@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 router.post('/test/mymodels', addInstagramSlot);
-router.post('/test/mymodels/:id', updateInstagramSlot);
+router.patch('/test/mymodels/:id', updateInstagramSlot);
 router.post('/insert/account', createInstagramSlots);
 router.get('/', getInstagramSlots);
 
