@@ -1,18 +1,18 @@
 import express from 'express';
 import cors from 'cors';
 import { connect } from './src/db/db.js';
-import authRoutes from './src/routes/authRoutes.js';
 import MyModel from './src/models/MyModel.js';
 import MyModelForTg from './src/models/MyModelForTg.js';
 import MyModelForWA from './src/models/MyModelForWA.js';
+import User from './src/models/User.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 connect(); // Подключение к базе данных
-
-app.use('/test', authRoutes); // Маршруты аутентификации и регистрации
 
 app.post('/test/mymodels', async (req, res) => {
   try {
@@ -165,7 +165,7 @@ app.patch('/test/whatsappslot/:id', async (req, res) => {
   }
 });
 
-app.post('/test/whatsappslot', async (req, res) => {
+app.post('/insert/account', async (req, res) => {
   try {
     const { account } = req.body;
 
@@ -197,6 +197,94 @@ app.get('/test/whatsappslot', async (req, res) => {
     res.status(500).json({ error: 'Что-то пошло не так' });
   }
 });
+
+app.post('/register', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Пользователь с таким именем уже существует' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({ username, password: hashedPassword });
+    await user.save();
+
+    res.status(200).json({ message: 'Регистрация прошла успешно' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Что-то пошло не так' });
+  }
+});
+
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: 'Неправильное имя пользователя или пароль' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Неправильное имя пользователя или пароль' });
+    }
+
+    const token = jwt.sign({ userId: user._id }, 'secret_key');
+
+    res.status(200).json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Что-то пошло не так' });
+  }
+});
+
+export const register = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Пользователь с таким именем уже существует' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({ username, password: hashedPassword });
+    await user.save();
+
+    res.status(200).json({ message: 'Регистрация прошла успешно' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Что-то пошло не так' });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: 'Неправильное имя пользователя или пароль' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Неправильное имя пользователя или пароль' });
+    }
+
+    const token = jwt.sign({ userId: user._id }, 'secret_key');
+
+    res.status(200).json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Что-то пошло не так' });
+  }
+};
 
 
 const PORT = 4000;
