@@ -198,7 +198,7 @@ app.get('/test/whatsappslot', async (req, res) => {
   }
 });
 
-app.post('/register', async (req, res) => {
+app.post('/test/register', async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -219,7 +219,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.post('/logins', async (req, res) => {
+app.post('/test/logins', async (req, res) => {
   try {
     const { username, password } = req.body;
 
