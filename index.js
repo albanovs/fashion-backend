@@ -103,7 +103,7 @@ app.patch('/test/telegramSlot/:id', async (req, res) => {
   }
 });
 
-app.post('/insert/account', async (req, res) => {
+app.post('/insert/telegram', async (req, res) => {
   try {
     const { account } = req.body;
 
@@ -197,6 +197,7 @@ app.get('/test/whatsappslot', async (req, res) => {
     res.status(500).json({ error: 'Что-то пошло не так' });
   }
 });
+
 
 app.post('/test/register', async (req, res) => {
   try {
