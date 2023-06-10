@@ -107,7 +107,7 @@ app.post('/insert/account', async (req, res) => {
   try {
     const { account } = req.body;
 
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 20; i++) {
       const myData = new MyModelForTg({
         account,
         num: i,
