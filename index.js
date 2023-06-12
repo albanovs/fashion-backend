@@ -7,12 +7,13 @@ import MyModelForWA from './src/models/MyModelForWA.js';
 import User from './src/models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-// import path from 'path';
-// import { fileURLToPath } from 'url';
-// import { dirname } from 'path';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import historyApiFallback from 'connect-history-api-fallback';
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // console.log(__dirname);
 
@@ -20,14 +21,15 @@ import jwt from 'jsonwebtoken';
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(historyApiFallback());
 
 connect(); // Подключение к базе данных
 
-// app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'build')));
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
+});
 
 app.post('/test/mymodels', async (req, res) => {
   try {
