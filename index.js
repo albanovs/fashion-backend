@@ -7,12 +7,27 @@ import MyModelForWA from './src/models/MyModelForWA.js';
 import User from './src/models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+console.log(__dirname);
+
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 connect(); // Подключение к базе данных
+
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 app.post('/test/mymodels', async (req, res) => {
   try {
@@ -226,12 +241,12 @@ app.post('/test/logins', async (req, res) => {
 
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: 'Неправильное имя пользователя или пароль' });
+      return res.status(400).json({ message: 'Неправильное имя пользователя' });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Неправильное имя пользователя или пароль' });
+      return res.status(400).json({ message: 'Неверный пароль' });
     }
 
     const token = jwt.sign({ userId: user._id }, 'secret_key');
