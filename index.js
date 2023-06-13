@@ -7,6 +7,10 @@ import MyModelForWA from './src/models/MyModelForWA.js';
 import User from './src/models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import axios from 'axios'
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(express.json());
@@ -14,6 +18,23 @@ app.use(cors());
 
 
 connect(); // Подключение к базе данных
+
+const frontendURL = 'https://team.fashionrynok.kg';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename)
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('*', (req, res) => {
+  axios.get(`${frontendURL}/index.html`)
+    .then(response => {
+      res.send(response.data);
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send('Ошибка при получении фронтенда');
+    });
+});
 
 
 app.post('/test/mymodels', async (req, res) => {
