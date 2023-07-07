@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 
-const LiderOtchet = new mongoose.Schema({
+const MonacoOtchet = new mongoose.Schema({
     list: Number,
     sm: Number,
-    date: Date,
     sity: String,
     admin: String,
     comPersent100: Number,
@@ -19,8 +18,9 @@ const LiderOtchet = new mongoose.Schema({
     Otpravka: Number,
     itog: Number,
     itogIndex: Number
-})
+});
 
-const LiderModel = mongoose.model('otchet', LiderOtchet)
 
-export default LiderModel;
+const MonacoModel = mongoose.model("monacootchet", MonacoOtchet);
+
+export default MonacoModel;

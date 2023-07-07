@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const LiderItogSchema = new mongoose.Schema({
-    date: Date,
     ros1: String,
     ros2: String,
     ros3: String,
@@ -22,7 +21,7 @@ const LiderItogSchema = new mongoose.Schema({
     allItogPrihod: Number,
     allItogUhod: Number,
     raznica: Number,
-    itog: Number
+    itogs: Number
 });
 
 const LiderItogModel = mongoose.model("lideritog", LiderItogSchema);

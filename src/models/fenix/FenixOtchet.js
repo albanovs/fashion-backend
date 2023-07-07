@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const FenixOtchet = new mongoose.Schema({
     list: Number,
     sm: Number,
-    date: Date,
     sity: String,
     admin: String,
     comPersent100: Number,
@@ -19,8 +18,9 @@ const FenixOtchet = new mongoose.Schema({
     Otpravka: Number,
     itog: Number,
     itogIndex: Number
-})
+});
 
-const FenixModel = mongoose.model('fenixotchet', FenixOtchet)
+
+const FenixModel = mongoose.model("fenixotchet", FenixOtchet);
 
 export default FenixModel;

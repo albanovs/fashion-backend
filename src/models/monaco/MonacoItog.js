@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-const FenixItogSchema = new mongoose.Schema({
-    date: Date,
+const MonacoItogSchema = new mongoose.Schema({
     ros1: String,
     ros2: String,
     ros3: String,
@@ -22,9 +21,11 @@ const FenixItogSchema = new mongoose.Schema({
     allItogPrihod: Number,
     allItogUhod: Number,
     raznica: Number,
-    itog: Number
-})
+    itogs: Number
+});
 
-const FenixItogModel = mongoose.model("fenixitog", FenixItogSchema)
+const MonacoItogModel = mongoose.model("monacoitog", MonacoItogSchema);
 
-export default FenixItogModel;
+export default MonacoItogModel;
+
+
