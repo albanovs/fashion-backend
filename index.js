@@ -20,6 +20,11 @@ import TuranDataModel from "./src/models/turan/turanData.js";
 import TuranItogModel from "./src/models/turan/TuranItog.js";
 import TuranModel from "./src/models/turan/TuranOtchet.js";
 
+import SimModelLider from "./src/models/simcard/simlider.js";
+import SimModelFenix from "./src/models/simcard/simfenix.js";
+import SimModelTuran from "./src/models/simcard/simturan.js";
+import SimModelMonaco from "./src/models/simcard/simmonaco.js";
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -1280,7 +1285,7 @@ app.get('/test/fenixdatas', async (req, res) => {
 /*-------------------------------------------------------------------------*/
 
 
-app.post('/test/turanochets', async (req, res) => {
+app.post('/test/turanotchets', async (req, res) => {
   try {
     const {
       list,
@@ -1925,6 +1930,391 @@ app.post("/test/logins", async (req, res) => {
     res.status(500).json({ message: "Что-то пошло не так" });
   }
 });
+
+
+//***sim card ******************************** */
+//***sim card ******************************** */
+//***sim card ******************************** */
+
+
+app.post("/insert/simcards", async (req, res) => {
+  try {
+    const { curator } = req.body
+    const newData = new SimModelLider({
+      curator: curator,
+      slot: [{
+        num: 1,
+        number: '',
+        status: '1',
+        buyer: '',
+        personal_number: '',
+        date_of_verification: '',
+        days_since_verifiation: '',
+        status_simCard: '1',
+        physical_simCard: '1',
+        registration: '',
+        WAcod: '',
+        TGcod: '',
+      }]
+    })
+    await newData.save()
+    res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+  } catch (error) {
+    res.status(500).json({ massage: `${JSON.stringify(error)}` })
+  }
+})
+
+app.post("/insert/slots", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const newData = await SimModelLider.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          slot: {
+            num: 1,
+            number: '',
+            status: '1',
+            buyer: '',
+            personal_number: '',
+            date_of_verification: '',
+            days_since_verification: '',
+            status_simCard: '1',
+            physical_simCard: '1',
+            registration: '',
+            WAcod: '',
+            TGcod: '',
+          }
+        }
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ newData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to insert new slot" });
+  }
+});
+
+
+
+
+
+app.get("/test/simCardLiders", async (req, res) => {
+  try {
+    const data = await SimModelLider.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      error: "Что то пошло не так",
+    });
+  }
+})
+
+app.patch('/update/simcards', async (req, res) => {
+  const { itemId, field, value, days_since_verification } = req.body;
+
+  try {
+    await SimModelLider.findOneAndUpdate(
+      { "slot._id": itemId },
+      { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+
+//***sim card ******************************** */
+
+app.post("/insert/simcardfenix", async (req, res) => {
+  try {
+    const { curator } = req.body
+    const newData = new SimModelFenix({
+      curator: curator,
+      slot: [{
+        num: 1,
+        number: '',
+        status: '1',
+        buyer: '',
+        personal_number: '',
+        date_of_verification: '',
+        days_since_verifiation: '',
+        status_simCard: '1',
+        physical_simCard: '1',
+        registration: '',
+        WAcod: '',
+        TGcod: '',
+      }]
+    })
+    await newData.save()
+    res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+  } catch (error) {
+    res.status(500).json({ massage: `${JSON.stringify(error)}` })
+  }
+})
+
+app.post("/insert/slotsFenix", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const newData = await SimModelFenix.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          slot: {
+            num: 1,
+            number: '',
+            status: '1',
+            buyer: '',
+            personal_number: '',
+            date_of_verification: '',
+            days_since_verification: '',
+            status_simCard: '1',
+            physical_simCard: '1',
+            registration: '',
+            WAcod: '',
+            TGcod: '',
+          }
+        }
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ newData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to insert new slot" });
+  }
+});
+
+
+
+
+
+app.get("/test/simCardfenixes", async (req, res) => {
+  try {
+    const data = await SimModelFenix.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      error: "Что то пошло не так",
+    });
+  }
+})
+
+app.patch('/update/simcardfenix', async (req, res) => {
+  const { itemId, field, value, days_since_verification } = req.body;
+
+  try {
+    await SimModelFenix.findOneAndUpdate(
+      { "slot._id": itemId },
+      { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+//***sim card ******************************** */
+
+
+app.post("/insert/simcardturan", async (req, res) => {
+  try {
+    const { curator } = req.body
+    const newData = new SimModelTuran({
+      curator: curator,
+      slot: [{
+        num: 1,
+        number: '',
+        status: '1',
+        buyer: '',
+        personal_number: '',
+        date_of_verification: '',
+        days_since_verifiation: '',
+        status_simCard: '1',
+        physical_simCard: '1',
+        registration: '',
+        WAcod: '',
+        TGcod: '',
+      }]
+    })
+    await newData.save()
+    res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+  } catch (error) {
+    res.status(500).json({ massage: `${JSON.stringify(error)}` })
+  }
+})
+
+app.post("/insert/slotsTuran", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const newData = await SimModelTuran.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          slot: {
+            num: 1,
+            number: '',
+            status: '1',
+            buyer: '',
+            personal_number: '',
+            date_of_verification: '',
+            days_since_verification: '',
+            status_simCard: '1',
+            physical_simCard: '1',
+            registration: '',
+            WAcod: '',
+            TGcod: '',
+          }
+        }
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ newData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to insert new slot" });
+  }
+});
+
+
+
+
+
+app.get("/test/simCardTurans", async (req, res) => {
+  try {
+    const data = await SimModelTuran.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      error: "Что то пошло не так",
+    });
+  }
+})
+
+app.patch('/update/simcardturan', async (req, res) => {
+  const { itemId, field, value, days_since_verification } = req.body;
+
+  try {
+    await SimModelTuran.findOneAndUpdate(
+      { "slot._id": itemId },
+      { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+//***sim card ******************************** */
+
+app.post("/insert/simcardMonacos", async (req, res) => {
+  try {
+    const { curator } = req.body
+    const newData = new SimModelMonaco({
+      curator: curator,
+      slot: [{
+        num: 1,
+        number: '',
+        status: '1',
+        buyer: '',
+        personal_number: '',
+        date_of_verification: '',
+        days_since_verifiation: '',
+        status_simCard: '1',
+        physical_simCard: '1',
+        registration: '',
+        WAcod: '',
+        TGcod: '',
+      }]
+    })
+    await newData.save()
+    res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+  } catch (error) {
+    res.status(500).json({ massage: `${JSON.stringify(error)}` })
+  }
+})
+
+app.post("/insert/slotsMonacos", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const newData = await SimModelMonaco.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          slot: {
+            num: 1,
+            number: '',
+            status: '1',
+            buyer: '',
+            personal_number: '',
+            date_of_verification: '',
+            days_since_verification: '',
+            status_simCard: '1',
+            physical_simCard: '1',
+            registration: '',
+            WAcod: '',
+            TGcod: '',
+          }
+        }
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ newData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to insert new slot" });
+  }
+});
+
+
+
+
+
+app.get("/test/simCardMonacos", async (req, res) => {
+  try {
+    const data = await SimModelMonaco.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      error: "Что то пошло не так",
+    });
+  }
+})
+
+app.patch('/update/simcardmonacos', async (req, res) => {
+  const { itemId, field, value, days_since_verification } = req.body;
+
+  try {
+    await SimModelMonaco.findOneAndUpdate(
+      { "slot._id": itemId },
+      { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+
+
 
 const PORT = 4000;
 
