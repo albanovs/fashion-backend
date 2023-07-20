@@ -2381,7 +2381,7 @@ app.post("/insert/slotsManagers", async (req, res) => {
 
 
 
-app.get("/test/simCardManagers", async (req, res) => {
+app.get("/test/simcardmanagers", async (req, res) => {
   try {
     const data = await SimModelManager.find();
     res.status(200).json(data);
@@ -2406,7 +2406,7 @@ app.patch('/update/simcardmanagers', async (req, res) => {
     console.error(error);
     res.sendStatus(500);
   }
-}); F
+});
 
 
 
