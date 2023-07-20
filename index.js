@@ -24,6 +24,7 @@ import SimModelLider from "./src/models/simcard/simlider.js";
 import SimModelFenix from "./src/models/simcard/simfenix.js";
 import SimModelTuran from "./src/models/simcard/simturan.js";
 import SimModelMonaco from "./src/models/simcard/simmonaco.js";
+import SimModelManager from "./src/models/simcard/simmanager.js";
 
 const app = express();
 app.use(express.json());
@@ -2312,6 +2313,100 @@ app.patch('/update/simcardmonacos', async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+/*-------------------------------------------------------------simcard---------------------------*/
+
+app.post("/insert/simcardManagers", async (req, res) => {
+  try {
+    const { curator } = req.body
+    const newData = new SimModelManager({
+      curator: curator,
+      slot: [{
+        num: 1,
+        number: '',
+        status: '1',
+        buyer: '',
+        personal_number: '',
+        date_of_verification: '',
+        days_since_verifiation: '',
+        status_simCard: '1',
+        physical_simCard: '1',
+        registration: '',
+        WAcod: '',
+        TGcod: '',
+      }]
+    })
+    await newData.save()
+    res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+  } catch (error) {
+    res.status(500).json({ massage: `${JSON.stringify(error)}` })
+  }
+})
+
+app.post("/insert/slotsManagers", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const newData = await SimModelManager.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          slot: {
+            num: 1,
+            number: '',
+            status: '1',
+            buyer: '',
+            personal_number: '',
+            date_of_verification: '',
+            days_since_verification: '',
+            status_simCard: '1',
+            physical_simCard: '1',
+            registration: '',
+            WAcod: '',
+            TGcod: '',
+          }
+        }
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ newData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to insert new slot" });
+  }
+});
+
+
+
+
+
+app.get("/test/simCardManagers", async (req, res) => {
+  try {
+    const data = await SimModelManager.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      error: "Что то пошло не так",
+    });
+  }
+})
+
+app.patch('/update/simcardmanagers', async (req, res) => {
+  const { itemId, field, value, days_since_verification } = req.body;
+
+  try {
+    await SimModelManager.findOneAndUpdate(
+      { "slot._id": itemId },
+      { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}); F
 
 
 
