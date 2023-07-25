@@ -8,6 +8,7 @@ const LiderDataSchema = new mongoose.Schema({
         date: Date,
         sity: String,
         admin: String,
+        buyer: String,
         comPersent100: Number,
         comPersent2: Number,
         comPersent3: Number,
