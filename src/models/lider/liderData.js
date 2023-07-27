@@ -43,6 +43,7 @@ const LiderDataSchema = new mongoose.Schema({
         upak: Number,
         allItogIndex: Number,
         allItog: Number,
+        allItogOtpravka: String,
         allItogUhod: Number,
         allItogPrihod: Number,
         raznica: Number,

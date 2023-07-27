@@ -18,6 +18,7 @@ const LiderItogSchema = new mongoose.Schema({
     upak: Number,
     allItogIndex: Number,
     allItog: Number,
+    allItogOtpravka: String,
     allItogPrihod: Number,
     allItogUhod: Number,
     raznica: Number,
