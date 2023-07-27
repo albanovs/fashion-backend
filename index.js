@@ -60,7 +60,6 @@ app.post('/test/ochets', async (req, res) => {
       indexPersent4,
       uhod,
       prihod,
-      Otpravka,
       itog,
       itogIndex
     } = req.body;
@@ -81,7 +80,6 @@ app.post('/test/ochets', async (req, res) => {
       indexPersent4,
       uhod,
       prihod,
-      Otpravka,
       itog,
       itogIndex
     });
@@ -111,7 +109,6 @@ app.patch('/test/otchets/:id', async (req, res) => {
     indexPersent4,
     uhod,
     prihod,
-    Otpravka,
     itog,
     itogIndex
   } = req.body;
@@ -135,7 +132,6 @@ app.patch('/test/otchets/:id', async (req, res) => {
         indexPersent4,
         uhod,
         prihod,
-        Otpravka,
         itog,
         itogIndex
       },
@@ -167,7 +163,6 @@ app.post("/newotchet/otchets", async (req, res) => {
         indexPersent4: 0,
         uhod: 0,
         prihod: 0,
-        Otpravka: 0,
         itog: 0,
         itogIndex: 0
       })
@@ -224,7 +219,6 @@ app.post('/test/lideritogs', async (req, res) => {
       upak,
       allItogIndex,
       allItog,
-      allItogOtpravka,
       allItogPrihod,
       allItogUhod,
       raznica,
@@ -249,7 +243,6 @@ app.post('/test/lideritogs', async (req, res) => {
       upak,
       allItogIndex,
       allItog,
-      allItogOtpravka,
       allItogPrihod,
       allItogUhod,
       raznica,
@@ -283,7 +276,6 @@ app.patch('/test/lideritogs/:id', async (req, res) => {
     upak,
     allItogIndex,
     allItog,
-    allItogOtpravka,
     allItogPrihod,
     allItogUhod,
     raznica,
@@ -311,7 +303,6 @@ app.patch('/test/lideritogs/:id', async (req, res) => {
         upak,
         allItogIndex,
         allItog,
-        allItogOtpravka,
         allItogPrihod,
         allItogUhod,
         raznica,
@@ -347,7 +338,6 @@ app.post('/newitog/lideritogs', async (req, res) => {
       upak: 0,
       allItogIndex: 0,
       allItog: 0,
-      allItogOtpravka: 0,
       allItogPrihod: 0,
       allItogUhod: 0,
       raznica: 0,
@@ -405,7 +395,6 @@ app.post('/test/liderdatas', (req, res) => {
       indexPersent4: elem.indexPersent4,
       uhod: elem.uhod,
       prihod: elem.prihod,
-      Otpravka: elem.Otpravka,
       itog: elem.itog,
       itogIndex: elem.itogIndex
     })),
@@ -430,7 +419,6 @@ app.post('/test/liderdatas', (req, res) => {
       upak: elem.upak,
       allItogIndex: elem.allItogIndex,
       allItog: elem.allItog,
-      allItogOtpravka: elem.allItogOtpravka,
       allItogUhod: elem.allItogUhod,
       allItogPrihod: elem.allItogPrihod,
       raznica: elem.raznica,

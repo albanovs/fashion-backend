@@ -16,7 +16,6 @@ const LiderOtchet = new mongoose.Schema({
     indexPersent4: Number,
     uhod: Number,
     prihod: Number,
-    Otpravka: Number,
     itog: Number,
     itogIndex: Number
 });
