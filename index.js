@@ -881,6 +881,7 @@ app.post('/test/fenixochets', async (req, res) => {
       sm,
       sity,
       admin,
+      buyer,
       comPersent100,
       comPersent2,
       comPersent3,
@@ -891,7 +892,6 @@ app.post('/test/fenixochets', async (req, res) => {
       indexPersent4,
       uhod,
       prihod,
-      Otpravka,
       itog,
       itogIndex
     } = req.body;
@@ -901,6 +901,7 @@ app.post('/test/fenixochets', async (req, res) => {
       sm,
       sity,
       admin,
+      buyer,
       comPersent100,
       comPersent2,
       comPersent3,
@@ -911,7 +912,6 @@ app.post('/test/fenixochets', async (req, res) => {
       indexPersent4,
       uhod,
       prihod,
-      Otpravka,
       itog,
       itogIndex
     });
@@ -930,6 +930,7 @@ app.patch('/test/fenixotchets/:id', async (req, res) => {
     sm,
     sity,
     admin,
+    buyer,
     comPersent100,
     comPersent2,
     comPersent3,
@@ -940,7 +941,6 @@ app.patch('/test/fenixotchets/:id', async (req, res) => {
     indexPersent4,
     uhod,
     prihod,
-    Otpravka,
     itog,
     itogIndex
   } = req.body;
@@ -953,6 +953,7 @@ app.patch('/test/fenixotchets/:id', async (req, res) => {
         sm,
         sity,
         admin,
+        buyer,
         comPersent100,
         comPersent2,
         comPersent3,
@@ -963,7 +964,6 @@ app.patch('/test/fenixotchets/:id', async (req, res) => {
         indexPersent4,
         uhod,
         prihod,
-        Otpravka,
         itog,
         itogIndex
       },
@@ -984,6 +984,7 @@ app.post("/newotchet/fenixotchets", async (req, res) => {
         sm: 0,
         sity: '',
         admin: '',
+        buyer: '',
         comPersent100: 0,
         comPersent2: 0,
         comPersent3: 0,
@@ -994,7 +995,6 @@ app.post("/newotchet/fenixotchets", async (req, res) => {
         indexPersent4: 0,
         uhod: 0,
         prihod: 0,
-        Otpravka: 0,
         itog: 0,
         itogIndex: 0
       })
@@ -1216,6 +1216,7 @@ app.post('/test/fenixdatas', (req, res) => {
       date: elem.date,
       sity: elem.sity,
       admin: elem.admin,
+      buyer: elem.buyer,
       comPersent100: elem.comPersent100,
       comPersent2: elem.comPersent2,
       comPersent3: elem.comPersent3,
@@ -1226,7 +1227,6 @@ app.post('/test/fenixdatas', (req, res) => {
       indexPersent4: elem.indexPersent4,
       uhod: elem.uhod,
       prihod: elem.prihod,
-      Otpravka: elem.Otpravka,
       itog: elem.itog,
       itogIndex: elem.itogIndex
     })),
