@@ -449,6 +449,25 @@ app.get('/test/liderdatas', async (req, res) => {
   }
 })
 
+app.put('/updateBuyer/:id', async (req, res) => {
+  const id = req.params.id;
+  const newBuyer = req.body.newBuyer;
+
+  try {
+    // Найдите объект по id и обновите значение buyer
+    const updatedData = await LiderDataModel.findByIdAndUpdate(id, { 'otchet.buyer': newBuyer }, { new: true });
+
+    if (!updatedData) {
+      return res.status(404).json({ error: 'Запись не найдена' });
+    }
+
+    return res.status(200).json(updatedData);
+  } catch (error) {
+    console.error('Ошибка при обновлении данных:', error);
+    return res.status(500).json({ error: 'Ошибка при обновлении данных' });
+  }
+});
+
 /****************************************************************************/
 /****************************************************************************/
 /****************************************************************************/
