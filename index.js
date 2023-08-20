@@ -1971,7 +1971,7 @@ app.post("/test/loginforteam", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Что-то пошло не так" });
   }
-}); 
+});
 
 
 app.post("/test/loginforteamin", async (req, res) => {

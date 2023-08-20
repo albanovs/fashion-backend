@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const userSchemaTeam = new mongoose.Schema({
     fullName: String,
     username: String,
     password: String,
@@ -8,6 +8,6 @@ const userSchema = new mongoose.Schema({
     role: String
 });
 
-const UserForTeam = mongoose.model('loginforteam', userSchema);
+const UserForTeam = mongoose.model('loginforteam', userSchemaTeam);
 
 export default UserForTeam;
