@@ -1930,7 +1930,7 @@ app.post("/test/register", async (req, res) => {
 
 app.post("/test/logins", async (req, res) => {
   try {
-    const { username, password, role } = req.body;
+    const { username, password } = req.body;
 
     const user = await User.findOne({ username });
     if (!user) {
