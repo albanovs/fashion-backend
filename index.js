@@ -1976,7 +1976,7 @@ app.post("/test/loginforteam", async (req, res) => {
 
 app.post("/test/loginforteamin", async (req, res) => {
   try {
-    const { fullName, username, password, team, role } = req.body;
+    const { username, password } = req.body;
 
     const user = await UserForTeam.findOne({ username });
     if (!user) {
