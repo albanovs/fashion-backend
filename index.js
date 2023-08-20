@@ -29,6 +29,7 @@ import SimModelLiderLog from "./src/models/simcardlogist/liderlogist.js";
 import SimModelMonacoLog from "./src/models/simcardlogist/monacologist.js";
 import SimModelTuranLog from "./src/models/simcardlogist/turanlogist.js";
 import SimModelFenixLog from "./src/models/simcardlogist/fenixlogist.js";
+import UserForTeam from "./src/models/forRegist.js";
 
 const app = express();
 app.use(express.json());
@@ -449,13 +450,13 @@ app.get('/test/liderdatas', async (req, res) => {
   }
 })
 
-app.put('/updateBuyer/:id', async (req, res) => {
-  const id = req.params.id;
-  const newBuyer = req.body.newBuyer;
+app.patch('/test/liderdatas/:id', async (req, res) => {
+  const { id } = req.params;
+  const { newValue } = req.body;
 
   try {
-    // Найдите объект по id и обновите значение buyer
-    const updatedData = await LiderDataModel.findByIdAndUpdate(id, { 'otchet.buyer': newBuyer }, { new: true });
+
+    const updatedData = await LiderDataModel.findByIdAndUpdate(id, { 'otchet.buyer': newValue }, { new: true });
 
     if (!updatedData) {
       return res.status(404).json({ error: 'Запись не найдена' });
@@ -464,7 +465,7 @@ app.put('/updateBuyer/:id', async (req, res) => {
     return res.status(200).json(updatedData);
   } catch (error) {
     console.error('Ошибка при обновлении данных:', error);
-    return res.status(500).json({ error: 'Ошибка при обновлении данных' });
+    return res.status(500).json({ error: 'Ошибка при обновлении данных', details: error.message });
   }
 });
 
@@ -1940,18 +1941,96 @@ app.post("/test/logins", async (req, res) => {
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Неверный пароль" });
     }
-
-    // user.role = role; // Добавление роли к пользователю
-    // await user.save(); // Сохранение обновленных данных пользователя
-
     const roles = await User.findOne({ username })
-
-    // const token = jwt.sign({ userId: user._id }, "secret_key");
 
     res.status(200).json({ roles });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Что-то пошло не так" });
+  }
+});
+
+//***************************************** */
+
+app.post("/test/loginforteam", async (req, res) => {
+  try {
+    const { fullName, username, password, team, role } = req.body;
+
+    const existingUser = await UserForTeam.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 8);
+
+    const user = new UserForTeam({ fullName, username, password: hashedPassword, team, role });
+    await user.save();
+
+    res.status(200).json({ message: "Регистрация прошла успешно" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Что-то пошло не так" });
+  }
+}); 
+
+
+app.post("/test/logins", async (req, res) => {
+  try {
+    const { fullName, username, password, team, role } = req.body;
+
+    const user = await UserForTeam.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: "Неправильное имя пользователя" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Неверный пароль" });
+    }
+    const roles = await UserForTeam.findOne({ username })
+
+    res.status(200).json({ roles });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Что-то пошло не так" });
+  }
+});
+
+app.get("/test/loginforteams", async (req, res) => {
+  try {
+    const data = await UserForTeam.find();
+    res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Что-то пошло не так" });
+  }
+});
+
+app.delete('/test/loginforteams/:id', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const deletedUser = await UserForTeam.findByIdAndDelete(id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+    res.status(200).json({ message: 'Пользователь успешно удален' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Что-то пошло не так' });
+  }
+});
+
+app.put('/test/loginforteams/:id', async (req, res) => {
+  const userId = req.params.id;
+  const updatedData = req.body;
+
+  try {
+    const updatedUser = await UserForTeam.findByIdAndUpdate(userId, updatedData, { new: true });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Произошла ошибка при обновлении данных пользователя' });
   }
 });
 
