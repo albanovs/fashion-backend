@@ -1974,7 +1974,7 @@ app.post("/test/loginforteam", async (req, res) => {
 }); 
 
 
-app.post("/test/logins", async (req, res) => {
+app.post("/test/loginforteamin", async (req, res) => {
   try {
     const { fullName, username, password, team, role } = req.body;
 
