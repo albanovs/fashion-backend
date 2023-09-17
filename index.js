@@ -6,19 +6,11 @@ import MyModelForTg from "./src/models/MyModelForTg.js";
 import MyModelForWA from "./src/models/MyModelForWA.js";
 import User from "./src/models/User.js";
 import bcrypt from "bcrypt";
-import LiderModel from "./src/models/lider/LiderOtchet.js";
 import LiderDataModel from "./src/models/lider/liderData.js";
 import bodyParser from "body-parser";
-import LiderItogModel from "./src/models/lider/LiderItog.js";
 import MonacoDataModel from "./src/models/monaco/monacoData.js";
-import MonacoItogModel from "./src/models/turan/TuranItog.js";
-import MonacoModel from "./src/models/monaco/MonacoOtchet.js";
 import FenixDataModel from "./src/models/fenix/fenixData.js";
-import FenixItogModel from "./src/models/fenix/FenixItog.js";
-import FenixModel from "./src/models/fenix/FenixOtchet.js";
 import TuranDataModel from "./src/models/turan/turanData.js";
-import TuranItogModel from "./src/models/turan/TuranItog.js";
-import TuranModel from "./src/models/turan/TuranOtchet.js";
 
 import SimModelLider from "./src/models/simcard/simlider.js";
 import SimModelFenix from "./src/models/simcard/simfenix.js";
@@ -44,342 +36,6 @@ app.use(cors());
 app.use(bodyParser.json())
 
 connect(); // Подключение к базе данных
-
-/*-------------------------------------------------------------------------*/
-/*---------------LIDER----------------------------------------------------------*/
-/*-------------------------------------------------------------------------*/
-
-
-app.post('/test/ochets', async (req, res) => {
-  try {
-    const {
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    } = req.body;
-
-    const myData = new LiderModel({
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/otchets/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    list,
-    sm,
-    sity,
-    admin,
-    buyer,
-    comPersent100,
-    comPersent2,
-    comPersent3,
-    comPersent4,
-    indexPersent100,
-    indexPersent2,
-    indexPersent3,
-    indexPersent4,
-    uhod,
-    prihod,
-    itog,
-    itogIndex
-  } = req.body;
-
-  try {
-    const updatedDoc = await LiderModel.findByIdAndUpdate(
-      id,
-      {
-        list,
-        sm,
-        sity,
-        admin,
-        buyer,
-        comPersent100,
-        comPersent2,
-        comPersent3,
-        comPersent4,
-        indexPersent100,
-        indexPersent2,
-        indexPersent3,
-        indexPersent4,
-        uhod,
-        prihod,
-        itog,
-        itogIndex
-      },
-      { new: true }
-    );
-    res.json(updatedDoc);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-});
-
-app.post("/newotchet/otchets", async (req, res) => {
-  try {
-    for (let i = 1; i <= 50; i++) {
-      const newDate = new LiderModel({
-        list: i,
-        sm: 0,
-        sity: '',
-        admin: '',
-        buyer: '',
-        comPersent100: 0,
-        comPersent2: 0,
-        comPersent3: 0,
-        comPersent4: 0,
-        indexPersent100: 0,
-        indexPersent2: 0,
-        indexPersent3: 0,
-        indexPersent4: 0,
-        uhod: 0,
-        prihod: 0,
-        itog: 0,
-        itogIndex: 0
-      })
-      await newDate.save()
-
-    }
-
-    res.status(200).json({ message: JSON.stringify(newDate) });
-  } catch (error) {
-    res.status(500).json({ error: "Что-то пошло не так!" });
-  }
-});
-
-app.get("/test/otchets", async (req, res) => {
-  try {
-    const data = await LiderModel.find()
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-});
-
-app.delete('/test/otchets', async (req, res) => {
-  try {
-    await LiderModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
-
-
-/*------------Itog---------------------------------------------------------------------*/
-app.post('/test/lideritogs', async (req, res) => {
-  try {
-    const {
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    } = req.body
-
-    const myData = new LiderItogModel({
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/lideritogs/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    ros1,
-    ros2,
-    ros3,
-    ros4,
-    ros5,
-    ros6,
-    ros7,
-    sum1,
-    sum2,
-    sum3,
-    sum4,
-    sum5,
-    sum6,
-    sum7,
-    upak,
-    allItogIndex,
-    allItog,
-    allItogPrihod,
-    allItogUhod,
-    raznica,
-    itogs
-  } = req.body;
-
-  try {
-    const updatedDoc = await LiderItogModel.findByIdAndUpdate(
-      id,
-      {
-        ros1,
-        ros2,
-        ros3,
-        ros4,
-        ros5,
-        ros6,
-        ros7,
-        sum1,
-        sum2,
-        sum3,
-        sum4,
-        sum5,
-        sum6,
-        sum7,
-        upak,
-        allItogIndex,
-        allItog,
-        allItogPrihod,
-        allItogUhod,
-        raznica,
-        itogs
-      },
-      { new: true }
-    );
-    res.json(updatedDoc);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-
-})
-
-app.post('/newitog/lideritogs', async (req, res) => {
-  try {
-    const myData = new LiderItogModel({
-      ros1: '',
-      ros2: '',
-      ros3: '',
-      ros4: '',
-      ros5: '',
-      ros6: '',
-      ros7: '',
-      sum1: 0,
-      sum2: 0,
-      sum3: 0,
-      sum4: 0,
-      sum5: 0,
-      sum6: 0,
-      sum7: 0,
-      upak: 0,
-      allItogIndex: 0,
-      allItog: 0,
-      allItogPrihod: 0,
-      allItogUhod: 0,
-      raznica: 0,
-      itogs: 0
-    })
-    await myData.save()
-    res.status(200).json({ massage: `${JSON.stringify(myData)}` })
-  } catch (error) {
-    res.status(500).json({ error: "что то пошло не так!" });
-  }
-})
-
-app.get("/test/lideritogs", async (req, res) => {
-  try {
-    const data = await LiderItogModel.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
-
-app.delete('/test/lideritogs', async (req, res) => {
-  try {
-    await LiderItogModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
-
-/*----itog data-------------------------------------------------------------*/
 
 app.post('/test/liderdatas', (req, res) => {
   const { date, otchet, itog } = req.body
@@ -457,364 +113,28 @@ app.get('/test/liderdatas', async (req, res) => {
   }
 })
 
-app.patch('/test/liderdatas/:id', async (req, res) => {
-  const { id } = req.params;
-  const { newValue } = req.body;
+app.patch('/updateDatalider/:id', async (req, res) => {
+  const { id } = req.params
+  const { buyer } = req.body
 
   try {
-
-    const updatedData = await LiderDataModel.findByIdAndUpdate(id, { 'otchet.buyer': newValue }, { new: true });
-
-    if (!updatedData) {
-      return res.status(404).json({ error: 'Запись не найдена' });
-    }
-
-    return res.status(200).json(updatedData);
-  } catch (error) {
-    console.error('Ошибка при обновлении данных:', error);
-    return res.status(500).json({ error: 'Ошибка при обновлении данных', details: error.message });
-  }
-});
-
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-
-/*-------------------------------------------------------------------------*/
-/*---------------MONACO----------------------------------------------------------*/
-/*-------------------------------------------------------------------------*/
-
-
-app.post('/test/monacoochets', async (req, res) => {
-  try {
-    const {
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    } = req.body;
-
-    const myData = new MonacoModel({
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/monacootchets/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    list,
-    sm,
-    sity,
-    admin,
-    buyer,
-    comPersent100,
-    comPersent2,
-    comPersent3,
-    comPersent4,
-    indexPersent100,
-    indexPersent2,
-    indexPersent3,
-    indexPersent4,
-    uhod,
-    prihod,
-    itog,
-    itogIndex
-  } = req.body;
-
-  try {
-    const updatedDoc = await MonacoModel.findByIdAndUpdate(
-      id,
+    const updateDoc = await LiderDataModel.findOneAndUpdate(
+      { "otchet._id": id },
       {
-        list,
-        sm,
-        sity,
-        admin,
-        buyer,
-        comPersent100,
-        comPersent2,
-        comPersent3,
-        comPersent4,
-        indexPersent100,
-        indexPersent2,
-        indexPersent3,
-        indexPersent4,
-        uhod,
-        prihod,
-        itog,
-        itogIndex
+        "otchet.$.buyer": buyer,
       },
       { new: true }
-    );
-    res.json(updatedDoc);
+    )
+
+    if (!updateDoc) {
+      return res.status(404).json({ error: 'Элемент не найден' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
   }
 });
 
-app.post("/newotchet/monacootchets", async (req, res) => {
-  try {
-    for (let i = 1; i <= 50; i++) {
-      const newDate = new MonacoModel({
-        list: i,
-        sm: 0,
-        sity: '',
-        admin: '',
-        buyer: '',
-        comPersent100: 0,
-        comPersent2: 0,
-        comPersent3: 0,
-        comPersent4: 0,
-        indexPersent100: 0,
-        indexPersent2: 0,
-        indexPersent3: 0,
-        indexPersent4: 0,
-        uhod: 0,
-        prihod: 0,
-        itog: 0,
-        itogIndex: 0
-      })
-      await newDate.save()
-
-    }
-
-    res.status(200).json({ message: JSON.stringify(newDate) });
-  } catch (error) {
-    res.status(500).json({ error: "Что-то пошло не так!" });
-  }
-});
-
-app.get("/test/monacootchets", async (req, res) => {
-  try {
-    const data = await MonacoModel.find()
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-});
-
-app.delete('/test/monacootchets', async (req, res) => {
-  try {
-    await MonacoModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
-
-
-/*------------Itog---------------------------------------------------------------------*/
-app.post('/test/monacoitogs', async (req, res) => {
-  try {
-    const {
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    } = req.body
-
-    const myData = new MonacoItogModel({
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/monacoitogs/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    ros1,
-    ros2,
-    ros3,
-    ros4,
-    ros5,
-    ros6,
-    ros7,
-    sum1,
-    sum2,
-    sum3,
-    sum4,
-    sum5,
-    sum6,
-    sum7,
-    upak,
-    allItogIndex,
-    allItog,
-    allItogPrihod,
-    allItogUhod,
-    raznica,
-    itogs
-  } = req.body;
-
-  try {
-    const updatedDoc = await MonacoItogModel.findByIdAndUpdate(
-      id,
-      {
-        ros1,
-        ros2,
-        ros3,
-        ros4,
-        ros5,
-        ros6,
-        ros7,
-        sum1,
-        sum2,
-        sum3,
-        sum4,
-        sum5,
-        sum6,
-        sum7,
-        upak,
-        allItogIndex,
-        allItog,
-        allItogPrihod,
-        allItogUhod,
-        raznica,
-        itogs
-      },
-      { new: true }
-    );
-    res.json(updatedDoc);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-
-})
-
-app.post('/newitog/monacoitogs', async (req, res) => {
-  try {
-    const myData = new MonacoItogModel({
-      ros1: '',
-      ros2: '',
-      ros3: '',
-      ros4: '',
-      ros5: '',
-      ros6: '',
-      ros7: '',
-      sum1: 0,
-      sum2: 0,
-      sum3: 0,
-      sum4: 0,
-      sum5: 0,
-      sum6: 0,
-      sum7: 0,
-      upak: 0,
-      allItogIndex: 0,
-      allItog: 0,
-      allItogPrihod: 0,
-      allItogUhod: 0,
-      raznica: 0,
-      itogs: 0
-    })
-    await myData.save()
-    res.status(200).json({ massage: `${JSON.stringify(myData)}` })
-  } catch (error) {
-    res.status(500).json({ error: "что то пошло не так!" });
-  }
-})
-
-app.get("/test/monacoitogs", async (req, res) => {
-  try {
-    const data = await MonacoItogModel.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
-
-app.delete('/test/monacoitogs', async (req, res) => {
-  try {
-    await MonacoItogModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
-
-/*----itog data-------------------------------------------------------------*/
 
 app.post('/test/monacodatas', (req, res) => {
   const { date, otchet, itog } = req.body
@@ -892,345 +212,29 @@ app.get('/test/monacodatas', async (req, res) => {
   }
 })
 
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-
-/*-------------------------------------------------------------------------*/
-/*---------------FENIX----------------------------------------------------------*/
-/*-------------------------------------------------------------------------*/
-
-
-app.post('/test/fenixochets', async (req, res) => {
-  try {
-    const {
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    } = req.body;
-
-    const myData = new FenixModel({
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/fenixotchets/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    list,
-    sm,
-    sity,
-    admin,
-    buyer,
-    comPersent100,
-    comPersent2,
-    comPersent3,
-    comPersent4,
-    indexPersent100,
-    indexPersent2,
-    indexPersent3,
-    indexPersent4,
-    uhod,
-    prihod,
-    itog,
-    itogIndex
-  } = req.body;
+app.patch('/updateDatamonaco/:id', async (req, res) => {
+  const { id } = req.params
+  const { buyer } = req.body
 
   try {
-    const updatedDoc = await FenixModel.findByIdAndUpdate(
-      id,
+    const updateDoc = await MonacoDataModel.findOneAndUpdate(
+      { "otchet._id": id },
       {
-        list,
-        sm,
-        sity,
-        admin,
-        buyer,
-        comPersent100,
-        comPersent2,
-        comPersent3,
-        comPersent4,
-        indexPersent100,
-        indexPersent2,
-        indexPersent3,
-        indexPersent4,
-        uhod,
-        prihod,
-        itog,
-        itogIndex
+        "otchet.$.buyer": buyer,
       },
       { new: true }
-    );
-    res.json(updatedDoc);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-});
+    )
 
-app.post("/newotchet/fenixotchets", async (req, res) => {
-  try {
-    for (let i = 1; i <= 50; i++) {
-      const newDate = new FenixModel({
-        list: i,
-        sm: 0,
-        sity: '',
-        admin: '',
-        buyer: '',
-        comPersent100: 0,
-        comPersent2: 0,
-        comPersent3: 0,
-        comPersent4: 0,
-        indexPersent100: 0,
-        indexPersent2: 0,
-        indexPersent3: 0,
-        indexPersent4: 0,
-        uhod: 0,
-        prihod: 0,
-        itog: 0,
-        itogIndex: 0
-      })
-      await newDate.save()
-
+    if (!updateDoc) {
+      return res.status(404).json({ error: 'Элемент не найден' });
     }
-
-    res.status(200).json({ message: JSON.stringify(newDate) });
-  } catch (error) {
-    res.status(500).json({ error: "Что-то пошло не так!" });
-  }
-});
-
-app.get("/test/fenixotchets", async (req, res) => {
-  try {
-    const data = await FenixModel.find()
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-});
-
-app.delete('/test/fenixotchets', async (req, res) => {
-  try {
-    await FenixModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
-
-
-/*------------Itog---------------------------------------------------------------------*/
-app.post('/test/fenixitogs', async (req, res) => {
-  try {
-    const {
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    } = req.body
-
-    const myData = new FenixItogModel({
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/fenixitogs/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    ros1,
-    ros2,
-    ros3,
-    ros4,
-    ros5,
-    ros6,
-    ros7,
-    sum1,
-    sum2,
-    sum3,
-    sum4,
-    sum5,
-    sum6,
-    sum7,
-    upak,
-    allItogIndex,
-    allItog,
-    allItogPrihod,
-    allItogUhod,
-    raznica,
-    itogs
-  } = req.body;
-
-  try {
-    const updatedDoc = await FenixItogModel.findByIdAndUpdate(
-      id,
-      {
-        ros1,
-        ros2,
-        ros3,
-        ros4,
-        ros5,
-        ros6,
-        ros7,
-        sum1,
-        sum2,
-        sum3,
-        sum4,
-        sum5,
-        sum6,
-        sum7,
-        upak,
-        allItogIndex,
-        allItog,
-        allItogPrihod,
-        allItogUhod,
-        raznica,
-        itogs
-      },
-      { new: true }
-    );
-    res.json(updatedDoc);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
   }
-
-})
-
-app.post('/newitog/fenixitogs', async (req, res) => {
-  try {
-    const myData = new FenixItogModel({
-      ros1: '',
-      ros2: '',
-      ros3: '',
-      ros4: '',
-      ros5: '',
-      ros6: '',
-      ros7: '',
-      sum1: 0,
-      sum2: 0,
-      sum3: 0,
-      sum4: 0,
-      sum5: 0,
-      sum6: 0,
-      sum7: 0,
-      upak: 0,
-      allItogIndex: 0,
-      allItog: 0,
-      allItogPrihod: 0,
-      allItogUhod: 0,
-      raznica: 0,
-      itogs: 0
-    })
-    await myData.save()
-    res.status(200).json({ massage: `${JSON.stringify(myData)}` })
-  } catch (error) {
-    res.status(500).json({ error: "что то пошло не так!" });
-  }
-})
-
-app.get("/test/fenixitogs", async (req, res) => {
-  try {
-    const data = await FenixItogModel.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
-
-app.delete('/test/fenixitogs', async (req, res) => {
-  try {
-    await FenixItogModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
 });
 
-/*----itog data-------------------------------------------------------------*/
+
 
 app.post('/test/fenixdatas', (req, res) => {
   const { date, otchet, itog } = req.body
@@ -1308,130 +312,125 @@ app.get('/test/fenixdatas', async (req, res) => {
   }
 })
 
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-
-/*-------------------------------------------------------------------------*/
-/*---------------TURAN----------------------------------------------------------*/
-/*-------------------------------------------------------------------------*/
-
-
-app.post('/test/turanotchets', async (req, res) => {
-  try {
-    const {
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    } = req.body;
-
-    const myData = new TuranModel({
-      list,
-      sm,
-      sity,
-      admin,
-      buyer,
-      comPersent100,
-      comPersent2,
-      comPersent3,
-      comPersent4,
-      indexPersent100,
-      indexPersent2,
-      indexPersent3,
-      indexPersent4,
-      uhod,
-      prihod,
-      itog,
-      itogIndex
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/turanotchets/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    list,
-    sm,
-    sity,
-    admin,
-    buyer,
-    comPersent100,
-    comPersent2,
-    comPersent3,
-    comPersent4,
-    indexPersent100,
-    indexPersent2,
-    indexPersent3,
-    indexPersent4,
-    uhod,
-    prihod,
-    itog,
-    itogIndex
-  } = req.body;
+app.patch('/updateDatafenix/:id', async (req, res) => {
+  const { id } = req.params
+  const { buyer } = req.body
 
   try {
-    const updatedDoc = await TuranModel.findByIdAndUpdate(
-      id,
+    const updateDoc = await FenixDataModel.findOneAndUpdate(
+      { "otchet._id": id },
       {
-        list,
-        sm,
-        sity,
-        admin,
-        buyer,
-        comPersent100,
-        comPersent2,
-        comPersent3,
-        comPersent4,
-        indexPersent100,
-        indexPersent2,
-        indexPersent3,
-        indexPersent4,
-        uhod,
-        prihod,
-        itog,
-        itogIndex
+        "otchet.$.buyer": buyer,
       },
       { new: true }
-    );
-    res.json(updatedDoc);
+    )
+
+    if (!updateDoc) {
+      return res.status(404).json({ error: 'Элемент не найден' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
   }
 });
 
+app.post('/test/turandatas', (req, res) => {
+  const { date, otchet, itog } = req.body
 
+  let data = {
+    date: date,
+    otchet: otchet.map(elem => ({
+      _id: elem._id,
+      sm: elem.sm,
+      date: elem.date,
+      sity: elem.sity,
+      admin: elem.admin,
+      buyer: elem.buyer,
+      comPersent100: elem.comPersent100,
+      comPersent2: elem.comPersent2,
+      comPersent3: elem.comPersent3,
+      comPersent4: elem.comPersent4,
+      indexPersent100: elem.indexPersent100,
+      indexPersent2: elem.indexPersent2,
+      indexPersent3: elem.indexPersent3,
+      indexPersent4: elem.indexPersent4,
+      uhod: elem.uhod,
+      prihod: elem.prihod,
+      itog: elem.itog,
+      itogIndex: elem.itogIndex
+    })),
 
+    itog: itog.map(elem => ({
+      _id: elem._id,
+      date: elem.date,
+      ros1: elem.ros1,
+      ros2: elem.ros2,
+      ros3: elem.ros3,
+      ros4: elem.ros4,
+      ros5: elem.ros5,
+      ros6: elem.ros6,
+      ros7: elem.ros7,
+      sum1: elem.sum1,
+      sum2: elem.sum2,
+      sum3: elem.sum3,
+      sum4: elem.sum4,
+      sum5: elem.sum5,
+      sum6: elem.sum6,
+      sum7: elem.sum7,
+      upak: elem.upak,
+      allItogIndex: elem.allItogIndex,
+      allItog: elem.allItog,
+      allItogUhod: elem.allItogUhod,
+      allItogPrihod: elem.allItogPrihod,
+      raznica: elem.raznica,
+      itogs: elem.itogs
+    }))
+  };
 
+  const turanData = new TuranDataModel(data);
+  turanData.save()
+    .then(() => {
+      console.log('Данные успешно сохранены');
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.error('Ошибка при сохранении данных:', error);
+      res.sendStatus(500);
+    });
+});
 
+app.get('/test/turandatas', async (req, res) => {
+  try {
+    const data = await TuranDataModel.find();
+    res.status(200).json(data)
+  } catch (error) {
+    res.status(500).json({
+      error: "Что то пошло не так",
+    });
+  }
+})
 
+app.patch('/updateDataturan/:id', async (req, res) => {
+  const { id } = req.params
+  const { buyer } = req.body
 
+  try {
+    const updateDoc = await TuranDataModel.findOneAndUpdate(
+      { "otchet._id": id },
+      {
+        "otchet.$.buyer": buyer,
+      },
+      { new: true }
+    )
 
-
-
-
-
-
-
+    if (!updateDoc) {
+      return res.status(404).json({ error: 'Элемент не найден' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
+  }
+});
 
 
 
@@ -2480,329 +1479,6 @@ app.post("/insert/fenixotchetbeta", async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.post("/newotchet/turanotchets", async (req, res) => {
-  try {
-    for (let i = 1; i <= 50; i++) {
-      const newDate = new TuranModel({
-        list: i,
-        sm: 0,
-        sity: '',
-        admin: '',
-        buyer: '',
-        comPersent100: 0,
-        comPersent2: 0,
-        comPersent3: 0,
-        comPersent4: 0,
-        indexPersent100: 0,
-        indexPersent2: 0,
-        indexPersent3: 0,
-        indexPersent4: 0,
-        uhod: 0,
-        prihod: 0,
-        itog: 0,
-        itogIndex: 0
-      })
-      await newDate.save()
-
-    }
-
-    res.status(200).json({ message: JSON.stringify(newDate) });
-  } catch (error) {
-    res.status(500).json({ error: "Что-то пошло не так!" });
-  }
-});
-
-app.get("/test/turanotchets", async (req, res) => {
-  try {
-    const data = await TuranModel.find()
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-});
-
-app.delete('/test/turanotchets', async (req, res) => {
-  try {
-    await TuranModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
-
-
-/*------------Itog---------------------------------------------------------------------*/
-app.post('/test/turanitogs', async (req, res) => {
-  try {
-    const {
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    } = req.body
-
-    const myData = new TuranItogModel({
-      ros1,
-      ros2,
-      ros3,
-      ros4,
-      ros5,
-      ros6,
-      ros7,
-      sum1,
-      sum2,
-      sum3,
-      sum4,
-      sum5,
-      sum6,
-      sum7,
-      upak,
-      allItogIndex,
-      allItog,
-      allItogPrihod,
-      allItogUhod,
-      raznica,
-      itogs
-    });
-    await myData.save();
-    res.status(200).json({ massage: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что то пошло не так" });
-  }
-})
-
-app.patch('/test/turanitogs/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    ros1,
-    ros2,
-    ros3,
-    ros4,
-    ros5,
-    ros6,
-    ros7,
-    sum1,
-    sum2,
-    sum3,
-    sum4,
-    sum5,
-    sum6,
-    sum7,
-    upak,
-    allItogIndex,
-    allItog,
-    allItogPrihod,
-    allItogUhod,
-    raznica,
-    itogs
-  } = req.body;
-
-  try {
-    const updatedDoc = await TuranItogModel.findByIdAndUpdate(
-      id,
-      {
-        ros1,
-        ros2,
-        ros3,
-        ros4,
-        ros5,
-        ros6,
-        ros7,
-        sum1,
-        sum2,
-        sum3,
-        sum4,
-        sum5,
-        sum6,
-        sum7,
-        upak,
-        allItogIndex,
-        allItog,
-        allItogPrihod,
-        allItogUhod,
-        raznica,
-        itogs
-      },
-      { new: true }
-    );
-    res.json(updatedDoc);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-
-})
-
-app.post('/newitog/turanitogs', async (req, res) => {
-  try {
-    const myData = new TuranItogModel({
-      ros1: '',
-      ros2: '',
-      ros3: '',
-      ros4: '',
-      ros5: '',
-      ros6: '',
-      ros7: '',
-      sum1: 0,
-      sum2: 0,
-      sum3: 0,
-      sum4: 0,
-      sum5: 0,
-      sum6: 0,
-      sum7: 0,
-      upak: 0,
-      allItogIndex: 0,
-      allItog: 0,
-      allItogPrihod: 0,
-      allItogUhod: 0,
-      raznica: 0,
-      itogs: 0
-    })
-    await myData.save()
-    res.status(200).json({ massage: `${JSON.stringify(myData)}` })
-  } catch (error) {
-    res.status(500).json({ error: "что то пошло не так!" });
-  }
-})
-
-app.get("/test/turanitogs", async (req, res) => {
-  try {
-    const data = await TuranItogModel.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
-
-app.delete('/test/turanitogs', async (req, res) => {
-  try {
-    await TuranItogModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
-
-/*----itog data-------------------------------------------------------------*/
-
-app.post('/test/turandatas', (req, res) => {
-  const { date, otchet, itog } = req.body
-
-  let data = {
-    date: date,
-    otchet: otchet.map(elem => ({
-      _id: elem._id,
-      sm: elem.sm,
-      date: elem.date,
-      sity: elem.sity,
-      admin: elem.admin,
-      buyer: elem.buyer,
-      comPersent100: elem.comPersent100,
-      comPersent2: elem.comPersent2,
-      comPersent3: elem.comPersent3,
-      comPersent4: elem.comPersent4,
-      indexPersent100: elem.indexPersent100,
-      indexPersent2: elem.indexPersent2,
-      indexPersent3: elem.indexPersent3,
-      indexPersent4: elem.indexPersent4,
-      uhod: elem.uhod,
-      prihod: elem.prihod,
-      itog: elem.itog,
-      itogIndex: elem.itogIndex
-    })),
-
-    itog: itog.map(elem => ({
-      _id: elem._id,
-      date: elem.date,
-      ros1: elem.ros1,
-      ros2: elem.ros2,
-      ros3: elem.ros3,
-      ros4: elem.ros4,
-      ros5: elem.ros5,
-      ros6: elem.ros6,
-      ros7: elem.ros7,
-      sum1: elem.sum1,
-      sum2: elem.sum2,
-      sum3: elem.sum3,
-      sum4: elem.sum4,
-      sum5: elem.sum5,
-      sum6: elem.sum6,
-      sum7: elem.sum7,
-      upak: elem.upak,
-      allItogIndex: elem.allItogIndex,
-      allItog: elem.allItog,
-      allItogUhod: elem.allItogUhod,
-      allItogPrihod: elem.allItogPrihod,
-      raznica: elem.raznica,
-      itogs: elem.itogs
-    }))
-  };
-
-  const turanData = new TuranDataModel(data);
-  turanData.save()
-    .then(() => {
-      console.log('Данные успешно сохранены');
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.error('Ошибка при сохранении данных:', error);
-      res.sendStatus(500);
-    });
-});
-
-app.get('/test/turandatas', async (req, res) => {
-  try {
-    const data = await TuranDataModel.find();
-    res.status(200).json(data)
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
-
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
 
 
 app.post("/test/mymodels", async (req, res) => {
