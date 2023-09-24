@@ -1876,20 +1876,20 @@ app.patch("/test/simCardLiders/:id", async (req, res) => {
     TGcod,
   } = req.body
   try {
-    const updateSimCard = await SimModelLider.findByIdAndUpdate(
-      id,
+    const updateSimCard = await SimModelLider.findOneAndUpdate(
+      { "slot._id": id },
       {
-        number,
-        status,
-        buyer,
-        personal_number,
-        date_of_verification,
-        days_since_verification,
-        status_simCard,
-        physical_simCard,
-        registration,
-        WAcod,
-        TGcod,
+        "slot.$.number": number,
+        "slot.$.status": status,
+        "slot.$.buyer": buyer,
+        "slot.$.personal_number": personal_number,
+        "slot.$.date_of_verification": date_of_verification,
+        "slot.$.days_since_verification": days_since_verification,
+        "slot.$.status_simCard": status_simCard,
+        "slot.$.physical_simCard": physical_simCard,
+        "slot.$.registration": registration,
+        "slot.$.WAcod": WAcod,
+        "slot.$.TGcod": TGcod,
       },
       { new: true }
     )
