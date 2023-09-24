@@ -2427,7 +2427,7 @@ app.patch("/test/simcardmanagers/:id", async (req, res) => {
     TGcod,
   } = req.body
   try {
-    const updateSimCard = await SimModelMonaco.findOneAndUpdate(
+    const updateSimCard = await SimModelManager.findOneAndUpdate(
       { "slot._id": id },
       {
         "slot.$.number": number,
