@@ -1877,7 +1877,7 @@ app.patch("/test/simCardLiders/:id", async (req, res) => {
   } = req.body
   try {
     const updateSimCard = await SimModelLider.findOneAndUpdate(
-      { "slot._id": id },
+      { "slot._id": id }, 
       {
         "slot.$.number": number,
         "slot.$.status": status,
