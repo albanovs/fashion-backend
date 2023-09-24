@@ -1860,9 +1860,46 @@ app.post("/insert/slots", async (req, res) => {
   }
 });
 
-
-
-
+app.patch("/test/simCardLiders/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    number,
+    status,
+    buyer,
+    personal_number,
+    date_of_verification,
+    days_since_verification,
+    status_simCard,
+    physical_simCard,
+    registration,
+    WAcod,
+    TGcod,
+  } = req.body
+  try {
+    const updateSimCard = await SimModelLider.findByIdAndUpdate(
+      id,
+      {
+        number,
+        status,
+        buyer,
+        personal_number,
+        date_of_verification,
+        days_since_verification,
+        status_simCard,
+        physical_simCard,
+        registration,
+        WAcod,
+        TGcod,
+      },
+      { new: true }
+    )
+    res.json(updateSimCard);
+  } catch (error) {
+    res.status(500).json({
+      error: "Что то пошло не так",
+    });
+  }
+})
 
 app.get("/test/simCardLiders", async (req, res) => {
   try {
