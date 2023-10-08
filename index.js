@@ -6,13 +6,13 @@ import MyModelForTg from "./src/models/MyModelForTg.js";
 import MyModelForWA from "./src/models/MyModelForWA.js";
 import User from "./src/models/User.js";
 import bcrypt from "bcrypt";
-import LiderDataModel from "./src/models/lider/liderData.js";
+import LiderDataModel from "./src/models/lider/liderData.mjs";
 import bodyParser from "body-parser";
 import MonacoDataModel from "./src/models/monaco/monacoData.js";
 import FenixDataModel from "./src/models/fenix/fenixData.js";
 import TuranDataModel from "./src/models/turan/turanData.js";
 
-import SimModelLider from "./src/models/simcard/simlider.js";
+import SimModelLider from "./src/models/simcard/simlider.mjs";
 import SimModelFenix from "./src/models/simcard/simfenix.js";
 import SimModelTuran from "./src/models/simcard/simturan.js";
 import SimModelMonaco from "./src/models/simcard/simmonaco.js";
@@ -24,10 +24,13 @@ import SimModelFenixLog from "./src/models/simcardlogist/fenixlogist.js";
 import UserForTeam from "./src/models/forRegist.js";
 import TuranOtchetBetaModel from './src/models/turan/turanOtchetBeta.js'
 import mongoose from "mongoose";
-import liderOtchetBetaModel from "./src/models/lider/liderOtchetBeta.js";
+import liderOtchetBetaModel from "./src/models/lider/liderOtchetBeta.mjs";
 import monacoOtchetBetaModel from "./src/models/monaco/monacoOtchetBeta.js";
 import fenixOtchetBetaModel from "./src/models/fenix/fenixOtchetBeta.js";
 
+import liderDataRouter from './src/routes/lider/liderDatasRouter.mjs'
+import liderOtchetBetaRouter from './src/routes/lider/otchetBetaRoutes.mjs'
+import simbuyerLiderRouter from './src/routes/lider/simbuyerLiderRouter.mjs'
 
 
 const app = express();
@@ -37,104 +40,109 @@ app.use(bodyParser.json())
 
 connect(); // Подключение к базе данных
 
-app.post('/test/liderdatas', (req, res) => {
-  const { date, otchet, itog } = req.body
+// app.post('/test/liderdatas', (req, res) => {
+//   const { date, otchet, itog } = req.body
 
-  let data = {
-    date: date,
-    otchet: otchet.map(elem => ({
-      _id: elem._id,
-      sm: elem.sm,
-      date: elem.date,
-      sity: elem.sity,
-      admin: elem.admin,
-      buyer: elem.buyer,
-      comPersent100: elem.comPersent100,
-      comPersent2: elem.comPersent2,
-      comPersent3: elem.comPersent3,
-      comPersent4: elem.comPersent4,
-      indexPersent100: elem.indexPersent100,
-      indexPersent2: elem.indexPersent2,
-      indexPersent3: elem.indexPersent3,
-      indexPersent4: elem.indexPersent4,
-      uhod: elem.uhod,
-      prihod: elem.prihod,
-      itog: elem.itog,
-      itogIndex: elem.itogIndex
-    })),
+//   let data = {
+//     date: date,
+//     otchet: otchet.map(elem => ({
+//       _id: elem._id,
+//       sm: elem.sm,
+//       date: elem.date,
+//       sity: elem.sity,
+//       admin: elem.admin,
+//       buyer: elem.buyer,
+//       comPersent100: elem.comPersent100,
+//       comPersent2: elem.comPersent2,
+//       comPersent3: elem.comPersent3,
+//       comPersent4: elem.comPersent4,
+//       indexPersent100: elem.indexPersent100,
+//       indexPersent2: elem.indexPersent2,
+//       indexPersent3: elem.indexPersent3,
+//       indexPersent4: elem.indexPersent4,
+//       uhod: elem.uhod,
+//       prihod: elem.prihod,
+//       itog: elem.itog,
+//       itogIndex: elem.itogIndex
+//     })),
 
-    itog: itog.map(elem => ({
-      _id: elem._id,
-      date: elem.date,
-      ros1: elem.ros1,
-      ros2: elem.ros2,
-      ros3: elem.ros3,
-      ros4: elem.ros4,
-      ros5: elem.ros5,
-      ros6: elem.ros6,
-      ros7: elem.ros7,
-      sum1: elem.sum1,
-      sum2: elem.sum2,
-      sum3: elem.sum3,
-      sum4: elem.sum4,
-      sum5: elem.sum5,
-      sum6: elem.sum6,
-      sum7: elem.sum7,
-      upak: elem.upak,
-      allItogIndex: elem.allItogIndex,
-      allItog: elem.allItog,
-      allItogUhod: elem.allItogUhod,
-      allItogPrihod: elem.allItogPrihod,
-      raznica: elem.raznica,
-      itogs: elem.itogs
-    }))
-  };
+//     itog: itog.map(elem => ({
+//       _id: elem._id,
+//       date: elem.date,
+//       ros1: elem.ros1,
+//       ros2: elem.ros2,
+//       ros3: elem.ros3,
+//       ros4: elem.ros4,
+//       ros5: elem.ros5,
+//       ros6: elem.ros6,
+//       ros7: elem.ros7,
+//       sum1: elem.sum1,
+//       sum2: elem.sum2,
+//       sum3: elem.sum3,
+//       sum4: elem.sum4,
+//       sum5: elem.sum5,
+//       sum6: elem.sum6,
+//       sum7: elem.sum7,
+//       upak: elem.upak,
+//       allItogIndex: elem.allItogIndex,
+//       allItog: elem.allItog,
+//       allItogUhod: elem.allItogUhod,
+//       allItogPrihod: elem.allItogPrihod,
+//       raznica: elem.raznica,
+//       itogs: elem.itogs
+//     }))
+//   };
 
-  const liderData = new LiderDataModel(data);
-  liderData.save()
-    .then(() => {
-      console.log('Данные успешно сохранены');
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.error('Ошибка при сохранении данных:', error);
-      res.sendStatus(500);
-    });
-});
+//   const liderData = new LiderDataModel(data);
+//   liderData.save()
+//     .then(() => {
+//       console.log('Данные успешно сохранены');
+//       res.sendStatus(200);
+//     })
+//     .catch((error) => {
+//       console.error('Ошибка при сохранении данных:', error);
+//       res.sendStatus(500);
+//     });
+// });
 
-app.get('/test/liderdatas', async (req, res) => {
-  try {
-    const data = await LiderDataModel.find();
-    res.status(200).json(data)
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
+// app.get('/test/liderdatas', async (req, res) => {
+//   try {
+//     const data = await LiderDataModel.find();
+//     res.status(200).json(data)
+//   } catch (error) {
+//     res.status(500).json({
+//       error: "Что то пошло не так",
+//     });
+//   }
+// })
 
-app.patch('/updateDatalider/:id', async (req, res) => {
-  const { id } = req.params
-  const { buyer } = req.body
+// app.patch('/updateDatalider/:id', async (req, res) => {
+//   const { id } = req.params
+//   const { buyer } = req.body
 
-  try {
-    const updateDoc = await LiderDataModel.findOneAndUpdate(
-      { "otchet._id": id },
-      {
-        "otchet.$.buyer": buyer,
-      },
-      { new: true }
-    )
+//   try {
+//     const updateDoc = await LiderDataModel.findOneAndUpdate(
+//       { "otchet._id": id },
+//       {
+//         "otchet.$.buyer": buyer,
+//       },
+//       { new: true }
+//     )
 
-    if (!updateDoc) {
-      return res.status(404).json({ error: 'Элемент не найден' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-});
+//     if (!updateDoc) {
+//       return res.status(404).json({ error: 'Элемент не найден' });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
+//   }
+// });
 
+
+
+app.use('/', liderDataRouter)
+app.use('/', liderOtchetBetaRouter)
+app.use('/', simbuyerLiderRouter)
 
 app.post('/test/monacodatas', (req, res) => {
   const { date, otchet, itog } = req.body
@@ -697,264 +705,264 @@ app.post("/insert/turanotchetbeta", async (req, res) => {
 
 
 
-app.post('/newotchet/liderotchetbeta', async (req, res) => {
-  try {
-    const otchetArray = [];
-    for (let i = 1; i <= 30; i++) {
-      otchetArray.push({
-        list: i,
-        sm: 1,
-        sity: '',
-        admin: '',
-        buyer: '',
-        comPersent100: 0,
-        comPersent2: 0,
-        comPersent3: 0,
-        comPersent4: 0,
-        indexPersent100: 0,
-        indexPersent2: 0,
-        indexPersent3: 0,
-        indexPersent4: 0,
-        uhod: 0,
-        prihod: 0,
-        itog: 0,
-        itogIndex: 0
-      });
-    }
+// app.post('/newotchet/liderotchetbeta', async (req, res) => {
+//   try {
+//     const otchetArray = [];
+//     for (let i = 1; i <= 30; i++) {
+//       otchetArray.push({
+//         list: i,
+//         sm: 1,
+//         sity: '',
+//         admin: '',
+//         buyer: '',
+//         comPersent100: 0,
+//         comPersent2: 0,
+//         comPersent3: 0,
+//         comPersent4: 0,
+//         indexPersent100: 0,
+//         indexPersent2: 0,
+//         indexPersent3: 0,
+//         indexPersent4: 0,
+//         uhod: 0,
+//         prihod: 0,
+//         itog: 0,
+//         itogIndex: 0
+//       });
+//     }
 
-    const newotchet = new liderOtchetBetaModel({
-      otchet: otchetArray,
-      itog: [{
-        ros1: '',
-        ros2: '',
-        ros3: '',
-        ros4: '',
-        ros5: '',
-        sum1: 0,
-        sum2: 0,
-        sum3: 0,
-        sum4: 0,
-        sum5: 0,
-        allItogIndex: 0,
-        allItog: 0,
-        allItogPrihod: 0,
-        allItogUhod: 0,
-        raznica: 0,
-        itogs: 0
-      }]
-    });
+//     const newotchet = new liderOtchetBetaModel({
+//       otchet: otchetArray,
+//       itog: [{
+//         ros1: '',
+//         ros2: '',
+//         ros3: '',
+//         ros4: '',
+//         ros5: '',
+//         sum1: 0,
+//         sum2: 0,
+//         sum3: 0,
+//         sum4: 0,
+//         sum5: 0,
+//         allItogIndex: 0,
+//         allItog: 0,
+//         allItogPrihod: 0,
+//         allItogUhod: 0,
+//         raznica: 0,
+//         itogs: 0
+//       }]
+//     });
 
-    await newotchet.save();
+//     await newotchet.save();
 
-    res.status(201).json({ message: 'Отчеты успешно созданы' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
-});
+//     res.status(201).json({ message: 'Отчеты успешно созданы' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Что-то пошло не так" });
+//   }
+// });
 
-app.patch('/update/liderotchetbetas/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    sm,
-    sity,
-    admin,
-    buyer,
-    comPersent100,
-    comPersent2,
-    comPersent3,
-    comPersent4,
-    indexPersent100,
-    indexPersent2,
-    indexPersent3,
-    indexPersent4,
-    uhod,
-    prihod,
-    itog,
-    itogIndex,
-    ros1,
-    ros2,
-    ros3,
-    ros4,
-    ros5,
-    sum1,
-    sum2,
-    sum3,
-    sum4,
-    sum5,
-    allItogIndex,
-    allItog,
-    allItogPrihod,
-    allItogUhod,
-    raznica,
-    itogs
-  } = req.body;
+// app.patch('/update/liderotchetbetas/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const {
+//     sm,
+//     sity,
+//     admin,
+//     buyer,
+//     comPersent100,
+//     comPersent2,
+//     comPersent3,
+//     comPersent4,
+//     indexPersent100,
+//     indexPersent2,
+//     indexPersent3,
+//     indexPersent4,
+//     uhod,
+//     prihod,
+//     itog,
+//     itogIndex,
+//     ros1,
+//     ros2,
+//     ros3,
+//     ros4,
+//     ros5,
+//     sum1,
+//     sum2,
+//     sum3,
+//     sum4,
+//     sum5,
+//     allItogIndex,
+//     allItog,
+//     allItogPrihod,
+//     allItogUhod,
+//     raznica,
+//     itogs
+//   } = req.body;
 
-  try {
-    const updatedDoc = await liderOtchetBetaModel.findOneAndUpdate(
-      { "otchet._id": id },
-      {
-        "otchet.$.sm": sm,
-        "otchet.$.sity": sity,
-        "otchet.$.admin": admin,
-        "otchet.$.buyer": buyer,
-        "otchet.$.comPersent100": comPersent100,
-        "otchet.$.comPersent2": comPersent2,
-        "otchet.$.comPersent3": comPersent3,
-        "otchet.$.comPersent4": comPersent4,
-        "otchet.$.indexPersent100": indexPersent100,
-        "otchet.$.indexPersent2": indexPersent2,
-        "otchet.$.indexPersent3": indexPersent3,
-        "otchet.$.indexPersent4": indexPersent4,
-        "otchet.$.uhod": uhod,
-        "otchet.$.prihod": prihod,
-        "otchet.$.itog": itog,
-        "otchet.$.itogIndex": itogIndex,
-        "otchet.$.itog.ros1": ros1,
-        "otchet.$.itog.ros2": ros2,
-        "otchet.$.itog.ros3": ros3,
-        "otchet.$.itog.ros4": ros4,
-        "otchet.$.itog.ros5": ros5,
-        "otchet.$.itog.sum1": sum1,
-        "otchet.$.itog.sum2": sum2,
-        "otchet.$.itog.sum3": sum3,
-        "otchet.$.itog.sum4": sum4,
-        "otchet.$.itog.sum5": sum5,
-        "otchet.$.itog.allItogIndex": allItogIndex,
-        "otchet.$.itog.allItog": allItog,
-        "otchet.$.itog.allItogPrihod": allItogPrihod,
-        "otchet.$.itog.allItogUhod": allItogUhod,
-        "otchet.$.itog.raznica": raznica,
-        "otchet.$.itog.itogs": itogs
-      },
-      { new: true }
-    );
+//   try {
+//     const updatedDoc = await liderOtchetBetaModel.findOneAndUpdate(
+//       { "otchet._id": id },
+//       {
+//         "otchet.$.sm": sm,
+//         "otchet.$.sity": sity,
+//         "otchet.$.admin": admin,
+//         "otchet.$.buyer": buyer,
+//         "otchet.$.comPersent100": comPersent100,
+//         "otchet.$.comPersent2": comPersent2,
+//         "otchet.$.comPersent3": comPersent3,
+//         "otchet.$.comPersent4": comPersent4,
+//         "otchet.$.indexPersent100": indexPersent100,
+//         "otchet.$.indexPersent2": indexPersent2,
+//         "otchet.$.indexPersent3": indexPersent3,
+//         "otchet.$.indexPersent4": indexPersent4,
+//         "otchet.$.uhod": uhod,
+//         "otchet.$.prihod": prihod,
+//         "otchet.$.itog": itog,
+//         "otchet.$.itogIndex": itogIndex,
+//         "otchet.$.itog.ros1": ros1,
+//         "otchet.$.itog.ros2": ros2,
+//         "otchet.$.itog.ros3": ros3,
+//         "otchet.$.itog.ros4": ros4,
+//         "otchet.$.itog.ros5": ros5,
+//         "otchet.$.itog.sum1": sum1,
+//         "otchet.$.itog.sum2": sum2,
+//         "otchet.$.itog.sum3": sum3,
+//         "otchet.$.itog.sum4": sum4,
+//         "otchet.$.itog.sum5": sum5,
+//         "otchet.$.itog.allItogIndex": allItogIndex,
+//         "otchet.$.itog.allItog": allItog,
+//         "otchet.$.itog.allItogPrihod": allItogPrihod,
+//         "otchet.$.itog.allItogUhod": allItogUhod,
+//         "otchet.$.itog.raznica": raznica,
+//         "otchet.$.itog.itogs": itogs
+//       },
+//       { new: true }
+//     );
 
-    if (!updatedDoc) {
-      return res.status(404).json({ error: 'Элемент не найден' });
-    }
+//     if (!updatedDoc) {
+//       return res.status(404).json({ error: 'Элемент не найден' });
+//     }
 
-    res.json(updatedDoc);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-});
+//     res.json(updatedDoc);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
+//   }
+// });
 
-app.patch('/update/liderotchetbetasitog/:id', async (req, res) => {
-  const { id } = req.params;
-  const {
-    ros1,
-    ros2,
-    ros3,
-    ros4,
-    ros5,
-    sum1,
-    sum2,
-    sum3,
-    sum4,
-    sum5,
-    allItogIndex,
-    allItog,
-    allItogPrihod,
-    allItogUhod,
-    raznica,
-    itogs
-  } = req.body;
+// app.patch('/update/liderotchetbetasitog/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const {
+//     ros1,
+//     ros2,
+//     ros3,
+//     ros4,
+//     ros5,
+//     sum1,
+//     sum2,
+//     sum3,
+//     sum4,
+//     sum5,
+//     allItogIndex,
+//     allItog,
+//     allItogPrihod,
+//     allItogUhod,
+//     raznica,
+//     itogs
+//   } = req.body;
 
-  try {
-    const updatedDoc = await liderOtchetBetaModel.findOneAndUpdate(
-      { "itog._id": id },
-      {
-        "itog.$.ros1": ros1,
-        "itog.$.ros2": ros2,
-        "itog.$.ros3": ros3,
-        "itog.$.ros4": ros4,
-        "itog.$.ros5": ros5,
-        "itog.$.sum1": sum1,
-        "itog.$.sum2": sum2,
-        "itog.$.sum3": sum3,
-        "itog.$.sum4": sum4,
-        "itog.$.sum5": sum5,
-        "itog.$.allItogIndex": allItogIndex,
-        "itog.$.allItog": allItog,
-        "itog.$.allItogPrihod": allItogPrihod,
-        "itog.$.allItogUhod": allItogUhod,
-        "itog.$.raznica": raznica,
-        "itog.$.itogs": itogs
-      },
-      { new: true }
-    );
+//   try {
+//     const updatedDoc = await liderOtchetBetaModel.findOneAndUpdate(
+//       { "itog._id": id },
+//       {
+//         "itog.$.ros1": ros1,
+//         "itog.$.ros2": ros2,
+//         "itog.$.ros3": ros3,
+//         "itog.$.ros4": ros4,
+//         "itog.$.ros5": ros5,
+//         "itog.$.sum1": sum1,
+//         "itog.$.sum2": sum2,
+//         "itog.$.sum3": sum3,
+//         "itog.$.sum4": sum4,
+//         "itog.$.sum5": sum5,
+//         "itog.$.allItogIndex": allItogIndex,
+//         "itog.$.allItog": allItog,
+//         "itog.$.allItogPrihod": allItogPrihod,
+//         "itog.$.allItogUhod": allItogUhod,
+//         "itog.$.raznica": raznica,
+//         "itog.$.itogs": itogs
+//       },
+//       { new: true }
+//     );
 
-    if (!updatedDoc) {
-      return res.status(404).json({ error: 'Элемент не найден' });
-    }
-    res.json(updatedDoc);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
-  }
-});
+//     if (!updatedDoc) {
+//       return res.status(404).json({ error: 'Элемент не найден' });
+//     }
+//     res.json(updatedDoc);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Произошла ошибка при обновлении данных' });
+//   }
+// });
 
-app.get('/test/liderotchetbeta', async (req, res) => {
-  try {
-    const data = await liderOtchetBetaModel.find()
-    res.status(200).json(data)
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
+// app.get('/test/liderotchetbeta', async (req, res) => {
+//   try {
+//     const data = await liderOtchetBetaModel.find()
+//     res.status(200).json(data)
+//   } catch (error) {
+//     res.status(500).json({
+//       error: "Что то пошло не так",
+//     });
+//   }
+// })
 
-app.delete('/test/liderotchetbeta', async (req, res) => {
-  try {
-    await liderOtchetBetaModel.deleteMany();
-    res.status(200).json({ message: 'Коллекция успешно удалена' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
-  }
-});
+// app.delete('/test/liderotchetbeta', async (req, res) => {
+//   try {
+//     await liderOtchetBetaModel.deleteMany();
+//     res.status(200).json({ message: 'Коллекция успешно удалена' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
+//   }
+// });
 
-app.post("/insert/liderotchetbeta", async (req, res) => {
-  try {
-    const { id } = req.body;
+// app.post("/insert/liderotchetbeta", async (req, res) => {
+//   try {
+//     const { id } = req.body;
 
-    const newData = await liderOtchetBetaModel.findByIdAndUpdate(
-      id,
-      {
-        $push: {
-          otchet: [{
-            list: 1,
-            sm: 1,
-            sity: '',
-            admin: '',
-            buyer: '',
-            comPersent100: 0,
-            comPersent2: 0,
-            comPersent3: 0,
-            comPersent4: 0,
-            indexPersent100: 0,
-            indexPersent2: 0,
-            indexPersent3: 0,
-            indexPersent4: 0,
-            uhod: 0,
-            prihod: 0,
-            itog: 0,
-            itogIndex: 0
-          }]
-        }
-      },
-      { new: true }
-    );
+//     const newData = await liderOtchetBetaModel.findByIdAndUpdate(
+//       id,
+//       {
+//         $push: {
+//           otchet: [{
+//             list: 1,
+//             sm: 1,
+//             sity: '',
+//             admin: '',
+//             buyer: '',
+//             comPersent100: 0,
+//             comPersent2: 0,
+//             comPersent3: 0,
+//             comPersent4: 0,
+//             indexPersent100: 0,
+//             indexPersent2: 0,
+//             indexPersent3: 0,
+//             indexPersent4: 0,
+//             uhod: 0,
+//             prihod: 0,
+//             itog: 0,
+//             itogIndex: 0
+//           }]
+//         }
+//       },
+//       { new: true }
+//     );
 
-    res.status(200).json({ newData });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to insert new slot" });
-  }
-});
+//     res.status(200).json({ newData });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Failed to insert new slot" });
+//   }
+// });
 
 
 
@@ -1799,134 +1807,134 @@ app.put('/test/loginforteams/:id', async (req, res) => {
 //***sim card ******************************** */
 
 
-app.post("/insert/simcards", async (req, res) => {
-  try {
-    const { curator } = req.body
-    const newData = new SimModelLider({
-      curator: curator,
-      slot: [{
-        num: 1,
-        number: '',
-        status: '1',
-        buyer: '',
-        personal_number: '',
-        date_of_verification: '',
-        days_since_verifiation: '',
-        status_simCard: '1',
-        physical_simCard: '1',
-        registration: '',
-        WAcod: '',
-        TGcod: '',
-      }]
-    })
-    await newData.save()
-    res.status(200).json({ massage: `${JSON.stringify(newData)}` })
-  } catch (error) {
-    res.status(500).json({ massage: `${JSON.stringify(error)}` })
-  }
-})
+// app.post("/insert/simcards", async (req, res) => {
+//   try {
+//     const { curator } = req.body
+//     const newData = new SimModelLider({
+//       curator: curator,
+//       slot: [{
+//         num: 1,
+//         number: '',
+//         status: '1',
+//         buyer: '',
+//         personal_number: '',
+//         date_of_verification: '',
+//         days_since_verifiation: '',
+//         status_simCard: '1',
+//         physical_simCard: '1',
+//         registration: '',
+//         WAcod: '',
+//         TGcod: '',
+//       }]
+//     })
+//     await newData.save()
+//     res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+//   } catch (error) {
+//     res.status(500).json({ massage: `${JSON.stringify(error)}` })
+//   }
+// })
 
-app.post("/insert/slots", async (req, res) => {
-  try {
-    const { id } = req.body;
+// app.post("/insert/slots", async (req, res) => {
+//   try {
+//     const { id } = req.body;
 
-    const newData = await SimModelLider.findByIdAndUpdate(
-      id,
-      {
-        $push: {
-          slot: {
-            num: 1,
-            number: '',
-            status: '1',
-            buyer: '',
-            personal_number: '',
-            date_of_verification: '',
-            days_since_verification: '',
-            status_simCard: '1',
-            physical_simCard: '1',
-            registration: '',
-            WAcod: '',
-            TGcod: '',
-          }
-        }
-      },
-      { new: true }
-    );
+//     const newData = await SimModelLider.findByIdAndUpdate(
+//       id,
+//       {
+//         $push: {
+//           slot: {
+//             num: 1,
+//             number: '',
+//             status: '1',
+//             buyer: '',
+//             personal_number: '',
+//             date_of_verification: '',
+//             days_since_verification: '',
+//             status_simCard: '1',
+//             physical_simCard: '1',
+//             registration: '',
+//             WAcod: '',
+//             TGcod: '',
+//           }
+//         }
+//       },
+//       { new: true }
+//     );
 
-    res.status(200).json({ newData });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to insert new slot" });
-  }
-});
+//     res.status(200).json({ newData });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Failed to insert new slot" });
+//   }
+// });
 
-app.patch("/test/simCardLiders/:id", async (req, res) => {
-  const { id } = req.params;
-  const {
-    number,
-    status,
-    buyer,
-    personal_number,
-    date_of_verification,
-    days_since_verification,
-    status_simCard,
-    physical_simCard,
-    registration,
-    WAcod,
-    TGcod,
-  } = req.body
-  try {
-    const updateSimCard = await SimModelLider.findOneAndUpdate(
-      { "slot._id": id },
-      {
-        "slot.$.number": number,
-        "slot.$.status": status,
-        "slot.$.buyer": buyer,
-        "slot.$.personal_number": personal_number,
-        "slot.$.date_of_verification": date_of_verification,
-        "slot.$.days_since_verification": days_since_verification,
-        "slot.$.status_simCard": status_simCard,
-        "slot.$.physical_simCard": physical_simCard,
-        "slot.$.registration": registration,
-        "slot.$.WAcod": WAcod,
-        "slot.$.TGcod": TGcod,
-      },
-      { new: true }
-    )
-    res.json(updateSimCard);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
+// app.patch("/test/simCardLiders/:id", async (req, res) => {
+//   const { id } = req.params;
+//   const {
+//     number,
+//     status,
+//     buyer,
+//     personal_number,
+//     date_of_verification,
+//     days_since_verification,
+//     status_simCard,
+//     physical_simCard,
+//     registration,
+//     WAcod,
+//     TGcod,
+//   } = req.body
+//   try {
+//     const updateSimCard = await SimModelLider.findOneAndUpdate(
+//       { "slot._id": id },
+//       {
+//         "slot.$.number": number,
+//         "slot.$.status": status,
+//         "slot.$.buyer": buyer,
+//         "slot.$.personal_number": personal_number,
+//         "slot.$.date_of_verification": date_of_verification,
+//         "slot.$.days_since_verification": days_since_verification,
+//         "slot.$.status_simCard": status_simCard,
+//         "slot.$.physical_simCard": physical_simCard,
+//         "slot.$.registration": registration,
+//         "slot.$.WAcod": WAcod,
+//         "slot.$.TGcod": TGcod,
+//       },
+//       { new: true }
+//     )
+//     res.json(updateSimCard);
+//   } catch (error) {
+//     res.status(500).json({
+//       error: "Что то пошло не так",
+//     });
+//   }
+// })
 
-app.get("/test/simCardLiders", async (req, res) => {
-  try {
-    const data = await SimModelLider.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
-})
+// app.get("/test/simCardLiders", async (req, res) => {
+//   try {
+//     const data = await SimModelLider.find();
+//     res.status(200).json(data);
+//   } catch (error) {
+//     res.status(500).json({
+//       error: "Что то пошло не так",
+//     });
+//   }
+// })
 
-app.patch('/update/simcards', async (req, res) => {
-  const { itemId, field, value, days_since_verification } = req.body;
+// app.patch('/update/simcards', async (req, res) => {
+//   const { itemId, field, value, days_since_verification } = req.body;
 
-  try {
-    await SimModelLider.findOneAndUpdate(
-      { "slot._id": itemId },
-      { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
-    );
+//   try {
+//     await SimModelLider.findOneAndUpdate(
+//       { "slot._id": itemId },
+//       { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
+//     );
 
-    res.sendStatus(200);
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
+//     res.sendStatus(200);
+//   } catch (error) {
+//     console.error(error);
+//     res.sendStatus(500);
+//   }
+// });
 
 
 //***sim card ******************************** */
