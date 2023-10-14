@@ -6,5 +6,6 @@ router.post('/insert/simcardturanlog', turanLogistSimController.CreateTableSim)
 router.post('/insert/slotturanlog', turanLogistSimController.updateSimLog)
 router.get('/test/simCardTuranLogs', turanLogistSimController.getLogistSim)
 router.patch('/update/simCardTuranLogs', turanLogistSimController.updateDateLogist)
+router.patch('/test/simCardTuranLogs/:id', turanLogistSimController.editSimTable)
 
 export default router

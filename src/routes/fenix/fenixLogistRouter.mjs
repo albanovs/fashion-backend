@@ -6,5 +6,6 @@ router.post('/insert/simcardfenixlog', fenixLogistSimController.CreateTableSim)
 router.post('/insert/slotfenixlog', fenixLogistSimController.updateSimLog)
 router.get('/test/simCardFenixLogs', fenixLogistSimController.getLogistSim)
 router.patch('/update/simCardFenixLogs', fenixLogistSimController.updateDateLogist)
+router.patch('/test/simCardFenixLogs/:id', fenixLogistSimController.editSimTable)
 
 export default router

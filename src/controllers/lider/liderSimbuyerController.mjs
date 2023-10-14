@@ -129,4 +129,6 @@ const updateSimcard = async (req, res) => {
     }
 }
 
+
+
 export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard }
