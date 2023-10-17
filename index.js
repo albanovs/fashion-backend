@@ -1,4 +1,4 @@
-import express, { json } from "express";
+ import express, { json } from "express";
 import cors from "cors";
 import { connect } from "./src/db/db.js";
 import MyModel from "./src/models/MyModel.js";
