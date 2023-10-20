@@ -1,4 +1,4 @@
-import simModelLier from '../../models/simcard/simlider.mjs';
+import simModelFenix from '../../models/simcard/simfenix.mjs';
 import LiderDataModel from '../../models/lider/liderData.mjs';
 import MonacoDataModel from '../../models/monaco/monacoData.mjs';
 import FenixDataModel from '../../models/fenix/fenixData.mjs';
@@ -9,7 +9,7 @@ let cachedData = null;
 async function calculateAndCacheData() {
     try {
         const [managers, dataItog, monacoItog, fenixItog, turanItog] = await Promise.all([
-            simModelLier.find(),
+            simModelFenix.find(),
             LiderDataModel.find(),
             MonacoDataModel.find(),
             FenixDataModel.find(),
@@ -151,7 +151,7 @@ setInterval(() => {
     calculateAndCacheDataCash();
 }, cacheUpdateInterval);
 
-const calcRaintingManager = async (req, res) => {
+const calcRaintingManagerFenix = async (req, res) => {
     try {
         if (!cachedData) {
             await calculateAndCacheData();
@@ -163,4 +163,4 @@ const calcRaintingManager = async (req, res) => {
     }
 };
 
-export default { calcRaintingManager };
+export default { calcRaintingManagerFenix };

@@ -1,4 +1,4 @@
- import express, { json } from "express";
+import express, { json } from "express";
 import cors from "cors";
 import { connect } from "./src/db/db.js";
 import MyModel from "./src/models/MyModel.js";
@@ -32,6 +32,9 @@ import simbuyerTuranRouter from './src/routes/turan/simbuyerTuranRouter.mjs'
 import turanSimLogistRouter from './src/routes/turan/turanLogistRouter.mjs'
 
 import calcliderManager from './src/routes/calculate/lider.mjs'
+import calcMonacoManager from './src/routes/calculate/monaco.mjs'
+import calcTuranManager from './src/routes/calculate/turan.mjs'
+import calcFenixManager from './src/routes/calculate/fenix.mjs'
 
 const app = express();
 app.use(express.json());
@@ -61,6 +64,9 @@ app.use('/', turanSimLogistRouter)
 app.use('/', simbuyerTuranRouter)
 
 app.use('/', calcliderManager)
+app.use('/', calcMonacoManager)
+app.use('/', calcTuranManager)
+app.use('/', calcFenixManager)
 
 
 app.post("/test/mymodels", async (req, res) => {
