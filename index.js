@@ -35,6 +35,10 @@ import calcliderManager from './src/routes/calculate/lider.mjs'
 import calcMonacoManager from './src/routes/calculate/monaco.mjs'
 import calcTuranManager from './src/routes/calculate/turan.mjs'
 import calcFenixManager from './src/routes/calculate/fenix.mjs'
+import calcliderLog from './src/routes/calculate-logist/lider.mjs'
+import calcMonacoLog from './src/routes/calculate-logist/monaco.mjs'
+import calcTuranLog from './src/routes/calculate-logist/turan.mjs'
+import calcFenixLog from './src/routes/calculate-logist/fenix.mjs'
 
 const app = express();
 app.use(express.json());
@@ -67,6 +71,11 @@ app.use('/', calcliderManager)
 app.use('/', calcMonacoManager)
 app.use('/', calcTuranManager)
 app.use('/', calcFenixManager)
+
+app.use('/', calcliderLog)
+app.use('/', calcMonacoLog)
+app.use('/', calcTuranLog)
+app.use('/', calcFenixLog)
 
 
 app.post("/test/mymodels", async (req, res) => {
