@@ -40,6 +40,8 @@ import calcMonacoLog from './src/routes/calculate-logist/monaco.mjs'
 import calcTuranLog from './src/routes/calculate-logist/turan.mjs'
 import calcFenixLog from './src/routes/calculate-logist/fenix.mjs'
 
+import roles from './src/routes/roles/roles.mjs'
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -76,6 +78,8 @@ app.use('/', calcliderLog)
 app.use('/', calcMonacoLog)
 app.use('/', calcTuranLog)
 app.use('/', calcFenixLog)
+
+app.use('/', roles)
 
 
 app.post("/test/mymodels", async (req, res) => {
