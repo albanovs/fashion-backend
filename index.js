@@ -41,6 +41,7 @@ import calcTuranLog from './src/routes/calculate-logist/turan.mjs'
 import calcFenixLog from './src/routes/calculate-logist/fenix.mjs'
 
 import roles from './src/routes/roles/roles.mjs'
+import itogs from './src/routes/calculate-itog/itog.mjs'
 
 const app = express();
 app.use(express.json());
@@ -80,6 +81,7 @@ app.use('/', calcTuranLog)
 app.use('/', calcFenixLog)
 
 app.use('/', roles)
+app.use('/', itogs)
 
 
 app.post("/test/mymodels", async (req, res) => {

@@ -140,7 +140,6 @@ async function calculateAndCacheDataCash() {
     if (!cachedData) {
         const result = await calculateAndCacheData();
         cachedData = result;
-        console.log('Данные вычислены и закешированы.');
     }
 }
 
