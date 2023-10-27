@@ -78,7 +78,7 @@ async function calculateAndCacheDataCash() {
 
 calculateAndCacheDataCash();
 
-const cacheUpdateInterval = 3600000; // 1 час
+const cacheUpdateInterval = 600000;
 setInterval(() => {
     calculateAndCacheDataCash();
 }, cacheUpdateInterval);

@@ -129,6 +129,12 @@ async function calculateAndCacheData() {
             return null;
         }).filter(Boolean);
 
+        const totalComSum = result.reduce((sum, elem) => sum + elem.totalcom, 0);
+
+        result.forEach((elem) => {
+            elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
+        });
+
         return result;
 
     } catch (error) {
@@ -146,7 +152,7 @@ async function calculateAndCacheDataCash() {
 
 calculateAndCacheDataCash();
 
-const cacheUpdateInterval = 3600000; // 1 час
+const cacheUpdateInterval = 600000;
 setInterval(() => {
     calculateAndCacheDataCash();
 }, cacheUpdateInterval);
