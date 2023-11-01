@@ -5,9 +5,9 @@ let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
-        const [logist, turanItog] = await Promise.all([
+        const [logist, dataItog] = await Promise.all([
             simTuranLog.find(),
-            TuranDataModel.find()
+            TuranDataModel.find(),
         ]);
 
         function isCurrentMonthAndYear(dateString) {
@@ -16,14 +16,13 @@ async function calculateAndCacheData() {
             return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
         }
 
-        const filtereditogTuran = turanItog.filter((item) => isCurrentMonthAndYear(item.date));
+        const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
 
         const result = logist.map((elem) => {
             const nonEmptyLogist = elem.slot.filter((item) => item.logist !== '' && item.status === '2');
 
             if (nonEmptyLogist.length > 0) {
-
-                const adminDataItogTuran = filtereditogTuran.filter((itog) => {
+                const adminDataItog = filtereditog.filter((itog) => {
                     return itog.otchet.some((otchetItem) => {
                         return nonEmptyLogist.some((logistItem) => {
                             return otchetItem.admin && (otchetItem.admin === logistItem.logist || otchetItem.admin === elem.curator);
@@ -31,27 +30,34 @@ async function calculateAndCacheData() {
                     });
                 });
 
-                const totalCommissionTuran = adminDataItogTuran.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
+                const totalCommission = adminDataItog.reduce((acc, cur) => {
+                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
+                        if (cur2.admin === elem.curator || nonEmptyLogist.some(logist => logist.logist === cur2.admin)) {
+                            return acc2 + cur2.comPersent100;
+                        }
+                        return acc2;
+                    }, 0);
+                    return acc + curatorCommission;
                 }, 0);
 
-                const totalOrdersTuran = adminDataItogTuran.reduce((acc, cur) => {
+
+
+                const totalOrders = adminDataItog.reduce((acc, cur) => {
                     return acc + cur.otchet.reduce((acc2, cur2) => {
                         const matchesCurator = cur2.admin === elem.curator;
-                        const matchesNonEmptyLogist = nonEmptyLogist.some((logistItem) => cur2.admin === logistItem.admin);
+                        const matchesNonEmptyLogist = nonEmptyLogist.some((logistItem) => cur2.admin === logistItem.logist);
                         return acc2 + (matchesCurator || matchesNonEmptyLogist ? 1 : 0);
                     }, 0);
                 }, 0);
 
-                const totalComissionAll = totalCommissionTuran;
-                const coefficent = ((parseFloat(totalComissionAll) / parseFloat(nonEmptyLogist.length).toFixed(0)).toFixed(0) / 10000).toFixed(1);
-                const yourCommission = ((totalComissionAll) * 0.15).toFixed(0);
-                const totalOrdersAll = totalOrdersTuran;
+                const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyLogist.length).toFixed(0)).toFixed(0) / 10000).toFixed(1);
+                const yourCommission = ((totalCommission) * 0.15).toFixed(0);
+                const totalOrdersAll = totalOrders;
 
                 return {
                     curator: elem.curator,
                     logistLength: nonEmptyLogist.length,
-                    totalcom: totalComissionAll,
+                    totalcom: totalCommission,
                     order: totalOrdersAll,
                     coeff: coefficent,
                     comission: yourCommission,
@@ -79,9 +85,16 @@ async function calculateAndCacheDataCash() {
 calculateAndCacheDataCash();
 
 const cacheUpdateInterval = 600000;
-setInterval(() => {
-    calculateAndCacheDataCash();
+setInterval(async () => {
+    try {
+        const result = await calculateAndCacheData();
+        cachedData = result;
+        console.log('Данные вычислены и закешированы.');
+    } catch (error) {
+        console.error('Ошибка при выполнении вычислений:', error);
+    }
 }, cacheUpdateInterval);
+
 
 const calcRaintingLogist = async (req, res) => {
     try {

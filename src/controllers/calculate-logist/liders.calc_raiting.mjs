@@ -31,8 +31,16 @@ async function calculateAndCacheData() {
                 });
 
                 const totalCommission = adminDataItog.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
+                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
+                        if (cur2.admin === elem.curator || nonEmptyLogist.some(logist => logist.logist === cur2.admin)) {
+                            return acc2 + cur2.comPersent100;
+                        }
+                        return acc2;
+                    }, 0);
+                    return acc + curatorCommission;
                 }, 0);
+
+
 
                 const totalOrders = adminDataItog.reduce((acc, cur) => {
                     return acc + cur.otchet.reduce((acc2, cur2) => {
@@ -42,15 +50,14 @@ async function calculateAndCacheData() {
                     }, 0);
                 }, 0);
 
-                const totalComissionAll = totalCommission;
-                const coefficent = ((parseFloat(totalComissionAll) / parseFloat(nonEmptyLogist.length).toFixed(0)).toFixed(0) / 10000).toFixed(1);
-                const yourCommission = ((totalComissionAll) * 0.15).toFixed(0);
+                const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyLogist.length).toFixed(0)).toFixed(0) / 10000).toFixed(1);
+                const yourCommission = ((totalCommission) * 0.15).toFixed(0);
                 const totalOrdersAll = totalOrders;
 
                 return {
                     curator: elem.curator,
                     logistLength: nonEmptyLogist.length,
-                    totalcom: totalComissionAll,
+                    totalcom: totalCommission,
                     order: totalOrdersAll,
                     coeff: coefficent,
                     comission: yourCommission,
@@ -78,9 +85,16 @@ async function calculateAndCacheDataCash() {
 calculateAndCacheDataCash();
 
 const cacheUpdateInterval = 600000;
-setInterval(() => {
-    calculateAndCacheDataCash();
+setInterval(async () => {
+    try {
+        const result = await calculateAndCacheData();
+        cachedData = result;
+        console.log('Данные вычислены и закешированы.');
+    } catch (error) {
+        console.error('Ошибка при выполнении вычислений:', error);
+    }
 }, cacheUpdateInterval);
+
 
 const calcRaintingLogist = async (req, res) => {
     try {

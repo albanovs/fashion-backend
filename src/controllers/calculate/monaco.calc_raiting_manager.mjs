@@ -153,8 +153,14 @@ async function calculateAndCacheDataCash() {
 calculateAndCacheDataCash();
 
 const cacheUpdateInterval = 600000;
-setInterval(() => {
-    calculateAndCacheDataCash();
+setInterval(async () => {
+    try {
+        const result = await calculateAndCacheData();
+        cachedData = result;
+        console.log('Данные вычислены и закешированы.');
+    } catch (error) {
+        console.error('Ошибка при выполнении вычислений:', error);
+    }
 }, cacheUpdateInterval);
 
 const calcRaintingManagerMonaco = async (req, res) => {
