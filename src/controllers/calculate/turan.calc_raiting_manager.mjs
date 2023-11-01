@@ -31,65 +31,6 @@ async function calculateAndCacheData() {
             const nonEmptyBuyers = elem.slot.filter((item) => item.buyer !== '' && item.status === '2');
 
             if (nonEmptyBuyers.length > 0) {
-                const adminDataItog = filtereditog.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
-
-                const totalCommission = adminDataItog.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
-                }, 0);
-
-                const totalOrders = adminDataItog.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
-
-                const adminDataItogMonaco = filtereditogMonaco.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
-
-                const totalCommissionMonaco = adminDataItogMonaco.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
-                }, 0);
-
-                const totalOrdersMonaco = adminDataItogMonaco.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
-
-                const adminDataItogFenix = filtereditogFenix.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
-
-                const totalCommissionFenix = adminDataItogFenix.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
-                }, 0);
-
-                const totalOrdersFenix = adminDataItogFenix.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
 
                 const adminDataItogTuran = filtereditogTuran.filter((itog) => {
                     return itog.otchet.some((otchetItem) => {
@@ -100,7 +41,13 @@ async function calculateAndCacheData() {
                 });
 
                 const totalCommissionTuran = adminDataItogTuran.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
+                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
+                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
+                            return acc2 + cur2.comPersent100;
+                        }
+                        return acc2;
+                    }, 0);
+                    return acc + curatorCommission;
                 }, 0);
 
                 const totalOrdersTuran = adminDataItogTuran.reduce((acc, cur) => {
@@ -111,16 +58,14 @@ async function calculateAndCacheData() {
                     }, 0);
                 }, 0);
 
-                const totalComissionAll = totalCommission + totalCommissionMonaco + totalCommissionTuran + totalCommissionFenix;
-                const coefficent = ((parseFloat(totalComissionAll) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
-                const yourCommission = ((totalComissionAll) * 0.1).toFixed(0);
-                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersFenix + totalOrdersTuran;
+                const coefficent = ((parseFloat(totalCommissionTuran) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
+                const yourCommission = ((totalCommissionTuran) * 0.1).toFixed(0);
 
                 return {
                     curator: elem.curator,
                     buyerLength: nonEmptyBuyers.length,
-                    totalcom: totalComissionAll,
-                    order: totalOrdersAll,
+                    totalcom: totalCommissionTuran,
+                    order: totalOrdersTuran,
                     coeff: coefficent,
                     comission: yourCommission,
                 };

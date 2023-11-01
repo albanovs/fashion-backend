@@ -1,19 +1,13 @@
 import simModelLier from '../../models/simcard/simlider.mjs';
 import LiderDataModel from '../../models/lider/liderData.mjs';
-import MonacoDataModel from '../../models/monaco/monacoData.mjs';
-import FenixDataModel from '../../models/fenix/fenixData.mjs';
-import TuranDataModel from '../../models/turan/turanData.mjs';
 
 let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
-        const [managers, dataItog, monacoItog, fenixItog, turanItog] = await Promise.all([
+        const [managers, dataItog] = await Promise.all([
             simModelLier.find(),
             LiderDataModel.find(),
-            MonacoDataModel.find(),
-            FenixDataModel.find(),
-            TuranDataModel.find()
         ]);
 
         function isCurrentMonthAndYear(dateString) {
@@ -23,9 +17,6 @@ async function calculateAndCacheData() {
         }
 
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
-        const filtereditogMonaco = monacoItog.filter((item) => isCurrentMonthAndYear(item.date));
-        const filtereditogFenix = fenixItog.filter((item) => isCurrentMonthAndYear(item.date));
-        const filtereditogTuran = turanItog.filter((item) => isCurrentMonthAndYear(item.date));
 
         const result = managers.map((elem) => {
             const nonEmptyBuyers = elem.slot.filter((item) => item.buyer !== '' && item.status === '2');
@@ -40,7 +31,13 @@ async function calculateAndCacheData() {
                 });
 
                 const totalCommission = adminDataItog.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
+                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
+                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
+                            return acc2 + cur2.comPersent100;
+                        }
+                        return acc2;
+                    }, 0);
+                    return acc + curatorCommission;
                 }, 0);
 
                 const totalOrders = adminDataItog.reduce((acc, cur) => {
@@ -51,76 +48,15 @@ async function calculateAndCacheData() {
                     }, 0);
                 }, 0);
 
-                const adminDataItogMonaco = filtereditogMonaco.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
 
-                const totalCommissionMonaco = adminDataItogMonaco.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
-                }, 0);
-
-                const totalOrdersMonaco = adminDataItogMonaco.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
-
-                const adminDataItogFenix = filtereditogFenix.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
-
-                const totalCommissionFenix = adminDataItogFenix.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
-                }, 0);
-
-                const totalOrdersFenix = adminDataItogFenix.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
-
-                const adminDataItogTuran = filtereditogTuran.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
-
-                const totalCommissionTuran = adminDataItogTuran.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => acc2 + cur2.comPersent100, 0);
-                }, 0);
-
-                const totalOrdersTuran = adminDataItogTuran.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
-
-                const totalComissionAll = totalCommission + totalCommissionMonaco + totalCommissionTuran + totalCommissionFenix;
-                const coefficent = ((parseFloat(totalComissionAll) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
-                const yourCommission = ((totalComissionAll) * 0.1).toFixed(0);
-                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersFenix + totalOrdersTuran;
+                const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
+                const yourCommission = ((totalCommission) * 0.1).toFixed(0);
 
                 return {
                     curator: elem.curator,
                     buyerLength: nonEmptyBuyers.length,
-                    totalcom: totalComissionAll,
-                    order: totalOrdersAll,
+                    totalcom: totalCommission,
+                    order: totalOrders,
                     coeff: coefficent,
                     comission: yourCommission,
                 };
