@@ -120,7 +120,7 @@ async function calculateAndCacheData30day() {
             MonacoDataModel.find(),
         ]);
 
-        function isWithinLast30Days(dateString) {
+        function isWithinLastMonth(dateString) {
             const currentDate = new Date();
             const targetDateParts = dateString.split('.');
             if (targetDateParts.length === 3) {
@@ -129,15 +129,20 @@ async function calculateAndCacheData30day() {
                     targetDateParts[1] - 1, // Месяц (в JavaScript месяцы начинаются с 0)
                     targetDateParts[0]    // День
                 );
-                const thirtyDaysAgo = new Date(currentDate);
-                thirtyDaysAgo.setDate(currentDate.getDate() - 30);
 
-                return targetDate >= thirtyDaysAgo && targetDate <= currentDate;
+                // Получаем первый день текущего месяца
+                const firstDayOfCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+
+                // Вычисляем первый день предыдущего месяца
+                const firstDayOfPreviousMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+
+                return targetDate >= firstDayOfPreviousMonth && targetDate < firstDayOfCurrentMonth;
             }
             return false; // Возвращаем false, если формат даты неправильный
         }
 
-        const filtereditog = dataItog.filter((item) => isWithinLast30Days(item.date));
+
+        const filtereditog = dataItog.filter((item) => isWithinLastMonth(item.date));
 
         const result = managers.map((elem) => {
             const nonEmptyBuyers = elem.slot.filter((item) => item.buyer !== '' && item.status === '2');
