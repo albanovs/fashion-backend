@@ -233,7 +233,7 @@ async function calculateAndCacheData30day() {
             return false; // Возвращаем false, если формат даты неправильный
         }
 
-        const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
+        const filtereditog = dataItog.filter((item) => isWithinLastMonth(item.date));
         const filtereditogmonaco = dataItogMonaco.filter((item) => isWithinLastMonth(item.date));
         const filtereditogturan = dataItogTuran.filter((item) => isWithinLastMonth(item.date));
         const filtereditogfenix = dataItogFenix.filter((item) => isWithinLastMonth(item.date));
