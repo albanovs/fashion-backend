@@ -235,7 +235,7 @@ const cacheUpdate30dayInterval = 600000;
 setInterval(async () => {
     try {
         const result = await calculateAndCacheData30day();
-        cachedData = result;
+        cachedData30day = result;
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
     }
@@ -243,10 +243,10 @@ setInterval(async () => {
 
 const calcRaintingManager30day = async (req, res) => {
     try {
-        if (!cachedData) {
+        if (!cachedData30day) {
             await calculateAndCacheData30day();
         }
-        res.json(cachedData);
+        res.json(cachedData30day);
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
