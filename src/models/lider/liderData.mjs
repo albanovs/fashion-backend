@@ -51,5 +51,4 @@ const LiderDataSchema = new mongoose.Schema({
 
 const LiderDataModel = mongoose.model('liderdata', LiderDataSchema);
 
-
 export default LiderDataModel;

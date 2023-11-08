@@ -182,7 +182,6 @@ setInterval(async () => {
     try {
         const result = await calculateAndCacheData();
         cachedData = result;
-        console.log('Данные вычислены и закешированы.');
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
     }
@@ -195,7 +194,6 @@ const calcRaintingManagerFenix = async (req, res) => {
         }
         res.json(cachedData);
     } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 };
