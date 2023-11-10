@@ -49,5 +49,29 @@ const getClient = async (req, res) => {
     }
 };
 
+const updateClient = async (req, res) => {
+    const clientId = req.params.id;
 
-export default { newClient, getClient }
+    try {
+        // Найти существующего клиента по ID
+        const existingClient = await LeaderClientsModel.findById(clientId);
+
+        if (!existingClient) {
+            return res.status(404).json({ error: 'Клиент не найден' });
+        }
+
+        // Обновить поля summa и order_count
+        existingClient.summa = parseFloat(existingClient.summa) + parseFloat(req.body.summa);
+        existingClient.order_count = parseFloat(existingClient.order_count) + parseFloat(req.body.order_count);
+
+        // Сохранить обновленного клиента
+        const updatedClient = await existingClient.save();
+
+        res.status(200).json(updatedClient);
+    } catch (error) {
+        console.error('Ошибка при обновлении клиента:', error);
+        res.status(500).json({ error: 'Что-то пошло не так' });
+    }
+};
+
+export default { newClient, getClient, updateClient }
