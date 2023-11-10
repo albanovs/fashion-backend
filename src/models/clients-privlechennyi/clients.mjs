@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const ClientsLeaderSchema = new mongoose.Schema({
-    clientsF: String,
+    clients: String,
     buyer_logist: String,
     date_to: String,
     date_go: String,
