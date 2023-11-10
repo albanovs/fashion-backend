@@ -1,28 +1,44 @@
 import LeaderClientsModel from "../../models/clients-privlechennyi/clients.mjs";
 
+// const newClient = async (req, res) => {
+//     try {
+//         const {
+//             client,
+//             buyer_logist,
+//             date_to,
+//             date_go,
+//             summa,
+//             order_count
+//         } = req.body
+//         const newClient = new LeaderClientsModel({
+//             client,
+//             buyer_logist,
+//             date_to,
+//             date_go,
+//             summa,
+//             order_count
+//         })
+//         await newClient.save()
+//     } catch (error) {
+//         res.status(500).json({ massage: `${JSON.stringify(error)}` })
+//     }
+// }
+
 const newClient = async (req, res) => {
+    const clientData = req.body;
+
     try {
-        const {
-            client,
-            buyer_logist,
-            date_to,
-            date_go,
-            summa,
-            order_count
-        } = req.body
-        const newClient = new LeaderClientsModel({
-            client,
-            buyer_logist,
-            date_to,
-            date_go,
-            summa,
-            order_count
-        })
-        await newClient.save()
+        // Создание новой записи в вашей MongoDB-модели для клиентов
+        const result = await LeaderClientsModel.create(clientData);
+
+        res.json(result);
     } catch (error) {
-        res.status(500).json({ massage: `${JSON.stringify(error)}` })
+        console.error('Ошибка при создании данных клиента:', error);
+        res.status(500).json({ error: 'Ошибка при создании данных клиента' });
     }
 }
+
+
 
 const getClient = async () => {
     try {

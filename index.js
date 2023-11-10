@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express from "express";
 import cors from "cors";
 import { connect } from "./src/db/db.js";
 import MyModel from "./src/models/MyModel.js";
@@ -9,7 +9,6 @@ import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
 import SimModelManager from "./src/models/simcard/simmanager.js";
 import UserForTeam from "./src/models/forRegist.js";
-
 
 import liderDataRouter from './src/routes/lider/liderDatasRouter.mjs'
 import liderOtchetBetaRouter from './src/routes/lider/otchetBetaRoutes.mjs'
