@@ -40,13 +40,14 @@ const newClient = async (req, res) => {
 
 
 
-const getClient = async () => {
+const getClient = async (req, res) => {
     try {
         const data = await LeaderClientsModel.find();
-        res.status(200).json(data)
+        res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ error: "Что-то пошло не так" });
     }
-}
+};
+
 
 export default { newClient, getClient }
