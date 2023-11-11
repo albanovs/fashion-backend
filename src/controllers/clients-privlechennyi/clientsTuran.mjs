@@ -1,10 +1,10 @@
-import LeaderClientsModel from "../../models/clients-privlechennyi/clients.mjs";
+import TuranClientsModel from "../../models/clients-privlechennyi/clientsturan.mjs";
 
 const newClient = async (req, res) => {
     const clientData = req.body;
 
     try {
-        const result = await LeaderClientsModel.create(clientData);
+        const result = await TuranClientsModel.create(clientData);
 
         res.json(result);
     } catch (error) {
@@ -17,7 +17,7 @@ const newClient = async (req, res) => {
 
 const getClient = async (req, res) => {
     try {
-        const data = await LeaderClientsModel.find();
+        const data = await TuranClientsModel.find();
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ error: "Что-то пошло не так" });
@@ -28,7 +28,7 @@ const updateClient = async (req, res) => {
     const clientId = req.params.id;
 
     try {
-        const existingClient = await LeaderClientsModel.findById(clientId);
+        const existingClient = await TuranClientsModel.findById(clientId);
 
         if (!existingClient) {
             return res.status(404).json({ error: 'Клиент не найден' });

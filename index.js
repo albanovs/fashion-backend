@@ -42,6 +42,9 @@ import calcFenixLog from './src/routes/calculate-logist/fenix.mjs'
 import roles from './src/routes/roles/roles.mjs'
 import itogs from './src/routes/calculate-itog/itog.mjs'
 import clientLeader from './src/routes/client-privlechennyi/client-lider.mjs'
+import clientMonaco from './src/routes/client-privlechennyi/client-monaco.mjs'
+import clientTuran from './src/routes/client-privlechennyi/client-turan.mjs'
+import clientFenix from './src/routes/client-privlechennyi/client-fenix.mjs'
 
 const app = express();
 app.use(express.json());
@@ -83,6 +86,9 @@ app.use('/', calcFenixLog)
 app.use('/', roles)
 app.use('/', itogs)
 app.use('/', clientLeader)
+app.use('/', clientMonaco)
+app.use('/', clientFenix)
+app.use('/', clientTuran)
 
 
 app.post("/test/mymodels", async (req, res) => {
