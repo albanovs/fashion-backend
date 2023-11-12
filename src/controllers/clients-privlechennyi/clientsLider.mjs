@@ -1,4 +1,5 @@
 import LeaderClientsModel from "../../models/clients-privlechennyi/clients.mjs";
+import cron from 'node-cron'
 
 const newClient = async (req, res) => {
     const clientData = req.body;
@@ -44,5 +45,6 @@ const updateClient = async (req, res) => {
         res.status(500).json({ error: 'Что-то пошло не так' });
     }
 };
+
 
 export default { newClient, getClient, updateClient }
