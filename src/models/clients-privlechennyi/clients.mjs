@@ -6,7 +6,8 @@ const ClientsLeaderSchema = new mongoose.Schema({
     date_to: String,
     date_go: String,
     summa: Number,
-    order_count: Number
+    order_count: Number,
+    status: Boolean
 })
 
 const LeaderClientsModel = mongoose.model('liderclient', ClientsLeaderSchema);

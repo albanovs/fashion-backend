@@ -1,4 +1,5 @@
 import LeaderClientsModel from "../../models/clients-privlechennyi/clients.mjs";
+import cron from 'node-cron'
 
 const newClient = async (req, res) => {
     const clientData = req.body;
@@ -44,5 +45,34 @@ const updateClient = async (req, res) => {
         res.status(500).json({ error: 'Что-то пошло не так' });
     }
 };
+
+const getCurrentDate = () => {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    return dd + '.' + mm + '.' + yyyy;
+};
+
+const updateDatas = async () => {
+    cron.schedule('* * * * *', async () => {
+        try {
+            const clients = await LeaderClientsModel.find()
+            for (const client of clients) {
+                if (client.status) {
+                    if (
+                        parseFloat(client.order_count) >= 10 ||
+                        (parseFloat(client.summa) >= 50000) ||
+                        client.date_go === getCurrentDate()
+                    ) {
+                        client.status = false;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Ошибка при выполнении вычислений:', error);
+        }
+    })
+}
 
 export default { newClient, getClient, updateClient }
