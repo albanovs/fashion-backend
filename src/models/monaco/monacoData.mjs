@@ -50,6 +50,4 @@ const MonacoDataSchema = new mongoose.Schema({
 });
 
 const MonacoDataModel = mongoose.model('monacodata', MonacoDataSchema);
-
-
 export default MonacoDataModel;

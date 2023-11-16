@@ -13,12 +13,11 @@ const newClient = async (req, res) => {
     }
 }
 
-
-
 const getClient = async (req, res) => {
     try {
         const data = await MonacoClientsModel.find();
         res.status(200).json(data);
+
     } catch (error) {
         res.status(500).json({ error: "Что-то пошло не так" });
     }
@@ -33,6 +32,7 @@ const updateClient = async (req, res) => {
         if (!existingClient) {
             return res.status(404).json({ error: 'Клиент не найден' });
         }
+
         existingClient.summa = parseFloat(existingClient.summa) + parseFloat(req.body.summa);
         existingClient.order_count = parseFloat(existingClient.order_count) + parseFloat(req.body.order_count);
 
@@ -44,5 +44,6 @@ const updateClient = async (req, res) => {
         res.status(500).json({ error: 'Что-то пошло не так' });
     }
 };
+
 
 export default { newClient, getClient, updateClient }

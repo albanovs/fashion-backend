@@ -139,6 +139,7 @@ async function calculateAndCacheData() {
                 const coefficent = ((parseFloat(totalCommissionall) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
                 const yourCommission = ((totalCommissionall) * 0.1).toFixed(0);
                 const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix
+                const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 
                 return {
                     curator: elem.curator,
@@ -147,6 +148,7 @@ async function calculateAndCacheData() {
                     order: totalOrdersAll,
                     coeff: coefficent,
                     comission: yourCommission,
+                    coeffOrder: coefficentOrder,
                 };
 
             }
