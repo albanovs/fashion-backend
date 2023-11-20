@@ -55,6 +55,32 @@ async function calculateAndCacheData() {
                 const yourCommission = ((totalCommission) * 0.15).toFixed(0);
                 const totalOrdersAll = totalOrders;
 
+                const detailInfo = nonEmptyLogist.map(logistItem => {
+                    const matchesCurator = adminDataItog.some((itog) => {
+                        return itog.otchet.some((otchetItem) => {
+                            return otchetItem.admin === elem.curator;
+                        });
+                    });
+
+                    const matchesLogist = adminDataItog.reduce((acc, cur) => {
+                        return acc + cur.otchet.reduce((acc2, cur2) => {
+                            return acc2 + (cur2.admin === logistItem.logist ? 1 : 0);
+                        }, 0);
+                    }, 0);
+
+                    const sumComPersent100 = adminDataItog.reduce((acc, cur) => {
+                        return acc + cur.otchet.reduce((acc2, cur2) => {
+                            return acc2 + (cur2.admin === logistItem.logist ? cur2.comPersent100 : 0);
+                        }, 0);
+                    }, 0);
+
+                    return {
+                        name: logistItem.logist,
+                        orders: matchesCurator ? 1 : matchesLogist,
+                        summa: sumComPersent100,
+                    };
+                });
+
                 return {
                     curator: elem.curator,
                     logistLength: nonEmptyLogist.length,
@@ -62,6 +88,7 @@ async function calculateAndCacheData() {
                     order: totalOrdersAll,
                     coeff: coefficent,
                     comission: yourCommission,
+                    detail: detailInfo,
                 };
             }
 
