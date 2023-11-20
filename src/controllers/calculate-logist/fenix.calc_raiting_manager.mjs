@@ -76,6 +76,7 @@ async function calculateAndCacheData() {
 
                     return {
                         name: logistItem.logist,
+                        status: logistItem.status,
                         orders: matchesCurator ? 1 : matchesLogist,
                         summa: sumComPersent100,
                     };
