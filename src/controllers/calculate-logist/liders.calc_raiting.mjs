@@ -57,7 +57,7 @@ async function calculateAndCacheData() {
                 const detailInfo = nonEmptyLogist.map(logistItem => {
                     const matchesCurator = adminDataItog.some((itog) => {
                         return itog.otchet.some((otchetItem) => {
-                            return otchetItem.admin === elem.curator;
+                            return otchetItem.admin === elem.curator || otchetItem.admin === logistItem.logist;
                         });
                     });
 
@@ -73,11 +73,12 @@ async function calculateAndCacheData() {
                         }, 0);
                     }, 0);
 
+
                     return {
                         name: logistItem.logist,
                         status: logistItem.status,
-                        orders: matchesCurator ? 1 : matchesLogist,
-                        summa: sumComPersent100,
+                        orders: matchesLogist,
+                        summa: sumComPersent100 === 0 ? 0 : sumComPersent100,
                     };
                 });
 
@@ -127,7 +128,8 @@ const calcRaintingLogist = async (req, res) => {
         if (!cachedData) {
             await calculateAndCacheData();
         }
-        res.json(cachedData);
+        // const request = await calculateAndCacheData()
+        res.json(request);
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
