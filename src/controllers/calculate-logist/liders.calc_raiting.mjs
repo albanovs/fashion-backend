@@ -129,7 +129,7 @@ const calcRaintingLogist = async (req, res) => {
             await calculateAndCacheData();
         }
         // const request = await calculateAndCacheData()
-        res.json(request);
+        res.json(cachedData);
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
