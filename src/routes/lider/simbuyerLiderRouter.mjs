@@ -7,5 +7,6 @@ router.post('/insert/slots', liderSimbuyerController.addSimSlot)
 router.patch('/test/simCardLiders/:id', liderSimbuyerController.editSimTable)
 router.get('/test/simCardLiders', liderSimbuyerController.getSimTable)
 router.patch('/update/simcards', liderSimbuyerController.updateSimcard)
+router.patch('/test/curatorLiders', liderSimbuyerController.upDateCurator)
 
 export default router;

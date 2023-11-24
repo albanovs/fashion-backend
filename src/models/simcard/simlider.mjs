@@ -21,3 +21,4 @@ const ModelLiderSchema = new mongoose.Schema({
 const SimModelLider = mongoose.model('simCardLider', ModelLiderSchema);
 
 export default SimModelLider;
+ 

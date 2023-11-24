@@ -129,6 +129,19 @@ const updateSimcard = async (req, res) => {
     }
 }
 
+const upDateCurator = async (req, res) => {
+    const { id } = req.params
+    const { curator } = req.body
 
+    try {
+        await SimModelLider.findOneAndUpdate(
+            { id },
+            { curator },
+            { new: true }
+        )
+    } catch (error) {
 
-export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard }
+    }
+}
+
+export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator }
