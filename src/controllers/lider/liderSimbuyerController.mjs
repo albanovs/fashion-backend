@@ -102,6 +102,23 @@ const editSimTable = async (req, res) => {
     }
 }
 
+const deleteSlot = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedSimCard = await SimModelLider.findOneAndUpdate(
+            { "slot._id": id },
+            { $pull: { slot: { _id: id } } },
+            { new: true }
+        );
+        res.json(updatedSimCard);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что-то пошло не так при удалении слота",
+        });
+    }
+};
+
+
 const getSimTable = async (req, res) => {
     try {
         const data = await SimModelLider.find();
@@ -130,19 +147,20 @@ const updateSimcard = async (req, res) => {
 }
 
 const upDateCurator = async (req, res) => {
-    const { id } = req.params
-    const { curator } = req.body
-
+    const { id } = req.params;
+    const { curator } = req.body;
     try {
         const updateSimCard = await SimModelLider.findOneAndUpdate(
-            { id },
+            { _id: id },
             { curator },
             { new: true }
-        )
+        );
         res.json(updateSimCard);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ error: 'Something went wrong' });
     }
-}
+};
 
-export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator }
+
+export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot }
