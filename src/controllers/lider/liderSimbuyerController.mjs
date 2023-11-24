@@ -102,23 +102,6 @@ const editSimTable = async (req, res) => {
     }
 }
 
-const deleteSlot = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const updatedSimCard = await SimModelLider.findOneAndUpdate(
-            { "slot._id": id },
-            { $pull: { slot: { _id: id } } },
-            { new: true }
-        );
-        res.json(updatedSimCard);
-    } catch (error) {
-        res.status(500).json({
-            error: "Что-то пошло не так при удалении слота",
-        });
-    }
-};
-
-
 const getSimTable = async (req, res) => {
     try {
         const data = await SimModelLider.find();
@@ -162,5 +145,35 @@ const upDateCurator = async (req, res) => {
     }
 };
 
+const deleteSlot = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedSimCard = await SimModelLider.findOneAndUpdate(
+            { "slot._id": id },
+            { $pull: { slot: { _id: id } } },
+            { new: true }
+        );
+        res.json(updatedSimCard);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что-то пошло не так при удалении слота",
+        });
+    }
+};
 
-export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot }
+const deleteManager = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deletedDocument = await SimModelLider.findByIdAndDelete(id);
+        if (!deletedDocument) {
+            return res.status(404).json({ error: "Документ не найден" });
+        }
+        res.json({ message: "Документ успешно удален" });
+    } catch (error) {
+        console.error("Ошибка при удалении документа:", error);
+        res.status(500).json({ error: "Что-то пошло не так при удалении документа" });
+    }
+};
+
+
+export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot, deleteManager }
