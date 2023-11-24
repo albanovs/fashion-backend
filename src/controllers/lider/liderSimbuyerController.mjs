@@ -134,13 +134,14 @@ const upDateCurator = async (req, res) => {
     const { curator } = req.body
 
     try {
-        await SimModelLider.findOneAndUpdate(
+        const updateSimCard = await SimModelLider.findOneAndUpdate(
             { id },
             { curator },
             { new: true }
         )
+        res.json(updateSimCard);
     } catch (error) {
-
+        console.log(error);
     }
 }
 
