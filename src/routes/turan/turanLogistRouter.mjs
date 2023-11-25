@@ -7,7 +7,7 @@ router.post('/insert/slotturanlog', turanLogistSimController.updateSimLog)
 router.get('/test/simCardTuranLogs', turanLogistSimController.getLogistSim)
 router.patch('/update/simCardTuranLogs', turanLogistSimController.updateDateLogist)
 router.patch('/test/simCardTuranLogs/:id', turanLogistSimController.editSimTable)
-router.patch('/test/logist-curatorTurans/:id', turanLogistSimController.upDateCurator)
-router.delete('/test/logist-deleteSlotTurans/:id', turanLogistSimController.deleteSlot)
+router.patch('/test/logist-curatorTuranLogs/:id', turanLogistSimController.upDateCurator)
+router.delete('/test/logist-deleteSlotTuranLogs/:id', turanLogistSimController.deleteSlot)
 
 export default router
