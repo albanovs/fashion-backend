@@ -129,4 +129,36 @@ const editSimTable = async (req, res) => {
     }
 }
 
-export default { CreateTableSim, updateSimLog, getLogistSim, updateDateLogist, editSimTable }
+const upDateCurator = async (req, res) => {
+    const { id } = req.params;
+    const { curator } = req.body;
+    try {
+        const updateSimCard = await SimModelMonacoLog.findOneAndUpdate(
+            { _id: id },
+            { curator },
+            { new: true }
+        );
+        res.json(updateSimCard);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+};
+
+const deleteSlot = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedSimCard = await SimModelMonacoLog.findOneAndUpdate(
+            { "slot._id": id },
+            { $pull: { slot: { _id: id } } },
+            { new: true }
+        );
+        res.json(updatedSimCard);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что-то пошло не так при удалении слота",
+        });
+    }
+};
+
+export default { CreateTableSim, updateSimLog, getLogistSim, updateDateLogist, editSimTable, upDateCurator, deleteSlot }

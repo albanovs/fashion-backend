@@ -7,5 +7,7 @@ router.post('/insert/slotmonacolog', monacoLogistSimController.updateSimLog)
 router.get('/test/simCardMonacoLogs', monacoLogistSimController.getLogistSim)
 router.patch('/update/simCardMonacoLogs', monacoLogistSimController.updateDateLogist)
 router.patch('/test/simCardMonacoLogs/:id', monacoLogistSimController.editSimTable)
+router.patch('/test/logist-curatorMonacos/:id', monacoLogistSimController.upDateCurator)
+router.delete('/test/logist-deleteSlotMonacos/:id', monacoLogistSimController.deleteSlot)
 
 export default router
