@@ -161,19 +161,6 @@ const deleteSlot = async (req, res) => {
     }
 };
 
-const deleteManager = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deletedDocument = await SimModelLider.findByIdAndDelete(id);
-        if (!deletedDocument) {
-            return res.status(404).json({ error: "Документ не найден" });
-        }
-        res.json({ message: "Документ успешно удален" });
-    } catch (error) {
-        console.error("Ошибка при удалении документа:", error);
-        res.status(500).json({ error: "Что-то пошло не так при удалении документа" });
-    }
-};
 
 
-export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot, deleteManager }
+export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot }

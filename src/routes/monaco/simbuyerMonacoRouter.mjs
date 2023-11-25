@@ -7,5 +7,7 @@ router.post('/insert/simcardMonacoslot', monacoSimBuyerController.addSimSlot)
 router.patch('/test/simCardMonacos/:id', monacoSimBuyerController.editSimTable)
 router.get('/test/simCardMonacos', monacoSimBuyerController.getSimTable)
 router.patch('/update/simcardmonacos', monacoSimBuyerController.updateSimcard)
+router.patch('/test/curatorMonacos/:id', monacoSimBuyerController.upDateCurator)
+router.delete('/test/deleteSlotMonacos/:id', monacoSimBuyerController.deleteSlot)
 
 export default router;

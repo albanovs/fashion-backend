@@ -10,4 +10,5 @@ router.delete('/test/turanotchetbeta', turanOtchetController.deleteOtchetBeta)
 router.post('/insert/turanotchetbeta', turanOtchetController.addSlotOtchet)
 
 
+
 export default router
