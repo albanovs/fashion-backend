@@ -148,7 +148,8 @@ async function calculateAndCacheData() {
                     order: totalOrdersAll,
                     coeff: coefficent,
                     comission: yourCommission,
-                    coeffOrder: coefficentOrder
+                    coeffOrder: coefficentOrder,
+                    allCoeff: coefficentOrder + coefficent
                 };
 
             }
