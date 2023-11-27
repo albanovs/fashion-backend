@@ -149,7 +149,7 @@ async function calculateAndCacheData() {
                     coeff: coefficent,
                     comission: yourCommission,
                     coeffOrder: coefficentOrder,
-                    allCoeff: parseFloat(coefficentOrder) + parseFloat(coefficent)
+                    allCoeff: (parseFloat(coefficentOrder) + parseFloat(coefficent)).toFixed(1)
                 };
 
             }
