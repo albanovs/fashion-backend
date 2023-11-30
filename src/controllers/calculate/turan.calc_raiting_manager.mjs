@@ -43,7 +43,7 @@ async function calculateAndCacheData() {
                 const totalCommission = adminDataItog.reduce((acc, cur) => {
                     const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
                         if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.comPersent100;
+                            return acc2 + cur2.itog;
                         }
                         return acc2;
                     }, 0);
@@ -69,7 +69,7 @@ async function calculateAndCacheData() {
                 const totalCommissionMonaco = adminDataItogMonaco.reduce((acc, cur) => {
                     const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
                         if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.comPersent100;
+                            return acc2 + cur2.itog;
                         }
                         return acc2;
                     }, 0);
@@ -95,7 +95,7 @@ async function calculateAndCacheData() {
                 const totalCommissionTuran = adminDataItogTuran.reduce((acc, cur) => {
                     const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
                         if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.comPersent100;
+                            return acc2 + cur2.itog;
                         }
                         return acc2;
                     }, 0);
@@ -121,7 +121,7 @@ async function calculateAndCacheData() {
                 const totalCommissionFenix = adminDataItogFenix.reduce((acc, cur) => {
                     const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
                         if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.comPersent100;
+                            return acc2 + cur2.itog;
                         }
                         return acc2;
                     }, 0);
