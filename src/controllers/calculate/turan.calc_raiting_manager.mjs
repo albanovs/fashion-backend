@@ -218,11 +218,11 @@ async function calculateAndCacheData() {
             return null;
         }).filter(Boolean);
 
-        const totalComSum = result.reduce((sum, elem) => sum + elem.totalcom, 0);
+        // const totalComSum = result.reduce((sum, elem) => sum + elem.totalcom, 0);
 
-        result.forEach((elem) => {
-            elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
-        });
+        // result.forEach((elem) => {
+        //     elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
+        // });
 
         return result;
 
