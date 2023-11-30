@@ -99,7 +99,7 @@ async function calculateAndCacheData() {
 
         result.forEach((elem) => {
             elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
-        }); АF
+        });
 
         return result;
 
