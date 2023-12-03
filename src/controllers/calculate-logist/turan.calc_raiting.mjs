@@ -74,10 +74,11 @@ async function calculateAndCacheData() {
                     }, 0);
 
                     return {
+                        curator: matchesCurator,
                         name: logistItem.logist,
                         status: logistItem.status,
                         orders: matchesLogist,
-                        summa: sumComPersent100,
+                        summa: sumComPersent100 === 0 ? 0 : sumComPersent100,
                     };
                 });
 

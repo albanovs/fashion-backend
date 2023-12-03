@@ -142,7 +142,7 @@ async function calculateAndCacheData() {
                 const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 
-                const detailInfo = nonEmptyBuyersStatic.map(logistItem => {
+                const detailInfo = nonEmptyBuyers.map(logistItem => {
 
                     const matchesLogist = adminDataItog.reduce((acc, cur) => {
                         return acc + cur.otchet.reduce((acc2, cur2) => {

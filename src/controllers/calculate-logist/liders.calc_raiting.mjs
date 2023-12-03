@@ -75,6 +75,7 @@ async function calculateAndCacheData() {
 
 
                     return {
+                        curator: matchesCurator,
                         name: logistItem.logist,
                         status: logistItem.status,
                         orders: matchesLogist,
