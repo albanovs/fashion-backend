@@ -50,37 +50,12 @@ async function calculateAndCacheData() {
                     return acc + curatorCommission;
                 }, 0);
 
-                // const totalOrders = adminDataItog.reduce((acc, cur) => {
-                //     return acc + cur.otchet.reduce((acc2, cur2) => {
-                //         const matchesCurator = cur2.buyer === elem.curator;
-                //         const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                //         return acc2 + (matchesCurator  || matchesNonEmptyBuyers ? 1 : 0);
-                //     }, 0);
-                // }, 0);
-
                 const totalOrders = adminDataItog.reduce((acc, cur) => {
-                    let documentMatches = {}; // Создаём пустой объект для отслеживания совпадений внутри одного документа
-
-                    cur.otchet.forEach((otchetItem) => {
-                        nonEmptyBuyers.forEach((buyerItem) => {
-                            // Проверяем совпадение покупателя внутри одного документа
-                            if (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator) {
-                                // Если находим совпадение, увеличиваем счётчик для этого покупателя внутри документа
-                                documentMatches[otchetItem.buyer] = (documentMatches[otchetItem.buyer] || 0) + 1;
-                            }
-                        });
-                    });
-
-                    // Вы можете использовать информацию в documentMatches для своих вычислений
-                    // Например, чтобы получить общее количество совпадений внутри этого документа:
-                    const documentTotalMatches = Object.values(documentMatches).reduce((total, count) => total + count, 0);
-                    // Или для получения количества уникальных совпадений:
-                    // const uniqueMatches = Object.keys(documentMatches).length;
-
-                    // Не забудьте добавить эти значения в общий аккумулятор acc
-                    // acc += documentTotalMatches; // или acc += uniqueMatches; в зависимости от вашей логики
-
-                    return acc;
+                    return acc + cur.otchet.reduce((acc2, cur2) => {
+                        const matchesCurator = cur2.buyer === elem.curator;
+                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
+                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
+                    }, 0);
                 }, 0);
 
                 const adminDataItogMonaco = filtereditogmonaco.filter((itog) => {
