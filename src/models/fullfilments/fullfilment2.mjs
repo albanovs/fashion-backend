@@ -1,0 +1,21 @@
+import mongoose from "mongoose";
+
+const Fullfilment2Schema = new mongoose.Schema({
+    date: String,
+    otchet: [{
+        date: String,
+        clients: String,
+        services: String,
+        package: String,
+        count_product: String,
+        status: String,
+        expiration_date: String,
+        sum_itog: String,
+        expenses: String,
+        sum_arrived: String
+    }]
+})
+
+const Fullfilment2Model = mongoose.model('fullfilment-2', Fullfilment2Schema)
+
+export default Fullfilment2Model;

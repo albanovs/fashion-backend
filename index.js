@@ -46,6 +46,8 @@ import clientMonaco from './src/routes/client-privlechennyi/client-monaco.mjs'
 import clientTuran from './src/routes/client-privlechennyi/client-turan.mjs'
 import clientFenix from './src/routes/client-privlechennyi/client-fenix.mjs'
 
+import fullfilment1 from './src/routes/fullfilment/fullfilment-1.mjs'
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -89,6 +91,8 @@ app.use('/', clientLeader)
 app.use('/', clientMonaco)
 app.use('/', clientFenix)
 app.use('/', clientTuran)
+
+app.use('/', fullfilment1)
 
 
 app.post("/test/mymodels", async (req, res) => {

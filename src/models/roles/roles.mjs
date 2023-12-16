@@ -7,6 +7,6 @@ const ModelRolesSchema = new mongoose.Schema({
    
 }, { strict: false });
 
-const ModelRoles = mongoose.model('roles', ModelRolesSchema);
+const ModelRoles = mongoose.model('practic', ModelRolesSchema);
 
 export default ModelRoles;
