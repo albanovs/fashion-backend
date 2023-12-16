@@ -6,7 +6,7 @@ const Fullfilment4Schema = new mongoose.Schema({
         date: String,
         clients: String,
         services: String,
-        package: String,
+        packages: String,
         count_product: String,
         status: String,
         expiration_date: String,
