@@ -9,7 +9,7 @@ const createRoles = async (req, res) => {
             date: date
         })
         await newRoles.save()
-        res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+        res.status(200).json({ massage: `${JSON.stringify(newRoles)}` })
     } catch (error) {
         res.status(500).json({ massage: `${JSON.stringify(error)}` })
     }
@@ -39,4 +39,17 @@ const getRoles = async (req, res) => {
     }
 }
 
-export default { createRoles, editRoles, getRoles }
+const deleteRoles = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deletedRoles = await ModelRoles.findByIdAndDelete(id);
+        if (!deletedRoles) {
+            return res.status(404).json({ error: 'Roles not found' });
+        }
+        res.json({ message: 'Roles deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: "Что-то пошло не так" });
+    }
+}
+
+export default { createRoles, editRoles, getRoles, deleteRoles }
