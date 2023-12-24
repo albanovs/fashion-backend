@@ -1,21 +1,21 @@
-import simTuranModel from '../../models/simcard/simturan.mjs'
+import simModelNewOtdel from '../../models/simcard/simnewotdel.mjs'
+import NewOtdelModel from '../../models/new-otel/newOtdelData.mjs'
 import LiderDataModel from '../../models/lider/liderData.mjs';
 import MonacoDataModel from '../../models/monaco/monacoData.mjs';
 import TuranDataModel from '../../models/turan/turanData.mjs';
 import FenixDataModel from '../../models/fenix/fenixData.mjs';
-import NewOtdelDataModel from '../../models/new-otel/newOtdelData.mjs';
 
 let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
         const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel] = await Promise.all([
-            simTuranModel.find(),
+            simModelNewOtdel.find(),
             LiderDataModel.find(),
             MonacoDataModel.find(),
             TuranDataModel.find(),
             FenixDataModel.find(),
-            NewOtdelDataModel.find()
+            NewOtdelModel.find()
         ]);
 
         function isCurrentMonthAndYear(dateString) {
@@ -31,8 +31,8 @@ async function calculateAndCacheData() {
         const filtereditognewotdel = dataItogNewOtdel.filter((item) => isCurrentMonthAndYear(item.date));
 
         const result = managers.map((elem) => {
-            const nonEmptyBuyers = elem.slot.filter((item) => item.buyer !== '' && item.status === '2');
             const nonEmptyBuyersStatic = elem.slot.filter((item) => item.buyer !== '');
+            const nonEmptyBuyers = elem.slot.filter((item) => item.buyer !== '' && item.status === "2");
 
             if (nonEmptyBuyers.length > 0) {
                 const adminDataItog = filtereditog.filter((itog) => {
@@ -139,36 +139,36 @@ async function calculateAndCacheData() {
                     }, 0);
                 }, 0);
 
-                // const adminDataItogNewOtdel = filtereditognewotdel.filter((itog) => {
-                //     return itog.otchet.some((otchetItem) => {
-                //         return nonEmptyBuyers.some((buyerItem) => {
-                //             return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                //         });
-                //     });
-                // });
+                const adminDataItogNewOtdel = filtereditognewotdel.filter((itog) => {
+                    return itog.otchet.some((otchetItem) => {
+                        return nonEmptyBuyers.some((buyerItem) => {
+                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
+                        });
+                    });
+                });
 
-                // const totalCommissionNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
-                //     const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                //         if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                //             return acc2 + cur2.itog;
-                //         }
-                //         return acc2;
-                //     }, 0);
-                //     return acc + curatorCommission;
-                // }, 0);
+                const totalCommissionNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
+                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
+                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
+                            return acc2 + cur2.itog;
+                        }
+                        return acc2;
+                    }, 0);
+                    return acc + curatorCommission;
+                }, 0);
 
-                // const totalOrdersNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
-                //     return acc + cur.otchet.reduce((acc2, cur2) => {
-                //         const matchesCurator = cur2.buyer === elem.curator;
-                //         const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                //         return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                //     }, 0);
-                // }, 0);
+                const totalOrdersNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
+                    return acc + cur.otchet.reduce((acc2, cur2) => {
+                        const matchesCurator = cur2.buyer === elem.curator;
+                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
+                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
+                    }, 0);
+                }, 0);
 
-                const totalCommissionall = totalCommission + totalCommissionMonaco + totalCommissionTuran + totalCommissionFenix
-                const coefficent = ((parseFloat(totalCommissionall) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
-                const yourCommission = ((totalCommissionall) * 0.1).toFixed(0);
-                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix
+                const totalCommissionall = totalCommission + totalCommissionMonaco + totalCommissionTuran + totalCommissionFenix + totalCommissionNewOtdel
+                const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
+                const yourCommission = ((totalCommission) * 0.1).toFixed(0);
+                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 
                 const detailInfo = nonEmptyBuyers.map(logistItem => {
@@ -221,20 +221,20 @@ async function calculateAndCacheData() {
                         }, 0);
                     }, 0);
 
-                    // const matchesNewOtdel = filtereditognewotdel.reduce((acc, cur) => {
-                    //     return acc + cur.otchet.reduce((acc2, cur2) => {
-                    //         return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
-                    //     }, 0);
-                    // }, 0);
+                    const matchesNewOtdel = filtereditognewotdel.reduce((acc, cur) => {
+                        return acc + cur.otchet.reduce((acc2, cur2) => {
+                            return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
+                        }, 0);
+                    }, 0);
 
-                    // const sumComPersent100NewOtdel = filtereditognewotdel.reduce((acc, cur) => {
-                    //     return acc + cur.otchet.reduce((acc2, cur2) => {
-                    //         return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
-                    //     }, 0);
-                    // }, 0);
+                    const sumComPersent100NewOtdel = filtereditognewotdel.reduce((acc, cur) => {
+                        return acc + cur.otchet.reduce((acc2, cur2) => {
+                            return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
+                        }, 0);
+                    }, 0);
 
-                    let allMatches = parseFloat(matchesLogist) + parseFloat(matchesTuran) + parseFloat(matchesFenix) + parseFloat(matchesMonaco)
-                    let allItogs = parseFloat(sumComPersent100) + parseFloat(sumComPersent100fenix) + parseFloat(sumComPersent100monaco) + parseFloat(sumComPersent100turan)
+                    let allMatches = parseFloat(matchesLogist) + parseFloat(matchesTuran) + parseFloat(matchesFenix) + parseFloat(matchesMonaco) + parseFloat(matchesNewOtdel)
+                    let allItogs = parseFloat(sumComPersent100) + parseFloat(sumComPersent100fenix) + parseFloat(sumComPersent100monaco) + parseFloat(sumComPersent100turan) + parseFloat(sumComPersent100NewOtdel)
 
                     return {
                         name: logistItem.buyer,
@@ -292,7 +292,7 @@ setInterval(async () => {
     }
 }, cacheUpdateInterval);
 
-const calcRaintingManagerTuran = async (req, res) => {
+const calcRaintingManagerNewOtdel = async (req, res) => {
     try {
         if (!cachedData) {
             await calculateAndCacheData();
@@ -304,4 +304,4 @@ const calcRaintingManagerTuran = async (req, res) => {
     }
 };
 
-export default { calcRaintingManagerTuran };
+export default { calcRaintingManagerNewOtdel };

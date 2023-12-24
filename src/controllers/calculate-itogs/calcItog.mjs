@@ -2,6 +2,7 @@ import LiderDataModel from "../../models/lider/liderData.mjs";
 import MonacoDataModel from "../../models/monaco/monacoData.mjs";
 import FenixDataModel from "../../models/fenix/fenixData.mjs";
 import TuranDataModel from "../../models/turan/turanData.mjs";
+import NewOtdelDataModel from "../../models/new-otel/newOtdelData.mjs";
 
 let cachedData = null
 
@@ -12,6 +13,7 @@ async function calculateAndCacheData() {
             monaco: [],
             fenix: [],
             turan: [],
+            // newOtdel: []
         },
         totalAllItog: {
             lider: {
@@ -42,6 +44,13 @@ async function calculateAndCacheData() {
                 percentItog: 0,
                 percentIndex: 0,
             },
+            // newOtdel: {
+            //     itog: 0,
+            //     index: 0,
+            //     allItog: 0,
+            //     percentItog: 0,
+            //     percentIndex: 0,
+            // },
             allItogs: {
                 itog: 0,
                 itogIndex: 0,
@@ -51,11 +60,12 @@ async function calculateAndCacheData() {
     }
 
     try {
-        const [liderData, monacoData, fenixData, turanData] = await Promise.all([
+        const [liderData, monacoData, fenixData, turanData, newOtdelData] = await Promise.all([
             LiderDataModel.find(),
             MonacoDataModel.find(),
             FenixDataModel.find(),
-            TuranDataModel.find()
+            TuranDataModel.find(),
+            NewOtdelDataModel.find(),
         ]);
 
         const currentMonth = new Date().toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
@@ -72,11 +82,13 @@ async function calculateAndCacheData() {
         const filteredMonacoData = filterDataByCurrentMonth(monacoData);
         const filteredFenixData = filterDataByCurrentMonth(fenixData);
         const filteredTuranData = filterDataByCurrentMonth(turanData);
+        // const filteredNewOtdelData = filterDataByCurrentMonth(turanData);
 
         itogs.otdel.lider = filteredLiderData
         itogs.otdel.monaco = filteredMonacoData
         itogs.otdel.turan = filteredTuranData
         itogs.otdel.fenix = filteredFenixData
+        // itogs.otdel.newOtdel = filteredNewOtdelData
 
         const calculateTotalAllItog = (data) => {
             return data.reduce((acc, elem) => {
@@ -99,6 +111,7 @@ async function calculateAndCacheData() {
         itogs.totalAllItog.monaco = calculateTotalAllItog(filteredMonacoData)
         itogs.totalAllItog.fenix = calculateTotalAllItog(filteredFenixData)
         itogs.totalAllItog.turan = calculateTotalAllItog(filteredTuranData)
+        // itogs.totalAllItog.newOtdel = calculateTotalAllItog(filteredNewOtdelData)
         itogs.totalAllItog.allItogs = calculateTotalAllItog([...filteredLiderData, ...filteredMonacoData, ...filteredFenixData, ...filteredTuranData])
 
         const allPercentIndex = (itogs.totalAllItog.lider.index + itogs.totalAllItog.monaco.index + itogs.totalAllItog.turan.index + itogs.totalAllItog.fenix.index)
@@ -107,10 +120,12 @@ async function calculateAndCacheData() {
         itogs.totalAllItog.monaco.percentIndex = ((itogs.totalAllItog.monaco.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.turan.percentIndex = ((itogs.totalAllItog.turan.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.fenix.percentIndex = ((itogs.totalAllItog.fenix.index / allPercentIndex) * 100).toFixed(0)
+        // itogs.totalAllItog.newOtdel.percentIndex = ((itogs.totalAllItog.newOtdel.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.lider.percentItog = ((itogs.totalAllItog.lider.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.monaco.percentItog = ((itogs.totalAllItog.monaco.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.turan.percentItog = ((itogs.totalAllItog.turan.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.fenix.percentItog = ((itogs.totalAllItog.fenix.itog / allPercentComission) * 100).toFixed(0)
+        // itogs.totalAllItog.newOtdel.percentItog = ((itogs.totalAllItog.newOtdel.itog / allPercentComission) * 100).toFixed(0)
 
         return itogs
 

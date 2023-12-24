@@ -7,6 +7,7 @@ const myModelForTgSchema = new mongoose.Schema({
   fenix: String,
   lider: String,
   turan: String,
+  // newOtdel: String
 });
 
 const MyModelForTg = mongoose.model('telegramslots', myModelForTgSchema);

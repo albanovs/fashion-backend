@@ -6,7 +6,8 @@ const MyModelForWASchema = new mongoose.Schema({
     monako: String,
     fenix: String,
     lider: String,
-    turan: String
+    turan: String,
+    // newOtdel: String
 })
 
 const MyModelForWA = mongoose.model('whatsappslots', MyModelForWASchema);

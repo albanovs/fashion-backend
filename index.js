@@ -30,14 +30,22 @@ import turanOtchetBetaRouter from './src/routes/turan/turanOtchetRouter.mjs'
 import simbuyerTuranRouter from './src/routes/turan/simbuyerTuranRouter.mjs'
 import turanSimLogistRouter from './src/routes/turan/turanLogistRouter.mjs'
 
+import newotdelDataRouter from './src/routes/newotdel/newotdelDatasRouter.mjs'
+import newotdelOtchetBetaRouter from './src/routes/newotdel/newotdelotchetBetaRoutes.mjs'
+import simbuyernewotdelRouter from './src/routes/newotdel/simbuyerNewotdelRouter.mjs'
+import newotdelSimLogistRouter from './src/routes/newotdel/newotdelLogistRouter.mjs'
+
 import calcliderManager from './src/routes/calculate/lider.mjs'
 import calcMonacoManager from './src/routes/calculate/monaco.mjs'
 import calcTuranManager from './src/routes/calculate/turan.mjs'
 import calcFenixManager from './src/routes/calculate/fenix.mjs'
+import calcNewOtdelManager from './src/routes/calculate/newotdel.mjs'
+
 import calcliderLog from './src/routes/calculate-logist/lider.mjs'
 import calcMonacoLog from './src/routes/calculate-logist/monaco.mjs'
 import calcTuranLog from './src/routes/calculate-logist/turan.mjs'
 import calcFenixLog from './src/routes/calculate-logist/fenix.mjs'
+import calcNewOtdelLog from './src/routes/calculate-logist/newOtdel.mjs'
 
 import roles from './src/routes/roles/roles.mjs'
 import itogs from './src/routes/calculate-itog/itog.mjs'
@@ -45,8 +53,10 @@ import clientLeader from './src/routes/client-privlechennyi/client-lider.mjs'
 import clientMonaco from './src/routes/client-privlechennyi/client-monaco.mjs'
 import clientTuran from './src/routes/client-privlechennyi/client-turan.mjs'
 import clientFenix from './src/routes/client-privlechennyi/client-fenix.mjs'
+import clientNewOtdel from './src/routes/client-privlechennyi/client-newotdel.mjs'
 
 import fullfilment1 from './src/routes/fullfilment/fullfilment-1.mjs'
+import itotdel from './src/routes/it/simcard.mjs'
 
 const app = express();
 app.use(express.json());
@@ -75,15 +85,22 @@ app.use('/', turanOtchetBetaRouter)
 app.use('/', turanSimLogistRouter)
 app.use('/', simbuyerTuranRouter)
 
+app.use('/', newotdelDataRouter)
+app.use('/', newotdelOtchetBetaRouter)
+app.use('/', simbuyernewotdelRouter)
+app.use('/', newotdelSimLogistRouter)
+
 app.use('/', calcliderManager)
 app.use('/', calcMonacoManager)
 app.use('/', calcTuranManager)
 app.use('/', calcFenixManager)
+app.use('/', calcNewOtdelManager)
 
 app.use('/', calcliderLog)
 app.use('/', calcMonacoLog)
 app.use('/', calcTuranLog)
 app.use('/', calcFenixLog)
+app.use('/', calcNewOtdelLog)
 
 app.use('/', roles)
 app.use('/', itogs)
@@ -91,8 +108,10 @@ app.use('/', clientLeader)
 app.use('/', clientMonaco)
 app.use('/', clientFenix)
 app.use('/', clientTuran)
+app.use('/', clientNewOtdel)
 
 app.use('/', fullfilment1)
+app.use('/', itotdel)
 
 
 app.post("/test/mymodels", async (req, res) => {
@@ -126,17 +145,16 @@ app.patch("/test/mymodels/:id", async (req, res) => {
 
 app.post("/insert/account", async (req, res) => {
   try {
-    for (var i = 1; i <= 5; i++) {
-      const myData = new MyModel({
-        account: req.body.account,
-        num: i,
-        monako: "",
-        fenix: "",
-        lider: "",
-        turan: "",
-      });
-      await myData.save();
-    }
+    const myData = new MyModel({
+      account: req.body.account,
+      num: 1,
+      monako: "",
+      fenix: "",
+      lider: "",
+      turan: "",
+      // newOtdel: "",
+    });
+    await myData.save();
     res.status(200).json({ massage: `${JSON.stringify(myData)}` });
   } catch (error) {
     res.status(500).json({ error: "что то пошло не так!" });
@@ -195,6 +213,7 @@ app.post("/insert/telegram", async (req, res) => {
         fenix: "",
         lider: "",
         turan: "",
+        // newOtdel: "",
       });
       await myData.save();
     }
@@ -230,12 +249,12 @@ app.post("/test/whatsappslot", async (req, res) => {
 
 app.patch("/test/whatsappslot/:id", async (req, res) => {
   const { id } = req.params;
-  const { monako, lider, fenix, turan } = req.body;
+  const { monako, lider, fenix, turan, newOtdel } = req.body;
 
   try {
     const updatedWhatsapp = await MyModelForWA.findByIdAndUpdate(
       id,
-      { monako, lider, fenix, turan },
+      { monako, lider, fenix, turan, newOtdel },
       { new: true }
     );
     res.json(updatedWhatsapp);
@@ -533,6 +552,8 @@ app.patch('/update/simcardmanagers', async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+
 
 const PORT = 4000;
 

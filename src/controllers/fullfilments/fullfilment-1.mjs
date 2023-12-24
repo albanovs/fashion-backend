@@ -7,7 +7,7 @@ const createFullfilmentTable = async (req, res) => {
         const otchetArray = Array.from({ length: 30 }, () => ({
             date: '',
             clients: '',
-            services: '',
+            services: [],
             packages: '',
             count_product: '',
             status: '',
@@ -41,7 +41,7 @@ const addFullfilmentSlot = async (req, res) => {
                     otchet: {
                         date: '',
                         clients: '',
-                        services: '',
+                        services: [],
                         packages: '',
                         count_product: '',
                         status: '',

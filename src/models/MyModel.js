@@ -6,7 +6,8 @@ const myModelSchema = new mongoose.Schema({
     monako: String,
     fenix: String,
     lider: String,
-    turan: String
+    turan: String,
+    // newOtdel: String
 })
 
 const MyModel = mongoose.model('mymodels', myModelSchema);

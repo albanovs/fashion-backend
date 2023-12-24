@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ClientsTuranSchema = new mongoose.Schema({
+const ClientsnewOtdelSchema = new mongoose.Schema({
     clients: String,
     buyer_logist: String,
     date_to: String,
@@ -10,6 +10,6 @@ const ClientsTuranSchema = new mongoose.Schema({
     status: Boolean
 })
 
-const TuranClientsModel = mongoose.model('turanclient', ClientsTuranSchema);
+const NewOtdelClientsModel = mongoose.model('newotdelclient', ClientsnewOtdelSchema);
 
-export default TuranClientsModel;
+export default NewOtdelClientsModel;

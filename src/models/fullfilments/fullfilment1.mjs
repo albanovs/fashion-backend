@@ -5,14 +5,14 @@ const Fullfilment1Schema = new mongoose.Schema({
     otchet: [{
         date: String,
         clients: String,
-        services: String,
-        packages: String,
-        count_product: String,
+        services: Array,
+        packages: Number,
+        count_product: Number,
         status: String,
         expiration_date: String,
-        sum_itog: String,
-        expenses: String,
-        sum_arrived: String
+        sum_itog: Number,
+        expenses: Number,
+        sum_arrived: Number
     }]
 })
 
