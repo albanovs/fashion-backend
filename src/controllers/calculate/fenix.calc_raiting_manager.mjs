@@ -22,6 +22,7 @@ async function calculateAndCacheData() {
             const currentDate = new Date();
             const [day, month, year] = dateString.split('.').map(Number);
             return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
+            // return 2023 === year && 12 === month;
         }
 
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
@@ -139,36 +140,36 @@ async function calculateAndCacheData() {
                     }, 0);
                 }, 0);
 
-                // const adminDataItogNewOtdel = filtereditognewotdel.filter((itog) => {
-                //     return itog.otchet.some((otchetItem) => {
-                //         return nonEmptyBuyers.some((buyerItem) => {
-                //             return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                //         });
-                //     });
-                // });
+                const adminDataItogNewOtdel = filtereditognewotdel.filter((itog) => {
+                    return itog.otchet.some((otchetItem) => {
+                        return nonEmptyBuyers.some((buyerItem) => {
+                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
+                        });
+                    });
+                });
 
-                // const totalCommissionNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
-                //     const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                //         if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                //             return acc2 + cur2.itog;
-                //         }
-                //         return acc2;
-                //     }, 0);
-                //     return acc + curatorCommission;
-                // }, 0);
+                const totalCommissionNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
+                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
+                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
+                            return acc2 + cur2.itog;
+                        }
+                        return acc2;
+                    }, 0);
+                    return acc + curatorCommission;
+                }, 0);
 
-                // const totalOrdersNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
-                //     return acc + cur.otchet.reduce((acc2, cur2) => {
-                //         const matchesCurator = cur2.buyer === elem.curator;
-                //         const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                //         return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                //     }, 0);
-                // }, 0);
+                const totalOrdersNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
+                    return acc + cur.otchet.reduce((acc2, cur2) => {
+                        const matchesCurator = cur2.buyer === elem.curator;
+                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
+                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
+                    }, 0);
+                }, 0);
 
-                const totalCommissionall = totalCommission + totalCommissionMonaco + totalCommissionTuran + totalCommissionFenix
+                const totalCommissionall = totalCommission + totalCommissionMonaco + totalCommissionTuran + totalCommissionFenix + totalCommissionNewOtdel
                 const coefficent = ((parseFloat(totalCommissionall) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
                 const yourCommission = ((totalCommissionall) * 0.1).toFixed(0);
-                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix
+                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 
                 const detailInfo = nonEmptyBuyers.map(logistItem => {
@@ -221,20 +222,20 @@ async function calculateAndCacheData() {
                         }, 0);
                     }, 0);
 
-                    // const matchesNewOtdel = filtereditognewotdel.reduce((acc, cur) => {
-                    //     return acc + cur.otchet.reduce((acc2, cur2) => {
-                    //         return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
-                    //     }, 0);
-                    // }, 0);
+                    const matchesNewOtdel = filtereditognewotdel.reduce((acc, cur) => {
+                        return acc + cur.otchet.reduce((acc2, cur2) => {
+                            return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
+                        }, 0);
+                    }, 0);
 
-                    // const sumComPersent100NewOtdel = filtereditognewotdel.reduce((acc, cur) => {
-                    //     return acc + cur.otchet.reduce((acc2, cur2) => {
-                    //         return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
-                    //     }, 0);
-                    // }, 0);
+                    const sumComPersent100NewOtdel = filtereditognewotdel.reduce((acc, cur) => {
+                        return acc + cur.otchet.reduce((acc2, cur2) => {
+                            return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
+                        }, 0);
+                    }, 0);
 
-                    let allMatches = parseFloat(matchesLogist) + parseFloat(matchesTuran) + parseFloat(matchesFenix) + parseFloat(matchesMonaco)
-                    let allItogs = parseFloat(sumComPersent100) + parseFloat(sumComPersent100fenix) + parseFloat(sumComPersent100monaco) + parseFloat(sumComPersent100turan)
+                    let allMatches = parseFloat(matchesLogist) + parseFloat(matchesTuran) + parseFloat(matchesFenix) + parseFloat(matchesMonaco) + parseFloat(matchesNewOtdel)
+                    let allItogs = parseFloat(sumComPersent100) + parseFloat(sumComPersent100fenix) + parseFloat(sumComPersent100monaco) + parseFloat(sumComPersent100turan) + parseFloat(sumComPersent100NewOtdel)
 
                     return {
                         name: logistItem.buyer,
