@@ -9,5 +9,6 @@ router.patch('/update/simCardNewotdelLogs', newOtdelLogistSimColtroller.updateDa
 router.patch('/test/simCardNewotdelLogs/:id', newOtdelLogistSimColtroller.editSimTable)
 router.patch('/test/logist-curatorNewotdelLogs/:id', newOtdelLogistSimColtroller.upDateCurator)
 router.delete('/test/logist-deleteSlotNewotdelLogs/:id', newOtdelLogistSimColtroller.deleteSlot)
+router.delete('/test/logist-deletedocument/:id', newOtdelLogistSimColtroller.deleteSlot)
 
 export default router
