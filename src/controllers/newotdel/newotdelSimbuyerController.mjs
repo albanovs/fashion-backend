@@ -104,7 +104,7 @@ const editSimTable = async (req, res) => {
 
 const getSimTable = async (req, res) => {
     try {
-        const data = await SimModelLider.find();
+        const data = await SimModelNewOtdel.find();
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({
