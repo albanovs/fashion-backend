@@ -12,6 +12,7 @@ const createFullfilmentTable = async (req, res) => {
             count_product: '',
             status: '',
             expiration_date: '',
+            sale: '',
             sum_itog: '',
             expenses: '',
             sum_arrived: ''
@@ -46,6 +47,7 @@ const addFullfilmentSlot = async (req, res) => {
                         count_product: '',
                         status: '',
                         expiration_date: '',
+                        sale: '',
                         sum_itog: '',
                         expenses: '',
                         sum_arrived: ''
@@ -72,6 +74,7 @@ const editFullfilmentTable = async (req, res) => {
         count_product,
         status,
         expiration_date,
+        sale,
         sum_itog,
         expenses,
         sum_arrived,
@@ -87,6 +90,7 @@ const editFullfilmentTable = async (req, res) => {
                 "otchet.$.count_product": count_product,
                 "otchet.$.status": status,
                 "otchet.$.expiration_date": expiration_date,
+                "otchet.$.sale": sale,
                 "otchet.$.sum_itog": sum_itog,
                 "otchet.$.expenses": expenses,
                 "otchet.$.sum_arrived": sum_arrived,

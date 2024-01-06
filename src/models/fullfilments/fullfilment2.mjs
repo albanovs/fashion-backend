@@ -10,6 +10,7 @@ const Fullfilment2Schema = new mongoose.Schema({
         count_product: String,
         status: String,
         expiration_date: String,
+        sale: String,
         sum_itog: String,
         expenses: String,
         sum_arrived: String
