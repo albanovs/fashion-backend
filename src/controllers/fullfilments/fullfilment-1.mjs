@@ -2,7 +2,7 @@ import Fullfilment1Model from "../../models/fullfilments/fullfilment1.mjs"
 
 const createFullfilmentTable = async (req, res) => {
     try {
-        const { date } = req.body;
+        const { date, last_date } = req.body;
 
         const otchetArray = Array.from({ length: 30 }, () => ({
             date: '',
@@ -20,6 +20,7 @@ const createFullfilmentTable = async (req, res) => {
 
         const newData = new Fullfilment1Model({
             date: date,
+            last_date: last_date,
             otchet: otchetArray
         });
 
