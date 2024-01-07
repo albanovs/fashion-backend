@@ -135,6 +135,19 @@ const deleteSlot = async (req, res) => {
     }
 };
 
+const deleteOtchet = async (req, res) => {
+    const { id } = req.params
+    try {
+        const deletedOtchet = await Fullfilment1Model.findByIdAndDelete(id);
+        if (!deletedOtchet) {
+            return res.status(404).json({ error: "Отчет для удаления не найден" });
+        }
+        res.json({ message: "Отчет успешно удален" });
+    } catch (error) {
+        res.status(500).json({ error: "Что-то пошло не так при удалении отчета" });
+    }
+}
+
 const checkAndMoveDocuments = async () => {
     try {
         const today = new Date().toISOString().split('T')[0];
@@ -160,4 +173,4 @@ cron.schedule('0 0 * * *', () => {
     timezone: "Europe/Moscow"
 });
 
-export default { createFullfilmentTable, addFullfilmentSlot, editFullfilmentTable, getFullfilmentTable, deleteSlot }
+export default { createFullfilmentTable, addFullfilmentSlot, editFullfilmentTable, getFullfilmentTable, deleteSlot, deleteOtchet }

@@ -86,8 +86,8 @@ async function calculateAndCacheData() {
 
         itogs.otdel.lider = filteredLiderData
         itogs.otdel.monaco = filteredMonacoData
-        itogs.otdel.turan = filteredTuranData
         itogs.otdel.fenix = filteredFenixData
+        itogs.otdel.turan = filteredTuranData
         itogs.otdel.fbox = filteredNewOtdelData
 
         const calculateTotalAllItog = (data) => {

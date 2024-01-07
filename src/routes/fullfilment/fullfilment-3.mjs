@@ -7,5 +7,6 @@ router.get('/fullfilment3-datas', fullfilmentController3.getFullfilmentTable)
 router.patch('/updatefullfilment3/:id', fullfilmentController3.editFullfilmentTable)
 router.post('/fullfilment3-addslot/:id', fullfilmentController3.addFullfilmentSlot)
 router.delete('fullfilment3-slotdelete/:id', fullfilmentController3.deleteSlot)
+router.delete('fullfilment3-delete', fullfilmentController3.deleteOtchet)
 
 export default router;
