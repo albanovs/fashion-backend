@@ -1,11 +1,11 @@
 import express from 'express'
 const router = express.Router();
-import fullfilmentController from '../../controllers/fullfilments/fullfilment-2.mjs'
+import fullfilmentController2 from '../../controllers/fullfilments/fullfilment-2.mjs'
 
-router.post('/fullfilment2-create', fullfilmentController.createFullfilmentTable)
-router.get('/fullfilment2-datas', fullfilmentController.getFullfilmentTable)
-router.patch('/updatefullfilment2/:id', fullfilmentController.editFullfilmentTable)
-router.post('/fullfilment2-addslot/:id', fullfilmentController.addFullfilmentSlot)
-router.delete('fullfilment2-slotdelete/:id', fullfilmentController.deleteSlot)
+router.post('/fullfilment2-create', fullfilmentController2.createFullfilmentTable)
+router.get('/fullfilment2-datas', fullfilmentController2.getFullfilmentTable)
+router.patch('/updatefullfilment2/:id', fullfilmentController2.editFullfilmentTable)
+router.post('/fullfilment2-addslot/:id', fullfilmentController2.addFullfilmentSlot)
+router.delete('fullfilment2-slotdelete/:id', fullfilmentController2.deleteSlot)
 
 export default router;
