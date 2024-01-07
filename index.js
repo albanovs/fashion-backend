@@ -56,6 +56,10 @@ import clientFenix from './src/routes/client-privlechennyi/client-fenix.mjs'
 import clientNewOtdel from './src/routes/client-privlechennyi/client-newotdel.mjs'
 
 import fullfilment1 from './src/routes/fullfilment/fullfilment-1.mjs'
+import fullfilment2 from './src/routes/fullfilment/fullfilment-2.mjs'
+import fullfilment3 from './src/routes/fullfilment/fullfilment-3.mjs'
+import fullfilment4 from './src/routes/fullfilment/fullfilment-4.mjs'
+
 import itotdel from './src/routes/it/simcard.mjs'
 
 const app = express();
@@ -111,6 +115,10 @@ app.use('/', clientTuran)
 app.use('/', clientNewOtdel)
 
 app.use('/', fullfilment1)
+app.use('/', fullfilment2)
+app.use('/', fullfilment3)
+app.use('/', fullfilment4)
+
 app.use('/', itotdel)
 
 
