@@ -1,5 +1,5 @@
-import Fullfilment2Model from "../../models/fullfilments/fullfilment2.mjs"
-import Fullfilment2dataModel from "../../models/fullfilments/fullfilment2data.mjs";
+import Fullfilment1Model from "../../models/fullfilments/fullfilment2.mjs"
+import Fullfilment1dataModel from "../../models/fullfilments/fullfilment2data.mjs";
 import cron from 'node-cron'
 
 const createFullfilmentTable = async (req, res) => {
@@ -20,7 +20,7 @@ const createFullfilmentTable = async (req, res) => {
             sum_arrived: ''
         }));
 
-        const newData = new Fullfilment2Model({
+        const newData = new Fullfilment1Model({
             date: date,
             last_date: last_date,
             otchet: otchetArray
@@ -38,7 +38,7 @@ const addFullfilmentSlot = async (req, res) => {
     try {
         const { id } = req.body;
 
-        const newData = await Fullfilment2Model.findByIdAndUpdate(
+        const newData = await Fullfilment1Model.findByIdAndUpdate(
             id,
             {
                 $push: {
@@ -83,7 +83,7 @@ const editFullfilmentTable = async (req, res) => {
         sum_arrived,
     } = req.body
     try {
-        const updateFullfilment = await Fullfilment2Model.findOneAndUpdate(
+        const updateFullfilment = await Fullfilment1Model.findOneAndUpdate(
             { "otchet._id": id },
             {
                 "otchet.$.date": date,
@@ -110,7 +110,7 @@ const editFullfilmentTable = async (req, res) => {
 
 const getFullfilmentTable = async (req, res) => {
     try {
-        const data = await Fullfilment2Model.find();
+        const data = await Fullfilment1Model.find();
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({
@@ -122,7 +122,7 @@ const getFullfilmentTable = async (req, res) => {
 const deleteSlot = async (req, res) => {
     const { id } = req.params;
     try {
-        const updatedfullfilment = await Fullfilment2Model.findOneAndUpdate(
+        const updatedfullfilment = await Fullfilment1Model.findOneAndUpdate(
             { "otchet._id": id },
             { $pull: { otchet: { _id: id } } },
             { new: true }
@@ -138,11 +138,11 @@ const deleteSlot = async (req, res) => {
 const checkAndMoveDocuments = async () => {
     try {
         const today = new Date().toISOString().split('T')[0];
-        const documentsToMove = await Fullfilment2Model.find({ last_date: today });
+        const documentsToMove = await Fullfilment1Model.find({ last_date: today });
 
         if (documentsToMove && documentsToMove.length > 0) {
-            await Fullfilment2dataModel.insertMany(documentsToMove);
-            await Fullfilment2Model.deleteMany({ last_date: today });
+            await Fullfilment1dataModel.insertMany(documentsToMove);
+            await Fullfilment1Model.deleteMany({ last_date: today });
             console.log('Документы успешно перенесены из Fullfilment1Model в Fullfilment1dataModel.');
         } else {
             console.log('Документов для переноса не найдено для сегодняшней даты.');
