@@ -136,7 +136,7 @@ const deleteSlot = async (req, res) => {
 };
 
 const deleteOtchet = async (req, res) => {
-    const { id } = req.body
+    const { id } = req.params
     try {
         const deletedOtchet = await Fullfilment4Model.findByIdAndDelete(id);
         if (!deletedOtchet) {
