@@ -115,7 +115,7 @@ async function calculateAndCacheData() {
         itogs.totalAllItog.allItogs = calculateTotalAllItog([...filteredLiderData, ...filteredMonacoData, ...filteredFenixData, ...filteredTuranData, ...filteredNewOtdelData])
 
         const allPercentIndex = (itogs.totalAllItog.lider.index + itogs.totalAllItog.monaco.index + itogs.totalAllItog.turan.index + itogs.totalAllItog.fenix.index + itogs.totalAllItog.fbox.index)
-        const allPercentComission = (itogs.totalAllItog.lider.itog + itogs.totalAllItog.monaco.itog + itogs.totalAllItog.fenix.itog + itogs.totalAllItog.turan.itog + + itogs.totalAllItog.fbox.itog)
+        const allPercentComission = (itogs.totalAllItog.lider.itog + itogs.totalAllItog.monaco.itog + itogs.totalAllItog.fenix.itog + itogs.totalAllItog.turan.itog + itogs.totalAllItog.fbox.itog)
         itogs.totalAllItog.lider.percentIndex = ((itogs.totalAllItog.lider.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.monaco.percentIndex = ((itogs.totalAllItog.monaco.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.turan.percentIndex = ((itogs.totalAllItog.turan.index / allPercentIndex) * 100).toFixed(0)

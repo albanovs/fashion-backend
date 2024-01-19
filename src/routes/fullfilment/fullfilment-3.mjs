@@ -4,6 +4,7 @@ import fullfilmentController3 from '../../controllers/fullfilments/fullfilment-3
 
 router.post('/fullfilment3-create', fullfilmentController3.createFullfilmentTable)
 router.get('/fullfilment3-datas', fullfilmentController3.getFullfilmentTable)
+router.get('/fullfilment3-datas-success', fullfilmentController3.getSuccesData)
 router.patch('/updatefullfilment3/:id', fullfilmentController3.editFullfilmentTable)
 router.post('/fullfilment3-addslot/:id', fullfilmentController3.addFullfilmentSlot)
 router.delete('/fullfilment3-slotdelete/:id', fullfilmentController3.deleteSlot)

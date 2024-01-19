@@ -22,7 +22,7 @@ async function calculateAndCacheData() {
             const currentDate = new Date();
             const [day, month, year] = dateString.split('.').map(Number);
             return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
-            // return 2023 === year && 12 === month;
+            // return 2023 === year && 8 === month;
         }
 
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
@@ -299,6 +299,8 @@ const calcRaintingManagerFenix = async (req, res) => {
             await calculateAndCacheData();
         }
         res.json(cachedData);
+        // const result = await calculateAndCacheData()
+        // res.json(result)
     } catch (error) {
         res.status(500).json({ error: 'Ошибка сервера' });
     }

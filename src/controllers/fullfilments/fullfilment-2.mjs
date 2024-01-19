@@ -165,6 +165,17 @@ const checkAndMoveDocuments = async () => {
     }
 };
 
+const getSuccesData = async (req, res) => {
+    try {
+        const data = await Fullfilment2dataModel.find();
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что то пошло не так",
+        });
+    }
+}
+
 
 cron.schedule('0 0 * * *', () => {
     checkAndMoveDocuments();
@@ -173,4 +184,4 @@ cron.schedule('0 0 * * *', () => {
     timezone: "Europe/Moscow"
 });
 
-export default { createFullfilmentTable, addFullfilmentSlot, editFullfilmentTable, getFullfilmentTable, deleteSlot, deleteOtchet }
+export default { createFullfilmentTable, addFullfilmentSlot, editFullfilmentTable, getFullfilmentTable, deleteSlot, deleteOtchet, getSuccesData }
