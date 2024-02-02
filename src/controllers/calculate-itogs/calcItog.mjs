@@ -100,7 +100,7 @@ async function calculateAndCacheData() {
         itogs.otdel.fenix = filteredFenixData
         itogs.otdel.turan = filteredTuranData
         itogs.otdel.fbox = filteredNewOtdelData
-        itogs.otdel.fbox = filteredLibertyData
+        itogs.otdel.liberty = filteredLibertyData
 
         const calculateTotalAllItog = (data) => {
             return data.reduce((acc, elem) => {
@@ -143,13 +143,13 @@ async function calculateAndCacheData() {
         itogs.totalAllItog.turan.percentIndex = ((itogs.totalAllItog.turan.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.fenix.percentIndex = ((itogs.totalAllItog.fenix.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.fbox.percentIndex = ((itogs.totalAllItog.fbox.index / allPercentIndex) * 100).toFixed(0)
-        itogs.totalAllItog.fbox.percentIndex = ((itogs.totalAllItog.liberty.index / allPercentIndex) * 100).toFixed(0)
+        itogs.totalAllItog.liberty.percentIndex = ((itogs.totalAllItog.liberty.index / allPercentIndex) * 100).toFixed(0)
         itogs.totalAllItog.lider.percentItog = ((itogs.totalAllItog.lider.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.monaco.percentItog = ((itogs.totalAllItog.monaco.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.turan.percentItog = ((itogs.totalAllItog.turan.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.fenix.percentItog = ((itogs.totalAllItog.fenix.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.fbox.percentItog = ((itogs.totalAllItog.fbox.itog / allPercentComission) * 100).toFixed(0)
-        itogs.totalAllItog.fbox.percentItog = ((itogs.totalAllItog.liberty.itog / allPercentComission) * 100).toFixed(0)
+        itogs.totalAllItog.liberty.percentItog = ((itogs.totalAllItog.liberty.itog / allPercentComission) * 100).toFixed(0)
 
         return itogs
 
