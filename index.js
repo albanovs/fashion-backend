@@ -60,6 +60,8 @@ import fullfilment2 from './src/routes/fullfilment/fullfilment-2.mjs'
 import fullfilment3 from './src/routes/fullfilment/fullfilment-3.mjs'
 import fullfilment4 from './src/routes/fullfilment/fullfilment-4.mjs'
 
+import getManagers from './src/routes/managers/getmanager.mjs'
+
 import itotdel from './src/routes/it/simcard.mjs'
 
 const app = express();
@@ -68,6 +70,8 @@ app.use(cors());
 app.use(bodyParser.json())
 
 connect(); // Подключение к базе данных
+
+app.use('/', getManagers)
 
 app.use('/', liderDataRouter)
 app.use('/', liderOtchetBetaRouter)
