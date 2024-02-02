@@ -3,19 +3,23 @@ import SimModelLider from "../../models/simcard/simlider.mjs";
 import SimModelMonaco from '../../models/simcard/simmonaco.mjs'
 import SimModelFenix from '../../models/simcard/simfenix.mjs'
 import SimModelTuran from '../../models/simcard/simturan.mjs'
+import SimModelNewOtdel from '../../models/simcard/simnewotdel.mjs'
+import SimModelLiberty from "../../models/simcard/simliberty.mjs";
 import cron from 'node-cron';
 
 const getCurator = async () => {
     try {
-        const [managersleader, managersmonaco, managersfenix, managersturan] = await Promise.all([
+        const [managersleader, managersmonaco, managersfenix, managersturan, managerfbox, managerliberty] = await Promise.all([
             SimModelLider.find(),
             SimModelMonaco.find(),
             SimModelFenix.find(),
             SimModelTuran.find(),
+            SimModelNewOtdel.find(),
+            SimModelLiberty.find()
         ]);
 
-        const managers = [...managersleader, ...managersmonaco, ...managersfenix, ...managersturan];
-        console.log(managers);
+        const managers = [...managersleader, ...managersmonaco, ...managersfenix, ...managersturan, ...managerfbox, ...managerliberty];
+        
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth();
         const currentYear = currentDate.getFullYear();

@@ -1,9 +1,9 @@
 import express from 'express';
 const router = express.Router();
-import newOtdelDataController from '../../controllers/newotdel/newotdelDatasController.mjs';
+import newOtdelDataController from '../../controllers/liberty/LibertyDatasController.mjs';
 
-router.post('/test/newotdeldatas', newOtdelDataController.createNewOtdelData);
-router.get('/test/newotdeldatas', newOtdelDataController.getNewOtdelData);
-router.patch('/updateDatanewotdel/:id', newOtdelDataController.updateNewOtdelData);
+router.post('/test/libertydatas', newOtdelDataController.createNewOtdelData);
+router.get('/test/libertydatas', newOtdelDataController.getNewOtdelData);
+router.patch('/updateDataliberty/:id', newOtdelDataController.updateNewOtdelData);
 
 export default router;

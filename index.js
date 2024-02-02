@@ -35,17 +35,24 @@ import newotdelOtchetBetaRouter from './src/routes/newotdel/newotdelotchetBetaRo
 import simbuyernewotdelRouter from './src/routes/newotdel/simbuyerNewotdelRouter.mjs'
 import newotdelSimLogistRouter from './src/routes/newotdel/newotdelLogistRouter.mjs'
 
+import libertyDataRouter from './src/routes/liberty/libertyDatasRouter.mjs'
+import libertyOtchetBetaRouter from './src/routes/liberty/libertyotchetBetaRoutes.mjs'
+import simbuyerlibertyRouter from './src/routes/liberty/simbuyerLibertyRouter.mjs'
+import libertySimLogistRouter from './src/routes/liberty/libertyLogistRouter.mjs'
+
 import calcliderManager from './src/routes/calculate/lider.mjs'
 import calcMonacoManager from './src/routes/calculate/monaco.mjs'
 import calcTuranManager from './src/routes/calculate/turan.mjs'
 import calcFenixManager from './src/routes/calculate/fenix.mjs'
 import calcNewOtdelManager from './src/routes/calculate/newotdel.mjs'
+import calcLibertyManager from './src/routes/calculate/liberty.mjs'
 
 import calcliderLog from './src/routes/calculate-logist/lider.mjs'
 import calcMonacoLog from './src/routes/calculate-logist/monaco.mjs'
 import calcTuranLog from './src/routes/calculate-logist/turan.mjs'
 import calcFenixLog from './src/routes/calculate-logist/fenix.mjs'
 import calcNewOtdelLog from './src/routes/calculate-logist/newOtdel.mjs'
+import calcLibertyLog from './src/routes/calculate-logist/liberty.mjs'
 
 import roles from './src/routes/roles/roles.mjs'
 import itogs from './src/routes/calculate-itog/itog.mjs'
@@ -54,6 +61,7 @@ import clientMonaco from './src/routes/client-privlechennyi/client-monaco.mjs'
 import clientTuran from './src/routes/client-privlechennyi/client-turan.mjs'
 import clientFenix from './src/routes/client-privlechennyi/client-fenix.mjs'
 import clientNewOtdel from './src/routes/client-privlechennyi/client-newotdel.mjs'
+import clientLiberty from './src/routes/client-privlechennyi/client-liberty.mjs'
 
 import fullfilment1 from './src/routes/fullfilment/fullfilment-1.mjs'
 import fullfilment2 from './src/routes/fullfilment/fullfilment-2.mjs'
@@ -98,17 +106,24 @@ app.use('/', newotdelOtchetBetaRouter)
 app.use('/', simbuyernewotdelRouter)
 app.use('/', newotdelSimLogistRouter)
 
+app.use('/', libertyDataRouter)
+app.use('/', libertyOtchetBetaRouter)
+app.use('/', simbuyerlibertyRouter)
+app.use('/', libertySimLogistRouter)
+
 app.use('/', calcliderManager)
 app.use('/', calcMonacoManager)
 app.use('/', calcTuranManager)
 app.use('/', calcFenixManager)
 app.use('/', calcNewOtdelManager)
+app.use('/', calcLibertyManager)
 
 app.use('/', calcliderLog)
 app.use('/', calcMonacoLog)
 app.use('/', calcTuranLog)
 app.use('/', calcFenixLog)
 app.use('/', calcNewOtdelLog)
+app.use('/', calcLibertyLog)
 
 app.use('/', roles)
 app.use('/', itogs)
@@ -117,6 +132,7 @@ app.use('/', clientMonaco)
 app.use('/', clientFenix)
 app.use('/', clientTuran)
 app.use('/', clientNewOtdel)
+app.use('/', clientLiberty)
 
 app.use('/', fullfilment1)
 app.use('/', fullfilment2)
