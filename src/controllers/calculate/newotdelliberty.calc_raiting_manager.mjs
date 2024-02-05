@@ -4,18 +4,20 @@ import LiderDataModel from '../../models/lider/liderData.mjs';
 import MonacoDataModel from '../../models/monaco/monacoData.mjs';
 import TuranDataModel from '../../models/turan/turanData.mjs';
 import FenixDataModel from '../../models/fenix/fenixData.mjs';
+import ManagerPersent from '../../models/manager-persent/manager-persent.mjs';
 
 let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
-        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel] = await Promise.all([
+        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, managerPersent] = await Promise.all([
             simModelLiberty.find(),
             LiderDataModel.find(),
             MonacoDataModel.find(),
             TuranDataModel.find(),
             FenixDataModel.find(),
-            LibertyModel.find()
+            LibertyModel.find(),
+            ManagerPersent.find()
         ]);
 
         function isCurrentMonthAndYear(dateString) {
@@ -244,12 +246,21 @@ async function calculateAndCacheData() {
                     };
                 });
 
+                const selectedManager = managerPersent.filter(manager => manager.manager === elem.curator)
+                let allpercentsum = 0;
+                if (selectedManager.length > 0 && selectedManager[0].persent.length > 0) {
+                    allpercentsum = selectedManager[0].persent.reduce((acc, count) => acc += count.sum, 0);
+                }
+                const for_withdrawal = parseFloat(yourCommission) - parseFloat(allpercentsum)
+
+
                 return {
                     curator: elem.curator,
                     buyerLength: nonEmptyBuyers.length,
                     totalcom: totalCommissionall,
                     order: totalOrdersAll,
                     comission: yourCommission,
+                    for_withdrawal: for_withdrawal,
                     allCoeff: (parseFloat(coefficentOrder) + parseFloat(coefficent)).toFixed(1),
                     detail: detailInfo,
                 };
@@ -304,4 +315,13 @@ const calcRaintingManagerLiberty = async (req, res) => {
     }
 };
 
-export default { calcRaintingManagerLiberty };
+const updateCalcManager = async () => {
+    try {
+        const result = await calculateAndCacheData();
+        cachedData = result;
+    } catch (error) {
+        console.error('Ошибка при выполнении вычислений:', error);
+    }
+}
+
+export default { calcRaintingManagerLiberty, updateCalcManager };
