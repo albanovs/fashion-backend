@@ -86,9 +86,9 @@ const AddPercent = async (req, res) => {
     try {
         const currentDate = new Date();
         const allManagers = await ManagerPersent.find();
-        const foundManager = allManagers.find(item => item.manager === manager
-            && new Date(item.datas).getFullYear() === currentDate.getFullYear()
-            && new Date(item.datas).getMonth() === currentDate.getMonth());
+        const foundManager = allManagers.find(item => item.manager === manager)
+            // && new Date(item.datas).getFullYear() === currentDate.getFullYear()
+            // && new Date(item.datas).getMonth() === currentDate.getMonth());
 
         if (foundManager) {
             foundManager.persent.push(detail);

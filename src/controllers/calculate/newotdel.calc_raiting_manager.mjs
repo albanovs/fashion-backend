@@ -323,4 +323,12 @@ const updateCalcManager = async () => {
     }
 }
 
+simModelNewOtdel.on('change', updateCalcManager);
+LiderDataModel.on('change', updateCalcManager);
+MonacoDataModel.on('change', updateCalcManager);
+TuranDataModel.on('change', updateCalcManager);
+FenixDataModel.on('change', updateCalcManager);
+NewOtdelModel.on('change', updateCalcManager);
+ManagerPersent.on('change', updateCalcManager);
+
 export default { calcRaintingManagerNewOtdel, updateCalcManager };

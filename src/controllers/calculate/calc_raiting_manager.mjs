@@ -249,8 +249,8 @@ async function calculateAndCacheData() {
 
                 const selectedManager = managerPersent.filter(manager => manager.manager === elem.curator)
                 let allpercentsum = 0;
-                if (selectedManager.length > 0 && selectedManager[0].persent.length > 0) {
-                    allpercentsum = selectedManager[0].persent.reduce((acc, count) => acc += count.sum, 0);
+                if (selectedManager && selectedManager.persent) {
+                    allpercentsum = selectedManager.persent.reduce((acc, count) => acc += count.sum, 0);
                 }
                 const for_withdrawal = parseFloat(yourCommission) - parseFloat(allpercentsum)
 
@@ -283,25 +283,25 @@ async function calculateAndCacheData() {
     }
 }
 
-async function calculateAndCacheDataCash() {
-    if (!cachedData) {
-        const result = await calculateAndCacheData();
-        cachedData = result;
-    }
-}
+// async function calculateAndCacheDataCash() {
+//     if (!cachedData) {
+//         const result = await calculateAndCacheData();
+//         cachedData = result;
+//     }
+// }
 
-calculateAndCacheDataCash();
+// calculateAndCacheDataCash();
 
-const cacheUpdateInterval = 600000;
+// const cacheUpdateInterval = 600000;
 
-setInterval(async () => {
-    try {
-        const result = await calculateAndCacheData();
-        cachedData = result;
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-}, cacheUpdateInterval);
+// setInterval(async () => {
+//     try {
+//         const result = await calculateAndCacheData();
+//         cachedData = result;
+//     } catch (error) {
+//         console.error('Ошибка при выполнении вычислений:', error);
+//     }
+// }, cacheUpdateInterval);
 
 const calcRaintingManager = async (req, res) => {
     try {
@@ -325,5 +325,13 @@ const updateCalcManager = async () => {
         console.error('Ошибка при выполнении вычислений:', error);
     }
 }
+
+simModelLier.on('change', updateCalcManager);
+LiderDataModel.on('change', updateCalcManager);
+MonacoDataModel.on('change', updateCalcManager);
+TuranDataModel.on('change', updateCalcManager);
+FenixDataModel.on('change', updateCalcManager);
+NewOtdelDataModel.on('change', updateCalcManager);
+ManagerPersent.on('change', updateCalcManager);
 
 export default { calcRaintingManager, updateCalcManager };

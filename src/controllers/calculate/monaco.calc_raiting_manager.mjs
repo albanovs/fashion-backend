@@ -283,25 +283,25 @@ async function calculateAndCacheData() {
     }
 }
 
-async function calculateAndCacheDataCash() {
-    if (!cachedData) {
-        const result = await calculateAndCacheData();
-        cachedData = result;
-    }
-}
+// async function calculateAndCacheDataCash() {
+//     if (!cachedData) {
+//         const result = await calculateAndCacheData();
+//         cachedData = result;
+//     }
+// }
 
-calculateAndCacheDataCash();
+// calculateAndCacheDataCash();
 
-const cacheUpdateInterval = 600000;
+// const cacheUpdateInterval = 600000;
 
-setInterval(async () => {
-    try {
-        const result = await calculateAndCacheData();
-        cachedData = result;
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-}, cacheUpdateInterval);
+// setInterval(async () => {
+//     try {
+//         const result = await calculateAndCacheData();
+//         cachedData = result;
+//     } catch (error) {
+//         console.error('Ошибка при выполнении вычислений:', error);
+//     }
+// }, cacheUpdateInterval);
 
 const calcRaintingManagerMonaco = async (req, res) => {
     try {
@@ -325,5 +325,13 @@ const updateCalcManager = async () => {
         console.error('Ошибка при выполнении вычислений:', error);
     }
 }
+
+simMonacoModel.on('change', updateCalcManager);
+LiderDataModel.on('change', updateCalcManager);
+MonacoDataModel.on('change', updateCalcManager);
+TuranDataModel.on('change', updateCalcManager);
+FenixDataModel.on('change', updateCalcManager);
+NewOtdelDataModel.on('change', updateCalcManager);
+ManagerPersent.on('change', updateCalcManager);
 
 export default { calcRaintingManagerMonaco, updateCalcManager };
