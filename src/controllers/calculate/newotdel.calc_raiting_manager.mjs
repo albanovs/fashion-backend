@@ -322,6 +322,7 @@ const updateCalcManager = async () => {
         console.error('Ошибка при выполнении вычислений:', error);
     }
 }
+updateCalcManager()
 
 simModelNewOtdel.on('change', updateCalcManager);
 LiderDataModel.on('change', updateCalcManager);

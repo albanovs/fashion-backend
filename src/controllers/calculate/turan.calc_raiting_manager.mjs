@@ -325,6 +325,7 @@ const updateCalcManager = async () => {
         console.error('Ошибка при выполнении вычислений:', error);
     }
 }
+updateCalcManager()
 
 simTuranModel.on('change', updateCalcManager);
 LiderDataModel.on('change', updateCalcManager);

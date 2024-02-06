@@ -326,6 +326,8 @@ const updateCalcManager = async () => {
     }
 }
 
+updateCalcManager()
+
 simModelLier.on('change', updateCalcManager);
 LiderDataModel.on('change', updateCalcManager);
 MonacoDataModel.on('change', updateCalcManager);

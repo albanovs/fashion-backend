@@ -93,12 +93,6 @@ const AddPercent = async (req, res) => {
         if (foundManager) {
             foundManager.persent.push(detail);
             await foundManager.save();
-            await calc_raiting_manager.updateCalcManager()
-            await newotdelCalc_raiting_manager.updateCalcManager()
-            await monacoCalc_raiting_manager.updateCalcManager()
-            await turanCalc_raiting_manager.updateCalcManager()
-            await newotdellibertyCalc_raiting_manager.updateCalcManager()
-            await fenixCalc_raiting_manager.updateCalcManager()
             res.status(200).json({
                 success: true,
                 message: 'Процент добавлен успешно.',
