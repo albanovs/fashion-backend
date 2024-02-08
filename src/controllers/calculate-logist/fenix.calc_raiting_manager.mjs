@@ -14,8 +14,8 @@ async function calculateAndCacheData() {
         function isCurrentMonthAndYear(dateString) {
             const currentDate = new Date();
             const [day, month, year] = dateString.split('.').map(Number);
-            return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
-            // return 2023 === year && 12 === month;
+            // return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
+            return 2024 === year && 1 === month;
         }
 
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
@@ -133,12 +133,12 @@ setInterval(async () => {
 
 const calcRaintingLogist = async (req, res) => {
     try {
-        if (!cachedData) {
-            await calculateAndCacheData();
-        }
-        // const resg = await calculateAndCacheData()
-        res.json(cachedData);
-        // res.json(resg);
+        // if (!cachedData) {
+        //     await calculateAndCacheData();
+        // }
+        // res.json(cachedData);
+        const resg = await calculateAndCacheData()
+        res.json(resg);
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });

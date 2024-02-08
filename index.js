@@ -156,12 +156,12 @@ app.post("/test/mymodels", async (req, res) => {
 
 app.patch("/test/mymodels/:id", async (req, res) => {
   const { id } = req.params;
-  const { monako, lider, fenix, turan } = req.body;
+  const { monako, lider, fenix, turan, liberty, fbox } = req.body;
 
   try {
     const updatedMyModel = await MyModel.findByIdAndUpdate(
       id,
-      { monako, lider, fenix, turan },
+      { monako, lider, fenix, turan, liberty, fbox },
       { new: true }
     );
     res.json(updatedMyModel);
@@ -180,7 +180,8 @@ app.post("/insert/account", async (req, res) => {
       fenix: "",
       lider: "",
       turan: "",
-      // newOtdel: "",
+      liberty: "",
+      fbox: ""
     });
     await myData.save();
     res.status(200).json({ massage: `${JSON.stringify(myData)}` });
@@ -214,12 +215,12 @@ app.post("/telegramslot", async (req, res) => {
 
 app.patch("/test/telegramSlot/:id", async (req, res) => {
   const { id } = req.params;
-  const { monako, lider, fenix, turan } = req.body;
+  const { monako, lider, fenix, turan, liberty, fbox } = req.body;
 
   try {
     const updatedTelegram = await MyModelForTg.findByIdAndUpdate(
       id,
-      { monako, lider, fenix, turan },
+      { monako, lider, fenix, turan, liberty, fbox },
       { new: true }
     );
     res.json(updatedTelegram);
@@ -241,7 +242,8 @@ app.post("/insert/telegram", async (req, res) => {
         fenix: "",
         lider: "",
         turan: "",
-        // newOtdel: "",
+        liberty: "",
+        fbox: ""
       });
       await myData.save();
     }
@@ -304,6 +306,8 @@ app.post("/insert/account", async (req, res) => {
         fenix: "",
         lider: "",
         turan: "",
+        liberty: "",
+        fbox: ""
       });
       await myData.save();
     }
