@@ -5,7 +5,6 @@ const newClient = async (req, res) => {
 
     try {
         const result = await FenixClientsModel.create(clientData);
-
         res.json(result);
     } catch (error) {
         console.error('Ошибка при создании данных клиента:', error);

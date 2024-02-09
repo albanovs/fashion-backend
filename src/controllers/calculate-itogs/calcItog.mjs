@@ -4,6 +4,7 @@ import FenixDataModel from "../../models/fenix/fenixData.mjs";
 import TuranDataModel from "../../models/turan/turanData.mjs";
 import LibertyDataModel from "../../models/liberty/libertyData.mjs";
 import NewOtdelDataModel from "../../models/new-otel/newOtdelData.mjs";
+import cron from 'node-cron'
 
 let cachedData = null
 
@@ -159,24 +160,19 @@ async function calculateAndCacheData() {
 }
 
 async function calculateAndCacheDataCash() {
-    if (!cachedData) {
-        const result = await calculateAndCacheData();
-        cachedData = result;
-    }
+    const result = await calculateAndCacheData();
+    cachedData = result;
 }
 
 calculateAndCacheDataCash();
 
-const cacheUpdateInterval = 600000;
-
-setInterval(async () => {
+cron.schedule('*/10 * * * *', async () => {
     try {
-        const result = await calculateAndCacheData();
-        cachedData = result;
+        await calculateAndCacheDataCash();
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
     }
-}, cacheUpdateInterval);
+});
 
 const calcItogs = async (req, res) => {
     try {
@@ -189,5 +185,12 @@ const calcItogs = async (req, res) => {
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 };
+
+LiderDataModel.on('change', calculateAndCacheDataCash);
+MonacoDataModel.on('change', calculateAndCacheDataCash);
+TuranDataModel.on('change', calculateAndCacheDataCash);
+FenixDataModel.on('change', calculateAndCacheDataCash);
+NewOtdelDataModel.on('change', calculateAndCacheDataCash);
+LibertyDataModel.on('change', calculateAndCacheDataCash);
 
 export default { calcItogs };

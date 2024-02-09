@@ -5,239 +5,108 @@ import TuranDataModel from '../../models/turan/turanData.mjs';
 import FenixDataModel from '../../models/fenix/fenixData.mjs';
 import NewOtdelDataModel from '../../models/new-otel/newOtdelData.mjs';
 import ManagerPersent from '../../models/manager-persent/manager-persent.mjs'
+import cron from 'node-cron'
+import { filterAdminDataItog, calculateTotalCommission, calculateTotalCommissionPercent, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs';
+import LibertyDataModel from '../../models/liberty/libertyData.mjs';
+import { calculateMatchesLogist, calculateSumComPersent100 } from './utils/detail-utils.mjs'
 
 let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
-        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, managerPersent] = await Promise.all([
+        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, dataItogLiberty, managerPersent] = await Promise.all([
             simModelLier.find(),
             LiderDataModel.find(),
             MonacoDataModel.find(),
             TuranDataModel.find(),
             FenixDataModel.find(),
             NewOtdelDataModel.find(),
+            LibertyDataModel.find(),
             ManagerPersent.find()
         ]);
-
-        function isCurrentMonthAndYear(dateString) {
-            const currentDate = new Date();
-            const [day, month, year] = dateString.split('.').map(Number);
-            return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
-            // return 2023 === year && 8 === month;
-        }
 
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
         const filtereditogmonaco = dataItogMonaco.filter((item) => isCurrentMonthAndYear(item.date));
         const filtereditogturan = dataItogTuran.filter((item) => isCurrentMonthAndYear(item.date));
         const filtereditogfenix = dataItogFenix.filter((item) => isCurrentMonthAndYear(item.date));
         const filtereditognewotdel = dataItogNewOtdel.filter((item) => isCurrentMonthAndYear(item.date));
+        const filteredliberty = dataItogLiberty.filter((item) => isCurrentMonthAndYear(item.date));
 
         const result = managers.map((elem) => {
             const nonEmptyBuyersStatic = elem.slot.filter((item) => item.buyer !== '');
             const nonEmptyBuyers = elem.slot.filter((item) => item.buyer !== '' && item.status === "2");
 
             if (nonEmptyBuyers.length > 0) {
-                const adminDataItog = filtereditog.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
 
-                const totalCommission = adminDataItog.reduce((acc, cur) => {
-                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.itog;
-                        }
-                        return acc2;
-                    }, 0);
-                    return acc + curatorCommission;
-                }, 0);
+                const adminDataItog = filterAdminDataItog(filtereditog, nonEmptyBuyers, elem);
+                const totalCommission = calculateTotalCommission(adminDataItog, elem, nonEmptyBuyers);
+                const totalCommissionpercent = calculateTotalCommissionPercent(adminDataItog, elem, nonEmptyBuyers);
+                const totalOrders = calculateTotalOrders(adminDataItog, elem, nonEmptyBuyers);
 
-                const totalOrders = adminDataItog.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
+                const adminDataItogMonaco = filterAdminDataItog(filtereditogmonaco, nonEmptyBuyers, elem);
+                const totalCommissionMonaco = calculateTotalCommission(adminDataItogMonaco, elem, nonEmptyBuyers);
+                const totalCommissionpercentMonaco = calculateTotalCommissionPercent(adminDataItogMonaco, elem, nonEmptyBuyers);
+                const totalOrdersMonaco = calculateTotalOrders(adminDataItogMonaco, elem, nonEmptyBuyers);
 
-                const adminDataItogMonaco = filtereditogmonaco.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
+                const adminDataItogTuran = filterAdminDataItog(filtereditogturan, nonEmptyBuyers, elem);
+                const totalCommissionTuran = calculateTotalCommission(adminDataItogTuran, elem, nonEmptyBuyers);
+                const totalCommissionpercentTuran = calculateTotalCommissionPercent(adminDataItogTuran, elem, nonEmptyBuyers);
+                const totalOrdersTuran = calculateTotalOrders(adminDataItogTuran, elem, nonEmptyBuyers);
 
-                const totalCommissionMonaco = adminDataItogMonaco.reduce((acc, cur) => {
-                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.itog;
-                        }
-                        return acc2;
-                    }, 0);
-                    return acc + curatorCommission;
-                }, 0);
+                const adminDataItogFenix = filterAdminDataItog(filtereditogfenix, nonEmptyBuyers, elem);
+                const totalCommissionFenix = calculateTotalCommission(adminDataItogFenix, elem, nonEmptyBuyers);
+                const totalCommissionpercentFenix = calculateTotalCommissionPercent(adminDataItogFenix, elem, nonEmptyBuyers);
+                const totalOrdersFenix = calculateTotalOrders(adminDataItogFenix, elem, nonEmptyBuyers);
 
-                const totalOrdersMonaco = adminDataItogMonaco.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
+                const adminDataItogNewOtdel = filterAdminDataItog(filtereditognewotdel, nonEmptyBuyers, elem);
+                const totalCommissionNewOtdel = calculateTotalCommission(adminDataItogNewOtdel, elem, nonEmptyBuyers);
+                const totalCommissionpercentNewOtdel = calculateTotalCommissionPercent(adminDataItogNewOtdel, elem, nonEmptyBuyers);
+                const totalOrdersNewOtdel = calculateTotalOrders(adminDataItogNewOtdel, elem, nonEmptyBuyers);
 
-                const adminDataItogTuran = filtereditogturan.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
+                const adminDataItogLiberty = filterAdminDataItog(filteredliberty, nonEmptyBuyers, elem);
+                const totalCommissionLiberty = calculateTotalCommission(adminDataItogLiberty, elem, nonEmptyBuyers);
+                const totalCommissionpercentLiberty = calculateTotalCommissionPercent(adminDataItogLiberty, elem, nonEmptyBuyers);
+                const totalOrdersLiberty = calculateTotalOrders(adminDataItogLiberty, elem, nonEmptyBuyers);
 
-                const totalCommissionTuran = adminDataItogTuran.reduce((acc, cur) => {
-                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.itog;
-                        }
-                        return acc2;
-                    }, 0);
-                    return acc + curatorCommission;
-                }, 0);
+                const totalCommissionall = totalCommission + totalCommissionMonaco + totalCommissionTuran
+                    + totalCommissionFenix + totalCommissionNewOtdel + totalCommissionLiberty
 
-                const totalOrdersTuran = adminDataItogTuran.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
+                const totalCommissionpercentAll = totalCommissionpercent + totalCommissionpercentMonaco
+                    + totalCommissionpercentTuran + totalCommissionpercentFenix + totalCommissionpercentNewOtdel + totalCommissionpercentLiberty
 
-                const adminDataItogFenix = filtereditogfenix.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
-
-                const totalCommissionFenix = adminDataItogFenix.reduce((acc, cur) => {
-                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.itog;
-                        }
-                        return acc2;
-                    }, 0);
-                    return acc + curatorCommission;
-                }, 0);
-
-                const totalOrdersFenix = adminDataItogFenix.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
-
-                const adminDataItogNewOtdel = filtereditognewotdel.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyBuyers.some((buyerItem) => {
-                            return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-                        });
-                    });
-                });
-
-                const totalCommissionNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
-                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                        if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
-                            return acc2 + cur2.itog;
-                        }
-                        return acc2;
-                    }, 0);
-                    return acc + curatorCommission;
-                }, 0);
-
-                const totalOrdersNewOtdel = adminDataItogNewOtdel.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.buyer === elem.curator;
-                        const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
-                        return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
-                    }, 0);
-                }, 0);
-
-                const totalCommissionall = totalCommission + totalCommissionMonaco + totalCommissionTuran + totalCommissionFenix + totalCommissionNewOtdel
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
-                const yourCommission = ((totalCommission) * 0.07).toFixed(0);
-                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel
+                const yourCommission = ((totalCommissionpercentAll) * 0.07).toFixed(0);
+                const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel + totalOrdersLiberty
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 
                 const detailInfo = nonEmptyBuyers.map(logistItem => {
 
-                    const matchesLogist = filtereditog.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
-                        }, 0);
-                    }, 0);
+                    const matchesLogist = calculateMatchesLogist(filtereditog, logistItem);
+                    const sumComPersent100 = calculateSumComPersent100(filtereditog, logistItem);
 
-                    const sumComPersent100 = filtereditog.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
-                        }, 0);
-                    }, 0);
+                    const matchesTuran = calculateMatchesLogist(filtereditogturan, logistItem);
+                    const sumComPersent100turan = calculateSumComPersent100(filtereditogturan, logistItem);
 
-                    const matchesTuran = filtereditogturan.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
-                        }, 0);
-                    }, 0);
+                    const matchesFenix = calculateMatchesLogist(filtereditogfenix, logistItem);
+                    const sumComPersent100fenix = calculateSumComPersent100(filtereditogfenix, logistItem);
 
-                    const sumComPersent100turan = filtereditogturan.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
-                        }, 0);
-                    }, 0);
+                    const matchesMonaco = calculateMatchesLogist(filtereditogmonaco, logistItem);
+                    const sumComPersent100monaco = calculateSumComPersent100(filtereditogmonaco, logistItem);
 
-                    const matchesFenix = filtereditogfenix.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
-                        }, 0);
-                    }, 0);
+                    const matchesNewOtdel = calculateMatchesLogist(filtereditognewotdel, logistItem);
+                    const sumComPersent100NewOtdel = calculateSumComPersent100(filtereditognewotdel, logistItem);
 
-                    const sumComPersent100fenix = filtereditogfenix.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
-                        }, 0);
-                    }, 0);
+                    const matchesLiberty = calculateMatchesLogist(filteredliberty, logistItem);
+                    const sumComPersent100Liberty = calculateSumComPersent100(filteredliberty, logistItem);
 
-                    const matchesMonaco = filtereditogmonaco.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
-                        }, 0);
-                    }, 0);
 
-                    const sumComPersent100monaco = filtereditogmonaco.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
-                        }, 0);
-                    }, 0);
+                    let allMatches = parseFloat(matchesLogist) + parseFloat(matchesTuran)
+                        + parseFloat(matchesFenix) + parseFloat(matchesMonaco)
+                        + parseFloat(matchesNewOtdel) + parseFloat(matchesLiberty)
 
-                    const matchesNewOtdel = filtereditognewotdel.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? 1 : 0);
-                        }, 0);
-                    }, 0);
-
-                    const sumComPersent100NewOtdel = filtereditognewotdel.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.buyer === logistItem.buyer ? cur2.itog : 0);
-                        }, 0);
-                    }, 0);
-
-                    let allMatches = parseFloat(matchesLogist) + parseFloat(matchesTuran) + parseFloat(matchesFenix) + parseFloat(matchesMonaco) + parseFloat(matchesNewOtdel)
-                    let allItogs = parseFloat(sumComPersent100) + parseFloat(sumComPersent100fenix) + parseFloat(sumComPersent100monaco) + parseFloat(sumComPersent100turan) + parseFloat(sumComPersent100NewOtdel)
+                    let allItogs = parseFloat(sumComPersent100) + parseFloat(sumComPersent100fenix)
+                        + parseFloat(sumComPersent100monaco) + parseFloat(sumComPersent100turan)
+                        + parseFloat(sumComPersent100NewOtdel) + parseFloat(sumComPersent100Liberty)
 
                     return {
                         name: logistItem.buyer,
@@ -283,34 +152,12 @@ async function calculateAndCacheData() {
     }
 }
 
-// async function calculateAndCacheDataCash() {
-//     if (!cachedData) {
-//         const result = await calculateAndCacheData();
-//         cachedData = result;
-//     }
-// }
-
-// calculateAndCacheDataCash();
-
-// const cacheUpdateInterval = 600000;
-
-// setInterval(async () => {
-//     try {
-//         const result = await calculateAndCacheData();
-//         cachedData = result;
-//     } catch (error) {
-//         console.error('Ошибка при выполнении вычислений:', error);
-//     }
-// }, cacheUpdateInterval);
-
 const calcRaintingManager = async (req, res) => {
     try {
         if (!cachedData) {
             await calculateAndCacheData();
         }
         res.json(cachedData);
-        // const result = await calculateAndCacheData()
-        // res.json(result)
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
@@ -326,6 +173,14 @@ const updateCalcManager = async () => {
     }
 }
 
+cron.schedule('*/10 * * * *', async () => {
+    try {
+        await updateCalcManager();
+    } catch (error) {
+        console.error('Ошибка при выполнении вычислений:', error);
+    }
+});
+
 updateCalcManager()
 
 simModelLier.on('change', updateCalcManager);
@@ -334,6 +189,7 @@ MonacoDataModel.on('change', updateCalcManager);
 TuranDataModel.on('change', updateCalcManager);
 FenixDataModel.on('change', updateCalcManager);
 NewOtdelDataModel.on('change', updateCalcManager);
+LibertyDataModel.on('change', updateCalcManager);
 ManagerPersent.on('change', updateCalcManager);
 
 export default { calcRaintingManager, updateCalcManager };

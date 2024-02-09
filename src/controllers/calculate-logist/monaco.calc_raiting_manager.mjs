@@ -1,5 +1,8 @@
 import simMonacoLog from '../../models/simcardlogist/monacologist.mjs';
 import MonacoDataModel from '../../models/monaco/monacoData.mjs';
+import { filterAdminDataItog, calculateTotalCommission, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs'
+import { calculateMatchesCurator, calculateMatchesLogist, calculateSumComPersent100 } from './utils/detail-logist.mjs'
+import cron from 'node-cron'
 
 let cachedData = null;
 
@@ -10,69 +13,26 @@ async function calculateAndCacheData() {
             MonacoDataModel.find(),
         ]);
 
-        function isCurrentMonthAndYear(dateString) {
-            const currentDate = new Date();
-            const [day, month, year] = dateString.split('.').map(Number);
-            // return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
-            return 2024 === year && 1 === month;
-        }
-
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
 
         const result = logist.map((elem) => {
             const nonEmptyLogist = elem.slot.filter((item) => item.logist !== '' && item.status === '2');
 
             if (nonEmptyLogist.length > 0) {
-                const adminDataItog = filtereditog.filter((itog) => {
-                    return itog.otchet.some((otchetItem) => {
-                        return nonEmptyLogist.some((logistItem) => {
-                            return otchetItem.admin && (otchetItem.admin === logistItem.logist || otchetItem.admin === elem.curator);
-                        });
-                    });
-                });
 
-                const totalCommission = adminDataItog.reduce((acc, cur) => {
-                    const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-                        if (cur2.admin === elem.curator || nonEmptyLogist.some(logist => logist.logist === cur2.admin)) {
-                            return acc2 + cur2.comPersent100;
-                        }
-                        return acc2;
-                    }, 0);
-                    return acc + curatorCommission;
-                }, 0);
-
-
-
-                const totalOrders = adminDataItog.reduce((acc, cur) => {
-                    return acc + cur.otchet.reduce((acc2, cur2) => {
-                        const matchesCurator = cur2.admin === elem.curator;
-                        const matchesNonEmptyLogist = nonEmptyLogist.some((logistItem) => cur2.admin === logistItem.logist);
-                        return acc2 + (matchesCurator || matchesNonEmptyLogist ? 1 : 0);
-                    }, 0);
-                }, 0);
+                const adminDataItog = filterAdminDataItog(filtereditog, nonEmptyLogist, elem);
+                const totalCommission = calculateTotalCommission(adminDataItog, elem, nonEmptyLogist);
+                const totalOrders = calculateTotalOrders(adminDataItog, elem, nonEmptyLogist);
 
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyLogist.length).toFixed(0)).toFixed(0) / 10000).toFixed(1);
                 const yourCommission = ((totalCommission) * 0.15).toFixed(0);
                 const totalOrdersAll = totalOrders;
 
                 const detailInfo = nonEmptyLogist.map(logistItem => {
-                    const matchesCurator = adminDataItog.some((itog) => {
-                        return itog.otchet.some((otchetItem) => {
-                            return otchetItem.admin === elem.curator;
-                        });
-                    });
 
-                    const matchesLogist = adminDataItog.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.admin === logistItem.logist ? 1 : 0);
-                        }, 0);
-                    }, 0);
-
-                    const sumComPersent100 = adminDataItog.reduce((acc, cur) => {
-                        return acc + cur.otchet.reduce((acc2, cur2) => {
-                            return acc2 + (cur2.admin === logistItem.logist ? cur2.comPersent100 : 0);
-                        }, 0);
-                    }, 0);
+                    const matchesCurator = calculateMatchesCurator(adminDataItog, elem);
+                    const matchesLogist = calculateMatchesLogist(adminDataItog, logistItem);
+                    const sumComPersent100 = calculateSumComPersent100(adminDataItog, logistItem);
 
                     return {
                         curator: matchesCurator,
@@ -112,37 +72,35 @@ async function calculateAndCacheData() {
 }
 
 async function calculateAndCacheDataCash() {
-    if (!cachedData) {
-        const result = await calculateAndCacheData();
-        cachedData = result;
-    }
+    const result = await calculateAndCacheData();
+    cachedData = result;
 }
 
 calculateAndCacheDataCash();
 
-const cacheUpdateInterval = 600000;
-setInterval(async () => {
+cron.schedule('*/10 * * * *', async () => {
     try {
-        const result = await calculateAndCacheData();
-        cachedData = result;
+        await calculateAndCacheDataCash();
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
     }
-}, cacheUpdateInterval);
-
+});
 
 const calcRaintingLogist = async (req, res) => {
     try {
-        // if (!cachedData) {
-        //     await calculateAndCacheData();
-        // }
-        // res.json(cachedData);
-        const resq = await calculateAndCacheData()
-        res.json(resq);
+        if (!cachedData) {
+            await calculateAndCacheData();
+        }
+        res.json(cachedData);
+        // const resq = await calculateAndCacheData()
+        // res.json(resq);
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 };
+
+simMonacoLog.on("change", calculateAndCacheDataCash)
+MonacoDataModel.on("change", calculateAndCacheDataCash)
 
 export default { calcRaintingLogist };
