@@ -6,6 +6,12 @@ import SimModelTuran from '../../models/simcard/simturan.mjs'
 import SimModelNewOtdel from '../../models/simcard/simnewotdel.mjs'
 import SimModelLiberty from "../../models/simcard/simliberty.mjs";
 import cron from 'node-cron';
+import calc_raiting_manager from "../calculate/calc_raiting_manager.mjs";
+import fenixCalc_raiting_manager from "../calculate/fenix.calc_raiting_manager.mjs";
+import turanCalc_raiting_manager from "../calculate/turan.calc_raiting_manager.mjs";
+import monacoCalc_raiting_manager from "../calculate/monaco.calc_raiting_manager.mjs";
+import newotdelCalc_raiting_manager from "../calculate/newotdel.calc_raiting_manager.mjs";
+import newotdellibertyCalc_raiting_manager from "../calculate/newotdelliberty.calc_raiting_manager.mjs";
 
 const getCurator = async () => {
     try {
@@ -80,6 +86,12 @@ const AddPercent = async (req, res) => {
                 success: true,
                 message: 'Процент добавлен успешно.',
             });
+            await calc_raiting_manager.updateCalcManager()
+            await fenixCalc_raiting_manager.updateCalcManager()
+            await turanCalc_raiting_manager.updateCalcManager()
+            await monacoCalc_raiting_manager.updateCalcManager()
+            await newotdelCalc_raiting_manager.updateCalcManager()
+            await newotdellibertyCalc_raiting_manager.updateCalcManager()
 
         } else {
             res.status(404).json({
