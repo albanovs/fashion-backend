@@ -137,6 +137,22 @@ async function calculateAndCacheData() {
             elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
         });
 
+        result.forEach(elem => {
+            const selectedManager = managerperc.find(i => {
+                const currentDate = new Date();
+                const managerDate = new Date(i.datas);
+                return managerDate.getDate() === currentDate.getDate() &&
+                    managerDate.getMonth() === currentDate.getMonth() &&
+                    managerDate.getFullYear() === currentDate.getFullYear() &&
+                    i.manager === elem.curator;
+            });
+
+            if (selectedManager && selectedManager.persent) {
+                let allpercentsum = selectedManager.persent.reduce((acc, count) => acc += parseFloat(count.sum), 0);
+                elem.for_withdrawal = elem.comission - parseFloat(allpercentsum);
+            }
+        });
+
         return result;
 
     } catch (error) {

@@ -39,19 +39,6 @@ const getCurator = async () => {
 
                     await newManagerPersent.save();
                 }
-                const existingCurator = await ManagerPersent.findOne({
-                    manager: manager.curator,
-                });
-
-                if (!existingCurator) {
-                    const newManagerPersent = new ManagerPersent({
-                        datas: currentDate,
-                        manager: manager.curator,
-                        persent: []
-                    });
-
-                    await newManagerPersent.save();
-                }
             }
         }
     } catch (error) {
