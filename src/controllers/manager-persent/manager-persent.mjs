@@ -6,12 +6,6 @@ import SimModelTuran from '../../models/simcard/simturan.mjs'
 import SimModelNewOtdel from '../../models/simcard/simnewotdel.mjs'
 import SimModelLiberty from "../../models/simcard/simliberty.mjs";
 import cron from 'node-cron';
-import calc_raiting_manager from "../calculate/calc_raiting_manager.mjs";
-import newotdelCalc_raiting_manager from "../calculate/newotdel.calc_raiting_manager.mjs";
-import monacoCalc_raiting_manager from "../calculate/monaco.calc_raiting_manager.mjs";
-import turanCalc_raiting_manager from "../calculate/turan.calc_raiting_manager.mjs";
-import newotdellibertyCalc_raiting_manager from "../calculate/newotdelliberty.calc_raiting_manager.mjs";
-import fenixCalc_raiting_manager from "../calculate/fenix.calc_raiting_manager.mjs";
 
 const getCurator = async () => {
     try {
@@ -69,6 +63,8 @@ cron.schedule('0 0 * * *', () => {
     getCurator();
 });
 
+getCurator()
+
 
 const getManagers = async (req, res) => {
     try {
@@ -86,9 +82,9 @@ const AddPercent = async (req, res) => {
     try {
         const currentDate = new Date();
         const allManagers = await ManagerPersent.find();
-        const foundManager = allManagers.find(item => item.manager === manager)
-            // && new Date(item.datas).getFullYear() === currentDate.getFullYear()
-            // && new Date(item.datas).getMonth() === currentDate.getMonth());
+        const foundManager = allManagers.find(item => item.manager === manager && new Date(item.datas).getFullYear() === currentDate.getFullYear()
+            && new Date(item.datas).getMonth() === currentDate.getMonth())
+
 
         if (foundManager) {
             foundManager.persent.push(detail);

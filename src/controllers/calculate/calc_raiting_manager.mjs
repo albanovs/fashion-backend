@@ -14,7 +14,7 @@ let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
-        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, dataItogLiberty, managerPersent] = await Promise.all([
+        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, dataItogLiberty, managerperc] = await Promise.all([
             simModelLier.find(),
             LiderDataModel.find(),
             MonacoDataModel.find(),
@@ -116,20 +116,12 @@ async function calculateAndCacheData() {
                     };
                 });
 
-                const selectedManager = managerPersent.filter(manager => manager.manager === elem.curator)
-                let allpercentsum = 0;
-                if (selectedManager && selectedManager.persent) {
-                    allpercentsum = selectedManager.persent.reduce((acc, count) => acc += count.sum, 0);
-                }
-                const for_withdrawal = parseFloat(yourCommission) - parseFloat(allpercentsum)
-
                 return {
                     curator: elem.curator,
                     buyerLength: nonEmptyBuyers.length,
                     totalcom: totalCommissionall,
                     order: totalOrdersAll,
                     comission: yourCommission,
-                    for_withdrawal: for_withdrawal,
                     allCoeff: (parseFloat(coefficentOrder) + parseFloat(coefficent)).toFixed(1),
                     detail: detailInfo,
                 };
@@ -145,6 +137,23 @@ async function calculateAndCacheData() {
             elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
         });
 
+        result.forEach(elem => {
+            const selectedManager = managerperc.find(i => {
+                const currentDate = new Date();
+                const managerDate = new Date(i.datas);
+                return managerDate.getDate() === currentDate.getDate() &&
+                    managerDate.getMonth() === currentDate.getMonth() &&
+                    managerDate.getFullYear() === currentDate.getFullYear() &&
+                    i.manager === elem.curator;
+            });
+
+            if (selectedManager && selectedManager.persent) {
+                let allpercentsum = selectedManager.persent.reduce((acc, count) => acc += parseFloat(count.sum), 0);
+                elem.for_withdrawal = elem.comission - parseFloat(allpercentsum);
+            }
+        });
+
+
         return result;
 
     } catch (error) {
@@ -158,6 +167,8 @@ const calcRaintingManager = async (req, res) => {
             await calculateAndCacheData();
         }
         res.json(cachedData);
+        // const result = await calculateAndCacheData()
+        // res.json(result)
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });

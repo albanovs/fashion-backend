@@ -14,7 +14,7 @@ let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
-        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, dataItogLiberty, managerPersent] = await Promise.all([
+        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, dataItogLiberty, managerperc] = await Promise.all([
             simModelLiberty.find(),
             LiderDataModel.find(),
             MonacoDataModel.find(),
@@ -116,21 +116,12 @@ async function calculateAndCacheData() {
                     };
                 });
 
-                const selectedManager = managerPersent.filter(manager => manager.manager === elem.curator)
-                let allpercentsum = 0;
-                if (selectedManager && selectedManager.persent) {
-                    allpercentsum = selectedManager.persent.reduce((acc, count) => acc += count.sum, 0);
-                }
-                const for_withdrawal = parseFloat(yourCommission) - parseFloat(allpercentsum)
-
-
                 return {
                     curator: elem.curator,
                     buyerLength: nonEmptyBuyers.length,
                     totalcom: totalCommissionall,
                     order: totalOrdersAll,
                     comission: yourCommission,
-                    for_withdrawal: for_withdrawal,
                     allCoeff: (parseFloat(coefficentOrder) + parseFloat(coefficent)).toFixed(1),
                     detail: detailInfo,
                 };
