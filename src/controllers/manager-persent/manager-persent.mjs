@@ -32,25 +32,32 @@ const getCurator = async () => {
 
         for (const manager of managers) {
             if (manager.curator) {
-                const existingData = await ManagerPersent.findOne({
+                // Находим все записи для данного куратора в текущем месяце
+                const existingData = await ManagerPersent.find({
                     datas: { $gte: new Date(currentYear, currentMonth, 1) },
                     manager: manager.curator,
                 });
-                if (!existingData) {
-                    const newManagerPersent = new ManagerPersent({
-                        datas: currentDate,
-                        manager: manager.curator,
-                        persent: []
-                    });
 
-                    await newManagerPersent.save();
+                // Если такие записи уже существуют, пропускаем этого куратора
+                if (existingData.length > 0) {
+                    continue;
                 }
+
+                // Создаем новую запись только если записей для куратора в текущем месяце нет
+                const newManagerPersent = new ManagerPersent({
+                    datas: currentDate,
+                    manager: manager.curator,
+                    persent: []
+                });
+
+                await newManagerPersent.save();
             }
         }
     } catch (error) {
         console.log(error);
     }
 }
+
 
 cron.schedule('0 0 * * *', () => {
     getCurator();
