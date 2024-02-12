@@ -63,8 +63,6 @@ cron.schedule('0 0 * * *', () => {
     getCurator();
 });
 
-getCurator()
-
 const getManagers = async (req, res) => {
     try {
         const data = await ManagerPersent.find();
