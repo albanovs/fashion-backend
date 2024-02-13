@@ -1,4 +1,5 @@
 import SimModelFenix from "../../models/simcard/simfenix.mjs"
+import cron from 'node-cron'
 
 const createSimTable = async (req, res) => {
     try {

@@ -1,4 +1,5 @@
 import SimModelMonacoLog from "../../models/simcardlogist/monacologist.mjs"
+import cron from 'node-cron'
 
 const CreateTableSim = async (req, res) => {
     try {

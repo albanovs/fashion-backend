@@ -1,4 +1,5 @@
 import SimModelTuran from '../../models/simcard/simturan.mjs'
+import cron from 'node-cron'
 
 const createSimTable = async (req, res) => {
     try {

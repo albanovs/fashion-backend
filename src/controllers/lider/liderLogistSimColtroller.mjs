@@ -1,4 +1,5 @@
 import SimModelLiderLog from "../../models/simcardlogist/liderlogist.mjs"
+import cron from 'node-cron'
 
 const CreateTableSim = async (req, res) => {
     try {

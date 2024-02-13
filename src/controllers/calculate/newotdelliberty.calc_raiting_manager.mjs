@@ -4,10 +4,7 @@ import MonacoDataModel from '../../models/monaco/monacoData.mjs';
 import TuranDataModel from '../../models/turan/turanData.mjs';
 import FenixDataModel from '../../models/fenix/fenixData.mjs';
 import ManagerPersent from '../../models/manager-persent/manager-persent.mjs';
-import {
-    filterAdminDataItog, calculateTotalCommission, calculateTotalCommissionPercent,
-    calculateTotalOrders, isCurrentMonthAndYear, percentVM
-} from './utils/utils.mjs';
+import { filterAdminDataItog, calculateTotalCommission, calculateTotalCommissionPercent, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs';
 import LibertyDataModel from '../../models/liberty/libertyData.mjs';
 import { calculateMatchesLogist, calculateSumComPersent100 } from './utils/detail-utils.mjs'
 import cron from 'node-cron'
@@ -78,7 +75,8 @@ async function calculateAndCacheData() {
                     + totalCommissionpercentTuran + totalCommissionpercentFenix + totalCommissionpercentNewOtdel + totalCommissionpercentLiberty
 
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
-                const yourCommission = percentVM(totalCommissionpercentAll, elem.curator)
+                const yourCommission = ((totalCommissionpercentAll) * 0.07).toFixed(0);
+                const сomissionVM = ((totalCommissionpercentAll) * 0.03).toFixed(0);
                 const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel + totalOrdersLiberty
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 
@@ -125,6 +123,7 @@ async function calculateAndCacheData() {
                     totalcom: totalCommissionall,
                     order: totalOrdersAll,
                     comission: yourCommission,
+                    comissionVM: сomissionVM,
                     allCoeff: (parseFloat(coefficentOrder) + parseFloat(coefficent)).toFixed(1),
                     detail: detailInfo,
                 };
@@ -155,6 +154,14 @@ async function calculateAndCacheData() {
                 elem.for_withdrawal = elem.comission - parseFloat(allpercentsum);
             }
         });
+
+        const percentVM = 0
+        result.forEach(elem => percentVM += elem.comissionVM)
+        result.forEach(elem => {
+            if (elem.curator.includes("ВМ")) {
+                elem.comission = percentVM
+            }
+        })
 
         return result;
 

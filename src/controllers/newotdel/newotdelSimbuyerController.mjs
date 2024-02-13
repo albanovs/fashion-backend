@@ -1,4 +1,5 @@
 import SimModelNewOtdel from "../../models/simcard/simnewotdel.mjs"
+import cron from 'node-cron'
 
 const createSimTable = async (req, res) => {
     try {
