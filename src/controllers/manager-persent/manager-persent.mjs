@@ -29,19 +29,22 @@ const getCurator = async () => {
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth();
         const currentYear = currentDate.getFullYear();
+
+        // Получаем первый день текущего месяца
         const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+        // Получаем последний день текущего месяца
         const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
         for (const manager of managers) {
             if (manager.curator) {
-                // Находим все записи для данного куратора в текущем месяце
-                const existingData = await ManagerPersent.find({
+                // Проверяем, есть ли уже запись для данного куратора в текущем месяце
+                const existingData = await ManagerPersent.findOne({
                     datas: { $gte: firstDayOfMonth, $lt: lastDayOfMonth },
                     manager: manager.curator,
                 });
 
-                // Если такие записи уже существуют, пропускаем этого куратора
-                if (existingData.length > 0) {
+                // Если запись уже существует, пропускаем этого куратора
+                if (existingData) {
                     continue;
                 }
 
@@ -59,8 +62,6 @@ const getCurator = async () => {
         console.log(error);
     }
 }
-
-
 
 cron.schedule('0 0 * * *', () => {
     getCurator();

@@ -161,6 +161,34 @@ const deleteSlot = async (req, res) => {
     }
 };
 
+const updateDaysSinceVerification = async () => {
+    try {
+        const today = new Date();
+        const datas = await SimModelLiberty.find();
+        for (const elem of datas) {
+            for (const slot of elem.slot) {
+                if (slot.date_of_verification) {
+                    const selectedDate = new Date(slot.date_of_verification);
+                    const timeDiff = today.getTime() - selectedDate.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
+                    await SimModelLiberty.findOneAndUpdate(
+                        { "slot._id": slot._id },
+                        { $set: { "slot.$.days_since_verification": daysDiff.toString() } }
+                    );
+                }
+            }
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+cron.schedule('0 0 * * *', () => {
+    updateDaysSinceVerification();
+}, {
+    scheduled: true,
+    timezone: 'Europe/Moscow'
+});
 
 export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot }
