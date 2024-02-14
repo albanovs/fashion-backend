@@ -159,7 +159,7 @@ async function calculateAndCacheData() {
             }
         });
 
-        const percentVM = 0
+        let percentVM = 0
         result.forEach(elem => percentVM += elem.comissonVM)
         result.forEach(elem => {
             if (elem.curator.includes("ВМ")) {
