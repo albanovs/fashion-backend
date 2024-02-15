@@ -30,9 +30,9 @@ async function calculateAndCacheData() {
 
                 const detailInfo = nonEmptyLogist.map(logistItem => {
 
-                    const matchesCurator = calculateMatchesCurator(adminDataItog, elem);
-                    const matchesLogist = calculateMatchesLogist(adminDataItog, logistItem);
-                    const sumComPersent100 = calculateSumComPersent100(adminDataItog, logistItem);
+                    const matchesCurator = calculateMatchesCurator(filtereditog, elem);
+                    const matchesLogist = calculateMatchesLogist(filtereditog, logistItem);
+                    const sumComPersent100 = calculateSumComPersent100(filtereditog, logistItem);
 
                     return {
                         curator: matchesCurator,
