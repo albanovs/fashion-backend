@@ -1,6 +1,6 @@
 import simNewOtdelLog from '../../models/simcardlogist/newotdellogist.mjs';
 import NewOtdelDataModel from '../../models/new-otel/newOtdelData.mjs';
-import { filterAdminDataItog, calculateTotalCommission, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs'
+import { calculateTotalCommission, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs'
 import { calculateMatchesCurator, calculateMatchesLogist, calculateSumComPersent100 } from './utils/detail-logist.mjs'
 import cron from 'node-cron'
 

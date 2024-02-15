@@ -1,14 +1,4 @@
 
-export const filterAdminDataItog = (filtereditog, nonEmptyBuyers, elem) => {
-    return filtereditog.filter((itog) => {
-        return itog.otchet.some((otchetItem) => {
-            return nonEmptyBuyers.some((buyerItem) => {
-                return otchetItem.buyer && (otchetItem.buyer === buyerItem.buyer || otchetItem.buyer === elem.curator);
-            });
-        });
-    });
-};
-
 export const calculateTotalCommission = (adminDataItog, elem, nonEmptyBuyers) => {
     return adminDataItog.reduce((acc, cur) => {
         const curatorCommission = cur.otchet.reduce((acc2, cur2) => {

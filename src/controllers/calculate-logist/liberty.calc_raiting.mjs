@@ -1,6 +1,6 @@
 import simLibertyLog from '../../models/simcardlogist/libertylogist.mjs';
 import LibertyDataModel from '../../models/liberty/libertyData.mjs';
-import { filterAdminDataItog, calculateTotalCommission, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs'
+import { calculateTotalCommission, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs'
 import { calculateMatchesCurator, calculateMatchesLogist, calculateSumComPersent100 } from './utils/detail-logist.mjs'
 import cron from 'node-cron'
 

@@ -5,7 +5,7 @@ import TuranDataModel from '../../models/turan/turanData.mjs';
 import FenixDataModel from '../../models/fenix/fenixData.mjs';
 import NewOtdelDataModel from '../../models/new-otel/newOtdelData.mjs';
 import ManagerPersent from '../../models/manager-persent/manager-persent.mjs';
-import { filterAdminDataItog, calculateTotalCommission, calculateTotalCommissionPercent, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs';
+import { calculateTotalCommission, calculateTotalCommissionPercent, calculateTotalOrders, isCurrentMonthAndYear } from './utils/utils.mjs';
 import LibertyDataModel from '../../models/liberty/libertyData.mjs';
 import { calculateMatchesLogist, calculateSumComPersent100 } from './utils/detail-utils.mjs'
 import cron from 'node-cron'
@@ -38,32 +38,26 @@ async function calculateAndCacheData() {
 
             if (nonEmptyBuyers.length > 0) {
 
-                const adminDataItog = filterAdminDataItog(filtereditog, nonEmptyBuyers, elem);
                 const totalCommission = calculateTotalCommission(filtereditog, elem, nonEmptyBuyers);
                 const totalCommissionpercent = calculateTotalCommissionPercent(filtereditog, elem, nonEmptyBuyers);
                 const totalOrders = calculateTotalOrders(filtereditog, elem, nonEmptyBuyers);
 
-                const adminDataItogMonaco = filterAdminDataItog(filtereditogmonaco, nonEmptyBuyers, elem);
                 const totalCommissionMonaco = calculateTotalCommission(filtereditogmonaco, elem, nonEmptyBuyers);
                 const totalCommissionpercentMonaco = calculateTotalCommissionPercent(filtereditogmonaco, elem, nonEmptyBuyers);
                 const totalOrdersMonaco = calculateTotalOrders(filtereditogmonaco, elem, nonEmptyBuyers);
 
-                const adminDataItogTuran = filterAdminDataItog(filtereditogturan, nonEmptyBuyers, elem);
                 const totalCommissionTuran = calculateTotalCommission(filtereditogturan, elem, nonEmptyBuyers);
                 const totalCommissionpercentTuran = calculateTotalCommissionPercent(filtereditogturan, elem, nonEmptyBuyers);
                 const totalOrdersTuran = calculateTotalOrders(filtereditogturan, elem, nonEmptyBuyers);
 
-                const adminDataItogFenix = filterAdminDataItog(filtereditogfenix, nonEmptyBuyers, elem);
                 const totalCommissionFenix = calculateTotalCommission(filtereditogfenix, elem, nonEmptyBuyers);
                 const totalCommissionpercentFenix = calculateTotalCommissionPercent(filtereditogfenix, elem, nonEmptyBuyers);
                 const totalOrdersFenix = calculateTotalOrders(filtereditogfenix, elem, nonEmptyBuyers);
 
-                const adminDataItogNewOtdel = filterAdminDataItog(filtereditognewotdel, nonEmptyBuyers, elem);
                 const totalCommissionNewOtdel = calculateTotalCommission(filtereditognewotdel, elem, nonEmptyBuyers);
                 const totalCommissionpercentNewOtdel = calculateTotalCommissionPercent(filtereditognewotdel, elem, nonEmptyBuyers);
                 const totalOrdersNewOtdel = calculateTotalOrders(filtereditognewotdel, elem, nonEmptyBuyers);
 
-                const adminDataItogLiberty = filterAdminDataItog(filteredliberty, nonEmptyBuyers, elem);
                 const totalCommissionLiberty = calculateTotalCommission(filteredliberty, elem, nonEmptyBuyers);
                 const totalCommissionpercentLiberty = calculateTotalCommissionPercent(filteredliberty, elem, nonEmptyBuyers);
                 const totalOrdersLiberty = calculateTotalOrders(filteredliberty, elem, nonEmptyBuyers);
