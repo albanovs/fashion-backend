@@ -20,7 +20,6 @@ async function calculateAndCacheData() {
 
             if (nonEmptyLogist.length > 0) {
 
-                const adminDataItog = filterAdminDataItog(filtereditog, nonEmptyLogist, elem);
                 const totalCommission = calculateTotalCommission(filtereditog, elem, nonEmptyLogist);
                 const totalOrders = calculateTotalOrders(filtereditog, elem, nonEmptyLogist);
 

@@ -39,34 +39,34 @@ async function calculateAndCacheData() {
             if (nonEmptyBuyers.length > 0) {
 
                 const adminDataItog = filterAdminDataItog(filtereditog, nonEmptyBuyers, elem);
-                const totalCommission = calculateTotalCommission(adminDataItog, elem, nonEmptyBuyers);
-                const totalCommissionpercent = calculateTotalCommissionPercent(adminDataItog, elem, nonEmptyBuyers);
-                const totalOrders = calculateTotalOrders(adminDataItog, elem, nonEmptyBuyers);
+                const totalCommission = calculateTotalCommission(filtereditog, elem, nonEmptyBuyers);
+                const totalCommissionpercent = calculateTotalCommissionPercent(filtereditog, elem, nonEmptyBuyers);
+                const totalOrders = calculateTotalOrders(filtereditog, elem, nonEmptyBuyers);
 
                 const adminDataItogMonaco = filterAdminDataItog(filtereditogmonaco, nonEmptyBuyers, elem);
-                const totalCommissionMonaco = calculateTotalCommission(adminDataItogMonaco, elem, nonEmptyBuyers);
-                const totalCommissionpercentMonaco = calculateTotalCommissionPercent(adminDataItogMonaco, elem, nonEmptyBuyers);
-                const totalOrdersMonaco = calculateTotalOrders(adminDataItogMonaco, elem, nonEmptyBuyers);
+                const totalCommissionMonaco = calculateTotalCommission(filtereditogmonaco, elem, nonEmptyBuyers);
+                const totalCommissionpercentMonaco = calculateTotalCommissionPercent(filtereditogmonaco, elem, nonEmptyBuyers);
+                const totalOrdersMonaco = calculateTotalOrders(filtereditogmonaco, elem, nonEmptyBuyers);
 
                 const adminDataItogTuran = filterAdminDataItog(filtereditogturan, nonEmptyBuyers, elem);
-                const totalCommissionTuran = calculateTotalCommission(adminDataItogTuran, elem, nonEmptyBuyers);
-                const totalCommissionpercentTuran = calculateTotalCommissionPercent(adminDataItogTuran, elem, nonEmptyBuyers);
-                const totalOrdersTuran = calculateTotalOrders(adminDataItogTuran, elem, nonEmptyBuyers);
+                const totalCommissionTuran = calculateTotalCommission(filtereditogturan, elem, nonEmptyBuyers);
+                const totalCommissionpercentTuran = calculateTotalCommissionPercent(filtereditogturan, elem, nonEmptyBuyers);
+                const totalOrdersTuran = calculateTotalOrders(filtereditogturan, elem, nonEmptyBuyers);
 
                 const adminDataItogFenix = filterAdminDataItog(filtereditogfenix, nonEmptyBuyers, elem);
-                const totalCommissionFenix = calculateTotalCommission(adminDataItogFenix, elem, nonEmptyBuyers);
-                const totalCommissionpercentFenix = calculateTotalCommissionPercent(adminDataItogFenix, elem, nonEmptyBuyers);
-                const totalOrdersFenix = calculateTotalOrders(adminDataItogFenix, elem, nonEmptyBuyers);
+                const totalCommissionFenix = calculateTotalCommission(filtereditogfenix, elem, nonEmptyBuyers);
+                const totalCommissionpercentFenix = calculateTotalCommissionPercent(filtereditogfenix, elem, nonEmptyBuyers);
+                const totalOrdersFenix = calculateTotalOrders(filtereditogfenix, elem, nonEmptyBuyers);
 
                 const adminDataItogNewOtdel = filterAdminDataItog(filtereditognewotdel, nonEmptyBuyers, elem);
-                const totalCommissionNewOtdel = calculateTotalCommission(adminDataItogNewOtdel, elem, nonEmptyBuyers);
-                const totalCommissionpercentNewOtdel = calculateTotalCommissionPercent(adminDataItogNewOtdel, elem, nonEmptyBuyers);
-                const totalOrdersNewOtdel = calculateTotalOrders(adminDataItogNewOtdel, elem, nonEmptyBuyers);
+                const totalCommissionNewOtdel = calculateTotalCommission(filtereditognewotdel, elem, nonEmptyBuyers);
+                const totalCommissionpercentNewOtdel = calculateTotalCommissionPercent(filtereditognewotdel, elem, nonEmptyBuyers);
+                const totalOrdersNewOtdel = calculateTotalOrders(filtereditognewotdel, elem, nonEmptyBuyers);
 
                 const adminDataItogLiberty = filterAdminDataItog(filteredliberty, nonEmptyBuyers, elem);
-                const totalCommissionLiberty = calculateTotalCommission(adminDataItogLiberty, elem, nonEmptyBuyers);
-                const totalCommissionpercentLiberty = calculateTotalCommissionPercent(adminDataItogLiberty, elem, nonEmptyBuyers);
-                const totalOrdersLiberty = calculateTotalOrders(adminDataItogLiberty, elem, nonEmptyBuyers);
+                const totalCommissionLiberty = calculateTotalCommission(filteredliberty, elem, nonEmptyBuyers);
+                const totalCommissionpercentLiberty = calculateTotalCommissionPercent(filteredliberty, elem, nonEmptyBuyers);
+                const totalOrdersLiberty = calculateTotalOrders(filteredliberty, elem, nonEmptyBuyers);
 
                 const totalCommissionall = totalCommission + totalCommissionMonaco + totalCommissionTuran
                     + totalCommissionFenix + totalCommissionNewOtdel + totalCommissionLiberty
