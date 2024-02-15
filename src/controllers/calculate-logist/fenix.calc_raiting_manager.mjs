@@ -21,8 +21,8 @@ async function calculateAndCacheData() {
             if (nonEmptyLogist.length > 0) {
 
                 const adminDataItog = filterAdminDataItog(filtereditog, nonEmptyLogist, elem);
-                const totalCommission = calculateTotalCommission(adminDataItog, elem, nonEmptyLogist);
-                const totalOrders = calculateTotalOrders(adminDataItog, elem, nonEmptyLogist);
+                const totalCommission = calculateTotalCommission(filtereditog, elem, nonEmptyLogist);
+                const totalOrders = calculateTotalOrders(filtereditog, elem, nonEmptyLogist);
 
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyLogist.length).toFixed(0)).toFixed(0) / 10000).toFixed(1);
                 const yourCommission = ((totalCommission) * 0.15).toFixed(0);
