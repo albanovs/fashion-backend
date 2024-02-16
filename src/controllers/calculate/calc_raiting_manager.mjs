@@ -121,7 +121,7 @@ async function calculateAndCacheData() {
                     totalcom: totalCommissionall,
                     order: totalOrdersAll,
                     comission: parseFloat(yourCommission),
-                    comissonVM: parseFloat(commissionVM),
+                    comissionVM: parseFloat(commissionVM),
                     allCoeff: (parseFloat(coefficentOrder) + parseFloat(coefficent)).toFixed(1),
                     detail: detailInfo,
                 };
@@ -140,7 +140,7 @@ async function calculateAndCacheData() {
         let percentVM = 0
         result.forEach(elem => {
             if (!elem.curator.includes("ВМ")) {
-                percentVM += parseFloat(elem.comissonVM)
+                percentVM += parseFloat(elem.comissionVM)
             }
         })
         result.forEach(elem => {
@@ -205,13 +205,18 @@ cron.schedule('*/10 * * * *', async () => {
 
 updateCalcManager()
 
-simModelLier.on('change', updateCalcManager);
-LiderDataModel.on('change', updateCalcManager);
-MonacoDataModel.on('change', updateCalcManager);
-TuranDataModel.on('change', updateCalcManager);
-FenixDataModel.on('change', updateCalcManager);
-NewOtdelDataModel.on('change', updateCalcManager);
-LibertyDataModel.on('change', updateCalcManager);
-ManagerPersent.on('change', updateCalcManager);
+const models = [
+    simModelLier,
+    LiderDataModel,
+    MonacoDataModel,
+    TuranDataModel,
+    FenixDataModel,
+    NewOtdelDataModel,
+    LibertyDataModel,
+    ManagerPersent
+];
+models.forEach(model => {
+    model.on('change', updateCalcManager);
+});
 
 export default { calcRaintingManager, updateCalcManager };

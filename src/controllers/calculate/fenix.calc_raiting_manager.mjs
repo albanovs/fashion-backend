@@ -134,6 +134,18 @@ async function calculateAndCacheData() {
             elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
         });
 
+        let percentVM = 0
+        result.forEach(elem => {
+            if (!elem.curator.includes("ВМ")) {
+                percentVM += parseFloat(elem.comission)
+            }
+        })
+        result.forEach(elem => {
+            if (elem.curator.includes("ВМ")) {
+                elem.comission += parseFloat(percentVM)
+            }
+        })
+
         result.forEach(elem => {
             const selectedManager = managerperc.find(i => {
                 const currentDate = new Date();
@@ -149,14 +161,6 @@ async function calculateAndCacheData() {
                 elem.for_withdrawal = elem.comission - parseFloat(allpercentsum);
             }
         });
-
-        let percentVM = 0
-        result.forEach(elem => percentVM += parseFloat(elem.comissionVM))
-        result.forEach(elem => {
-            if (elem.curator.includes("ВМ")) {
-                elem.comission = percentVM
-            }
-        })
 
         return result;
 
