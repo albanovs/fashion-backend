@@ -120,8 +120,8 @@ async function calculateAndCacheData() {
                     buyerLength: nonEmptyBuyers.length,
                     totalcom: totalCommissionall,
                     order: totalOrdersAll,
-                    comission: yourCommission,
-                    comissonVM: commissionVM,
+                    comission: parseFloat(yourCommission),
+                    comissonVM: parseFloat(commissionVM),
                     allCoeff: (parseFloat(coefficentOrder) + parseFloat(coefficent)).toFixed(1),
                     detail: detailInfo,
                 };
