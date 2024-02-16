@@ -30,25 +30,20 @@ const getCurator = async () => {
         const currentMonth = currentDate.getMonth();
         const currentYear = currentDate.getFullYear();
 
-        // Получаем первый день текущего месяца
         const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-        // Получаем последний день текущего месяца
         const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
         for (const manager of managers) {
             if (manager.curator) {
-                // Проверяем, есть ли уже запись для данного куратора в текущем месяце
                 const existingData = await ManagerPersent.findOne({
-                    datas: { $gte: firstDayOfMonth, $lt: lastDayOfMonth },
+                    datas: {
+                        $elemMatch: { $gte: firstDayOfMonth, $lt: lastDayOfMonth }
+                    },
                     manager: manager.curator,
                 });
-
-                // Если запись уже существует, пропускаем этого куратора
                 if (existingData) {
                     continue;
                 }
-
-                // Создаем новую запись только если записей для куратора в текущем месяце нет
                 const newManagerPersent = new ManagerPersent({
                     datas: currentDate,
                     manager: manager.curator,
