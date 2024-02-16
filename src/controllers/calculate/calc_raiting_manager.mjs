@@ -145,7 +145,7 @@ async function calculateAndCacheData() {
         })
         result.forEach(elem => {
             if (elem.curator.includes("ВМ")) {
-                elem.comission += percentVM
+                elem.comission += parseFloat(percentVM)
             }
         })
 
