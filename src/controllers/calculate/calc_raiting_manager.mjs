@@ -138,10 +138,14 @@ async function calculateAndCacheData() {
         });
 
         let percentVM = 0
-        result.forEach(elem => percentVM += parseFloat(elem.comissonVM))
+        result.forEach(elem => {
+            if (!elem.curator.includes("ВМ")) {
+                percentVM += parseFloat(elem.comissonVM)
+            }
+        })
         result.forEach(elem => {
             if (elem.curator.includes("ВМ")) {
-                elem.comission = percentVM
+                elem.comission += percentVM
             }
         })
 
