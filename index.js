@@ -71,11 +71,13 @@ import fullfilment4 from './src/routes/fullfilment/fullfilment-4.mjs'
 import getManagers from './src/routes/managers/getmanager.mjs'
 
 import itotdel from './src/routes/it/simcard.mjs'
+import bot from './src/controllers/telegram-bot/schet-faktura.mjs';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json())
+bot.launch()
 
 connect(); // Подключение к базе данных
 

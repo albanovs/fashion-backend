@@ -13,3 +13,4 @@ const schetfakturaModel = mongoose.model('schetfaktura', schetFacturaSchema);
 
 
 export default schetfakturaModel;
+

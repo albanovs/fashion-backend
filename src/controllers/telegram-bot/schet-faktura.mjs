@@ -1,27 +1,82 @@
-// import { Telegraf } from 'telegraf'
-import TelegramBot from 'node-telegram-bot-api'
+import { Telegraf, Markup } from 'telegraf';
 
-const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY"
-const bot = new TelegramBot(token, { polling: true });
+const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY";
+const bot = new Telegraf(token);
 
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Привет! Чем могу помочь?");
-    // Отправка клавиатуры с выбором действий
-    bot.sendMessage(msg.chat.id, "Выберите действие:", {
-        reply_markup: {
-            keyboard: [
-                [{ text: "Создать счет-фактуру" }],
-                [{ text: "Посмотреть статистику" }]
-            ],
-            resize_keyboard: true
+const state = {};
+
+bot.start((ctx) => {
+    ctx.reply(
+        "Привет! Внизу представлены команды для управления ботом:\n\n" +
+        "/command1 - для создания нового счета-фактуры\n\n" +
+        "/command2 - для изменения или удаления уже созданных счетов-фактур\n\n" +
+        "/command3 - для просмотра статистики (количество заказов, коэффициент, комиссия и т.д.)\n\n" +
+        "/command4 - для просмотра ежедневных отчетов."
+    );
+});
+
+// Объект для хранения состояния пользователя
+bot.command('command1', (ctx) => {
+    state[ctx.from.id] = {}; // Инициализация состояния для данного пользователя
+    askManager(ctx);
+});
+
+function askManager(ctx) {
+    ctx.reply("Введите имя менеджера:");
+}
+
+function askAdmin(ctx) {
+    ctx.reply("Введите имя админа:");
+}
+
+function askStatus(ctx) {
+    ctx.reply("Введите статус:");
+}
+
+function askFIO(ctx) {
+    ctx.reply("Введите ФИО клиента:");
+}
+
+function askCity(ctx) {
+    ctx.reply("Введите город:");
+}
+
+function askBank(ctx) {
+    ctx.reply("Введите банк:");
+}
+
+// Обработчики действий пользователя
+bot.on('text', (ctx) => {
+    const userId = ctx.from.id;
+    const currentState = state[userId];
+
+    if (currentState) {
+        // Обработка ответа на вопрос
+        if (!currentState.manager) {
+            currentState.manager = ctx.message.text;
+            askAdmin(ctx);
+        } else if (!currentState.admin) {
+            currentState.admin = ctx.message.text;
+            askStatus(ctx);
+        } else if (!currentState.status) {
+            currentState.status = ctx.message.text;
+            askFIO(ctx);
+        } else if (!currentState.fio) {
+            currentState.fio = ctx.message.text;
+            askCity(ctx);
+        } else if (!currentState.city) {
+            currentState.city = ctx.message.text;
+            askBank(ctx);
+        } else if (!currentState.bank) {
+            currentState.bank = ctx.message.text;
+            // Вы можете выполнить здесь какую-то логику с полученными данными
+            // Например, сохранить в базу данных и т.д.
+            // После сохранения выведите результат
+            const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
+            ctx.reply(resultMessage);
+            delete state[userId]; // Очистка состояния для данного пользователя
         }
-    });
+    }
 });
 
-bot.onText(/Создать счет-фактуру/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Вы выбрали создать счет-фактуру. Далее можно реализовать соответствующую логику.");
-});
-
-bot.onText(/Посмотреть статистику/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Вы выбрали посмотреть статистику. Далее можно реализовать соответствующую логику.");
-});
+export default bot
