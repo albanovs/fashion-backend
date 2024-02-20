@@ -29,7 +29,7 @@ function askAdmin(ctx) {
 }
 
 function askStatus(ctx) {
-    ctx.reply("Введите статус или выберите из списка:", Markup.inlineKeyboard([
+    ctx.reply("Выберите статус:", Markup.inlineKeyboard([
         Markup.button.callback('Банк', 'select_status_bank'),
         Markup.button.callback('Карта', 'select_status_card')
     ]));
@@ -44,15 +44,11 @@ function askCity(ctx) {
 }
 
 function askBank(ctx) {
-    ctx.reply("Введите банк или выберите из списка:", Markup.inlineKeyboard([
-        Markup.button.callback('Байкай банк', 'select_bank_baikay'),
-        Markup.button.callback('Оптима банк', 'select_bank_optima'),
-        Markup.button.callback('Дос-Кредо Банк', 'select_bank_doskredo'),
-        Markup.button.callback('Компаньон Банк', 'select_bank_companion'),
-        Markup.button.callback('Capital Bank', 'select_bank_capital'),
-        Markup.button.callback('Элсом', 'select_bank_elsom'),
-        Markup.button.callback('Финанс Кредит банк', 'select_bank_financecredit'),
-        Markup.button.callback('Кыргызстан банк', 'select_bank_kyrgyzstan')
+    ctx.reply("Выберите банк из списка:", Markup.inlineKeyboard([
+        [Markup.button.callback('Байкай банк', 'select_bank_baikay'), Markup.button.callback('Оптима банк', 'select_bank_optima')],
+        [Markup.button.callback('Дос-Кредо Банк', 'select_bank_doskredo'), Markup.button.callback('Компаньон Банк', 'select_bank_companion')],
+        [Markup.button.callback('Capital Bank', 'select_bank_capital'), Markup.button.callback('Элсом', 'select_bank_elsom')],
+        [Markup.button.callback('Финанс Кредит банк', 'select_bank_financecredit'), Markup.button.callback('Кыргызстан банк', 'select_bank_kyrgyzstan')]
     ]));
 }
 
@@ -101,28 +97,6 @@ bot.action('delete_invoice', (ctx) => {
 bot.action('fill_positions', (ctx) => {
     // Ваш код для заполнения позиций
     ctx.reply('Заполняем позиции.');
-});
-
-bot.action('select_bank_baikay', (ctx) => {
-    state[ctx.from.id].bank = 'Байкай банк';
-    askStatus(ctx);
-});
-
-bot.action('select_bank_optima', (ctx) => {
-    state[ctx.from.id].bank = 'Оптима банк';
-    askStatus(ctx);
-});
-
-// Повторите это для всех вариантов банков
-
-bot.action('select_status_bank', (ctx) => {
-    state[ctx.from.id].status = 'Банк';
-    askFIO(ctx);
-});
-
-bot.action('select_status_card', (ctx) => {
-    state[ctx.from.id].status = 'Карта';
-    askFIO(ctx);
 });
 
 export default bot
