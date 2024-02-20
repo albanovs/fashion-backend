@@ -9,7 +9,7 @@ import cron from 'node-cron'
 import {
     calculateTotalCommission,
     calculateTotalCommissionPercent,
-    calculateTotalOrders, isCurrentMonthAndYear,
+    calculateTotalOrders, isCurrentMonthAndYear, percentVM
 } from './utils/utils.mjs';
 import LibertyDataModel from '../../models/liberty/libertyData.mjs';
 import { calculateMatchesLogist, calculateSumComPersent100 } from './utils/detail-utils.mjs'
@@ -73,7 +73,7 @@ async function calculateAndCacheData() {
                     + totalCommissionpercentTuran + totalCommissionpercentFenix + totalCommissionpercentNewOtdel + totalCommissionpercentLiberty
 
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
-                const yourCommission = parseFloat((totalCommissionpercentAll * 0.07)).toFixed(0);
+                const yourCommission = percentVM(elem.curator, totalCommissionpercentAll);
                 const commissionVM = (parseFloat(totalCommissionpercentAll) * 0.03).toFixed(0);
                 const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel + totalOrdersLiberty
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
@@ -137,15 +137,15 @@ async function calculateAndCacheData() {
             elem.percentItog = ((elem.totalcom / totalComSum) * 100).toFixed(0);
         });
 
-        let percentVM = 0
+        let percentVMsun = 0
         result.forEach(elem => {
             if (!elem.curator.includes("ВМ")) {
-                percentVM += parseFloat(elem.comissionVM)
+                percentVMsun += parseFloat(elem.comissionVM)
             }
         })
         result.forEach(elem => {
             if (elem.curator.includes("ВМ")) {
-                elem.comission += parseFloat(percentVM)
+                elem.comission += parseFloat(percentVMsun)
             }
         })
 
@@ -153,8 +153,7 @@ async function calculateAndCacheData() {
             const selectedManager = managerperc.find(i => {
                 const currentDate = new Date();
                 const managerDate = new Date(i.datas);
-                return managerDate.getDate() === currentDate.getDate() &&
-                    managerDate.getMonth() === currentDate.getMonth() &&
+                return managerDate.getMonth() === currentDate.getMonth() &&
                     managerDate.getFullYear() === currentDate.getFullYear() &&
                     i.manager === elem.curator;
             });
