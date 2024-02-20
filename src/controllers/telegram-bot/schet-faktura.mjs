@@ -74,7 +74,8 @@ bot.on('text', (ctx) => {
             currentState.city = ctx.message.text;
             askBank(ctx);
         } else if (!currentState.bank) {
-            finishSurvey(ctx)
+            // Все параметры опроса заданы, переходим к завершению опроса
+            finishSurvey(ctx);
         }
     }
 });
@@ -90,43 +91,67 @@ bot.action('fill_positions', (ctx) => {
 });
 
 bot.action('select_bank_baikay', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Байкай банк';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_optima', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Оптима банк';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_companion', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Компаньон банк';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_doskredo', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Дос Кредо банк';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_capital', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Capital Bank';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_financecredit', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Финанс Кредит банк';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_elsom', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Элсом';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_kyrgyzstan', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     state[ctx.from.id].bank = 'Кыргызстан банк';
-    finishSurvey(ctx)
+    finishSurvey(ctx);
 });
 
 
@@ -135,28 +160,6 @@ function finishSurvey(ctx) {
     const currentState = state[userId];
 
     if (currentState) {
-        // Удаляем предыдущие сообщения
-        ctx.deleteMessage(ctx.message.message_id - 1);
-        ctx.deleteMessage(ctx.message.message_id - 2);
-        ctx.deleteMessage(ctx.message.message_id - 3);
-        ctx.deleteMessage(ctx.message.message_id - 4);
-        ctx.deleteMessage(ctx.message.message_id - 5);
-        ctx.deleteMessage(ctx.message.message_id - 6);
-
-        // Удаляем клавиатуру с выбором банка (при необходимости)
-        if (currentState.bank) {
-            ctx.editMessageReplyMarkup({
-                inline_keyboard: []
-            });
-        }
-
-        // Удаляем клавиатуру с выбором статуса (при необходимости)
-        if (currentState.status) {
-            ctx.editMessageReplyMarkup({
-                inline_keyboard: []
-            });
-        }
-
         // Выводим результаты опроса
         const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
         const keyboard = Markup.inlineKeyboard([
