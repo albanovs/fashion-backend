@@ -1,6 +1,6 @@
 import { Telegraf, Markup } from 'telegraf';
 
-const token = "YOUR_BOT_TOKEN";
+const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY";
 const bot = new Telegraf(token);
 
 const state = {};
@@ -44,7 +44,6 @@ function askBank(ctx) {
     ctx.reply("Введите банк:");
 }
 
-// Обработчики действий пользователя
 bot.on('text', (ctx) => {
     const userId = ctx.from.id;
     const currentState = state[userId];
@@ -72,13 +71,11 @@ bot.on('text', (ctx) => {
             // Например, сохранить в базу данных и т.д.
             // После сохранения выведите результат
             const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
-
             const keyboard = Markup.inlineKeyboard([
                 Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
                 Markup.button.callback('Заполнить позиции', 'fill_positions')
             ]);
-
-            ctx.replyWithMarkdown(resultMessage, keyboard);
+            ctx.reply(resultMessage, keyboard);
             delete state[userId]; // Очистка состояния для данного пользователя
         }
     }
