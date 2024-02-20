@@ -99,4 +99,72 @@ bot.action('fill_positions', (ctx) => {
     ctx.reply('Заполняем позиции.');
 });
 
+bot.action('select_bank_baikay', (ctx) => {
+    state[ctx.from.id].bank = 'Байкай банк';
+    finishSurvey(ctx)
+});
+
+bot.action('select_bank_optima', (ctx) => {
+    state[ctx.from.id].bank = 'Оптима банк';
+    finishSurvey(ctx)
+});
+
+bot.action('select_bank_companion', (ctx) => {
+    state[ctx.from.id].bank = 'Компаньон банк';
+    finishSurvey(ctx)
+});
+
+bot.action('select_bank_doskredo', (ctx) => {
+    state[ctx.from.id].bank = 'Дос Кредо банк';
+    finishSurvey(ctx)
+});
+
+bot.action('select_bank_capital', (ctx) => {
+    state[ctx.from.id].bank = 'Capital Bank';
+    finishSurvey(ctx)
+});
+
+bot.action('select_bank_financecredit', (ctx) => {
+    state[ctx.from.id].bank = 'Финанс Кредит банк';
+    finishSurvey(ctx)
+});
+
+bot.action('select_bank_elsom', (ctx) => {
+    state[ctx.from.id].bank = 'Элсом';
+    finishSurvey(ctx)
+});
+
+bot.action('select_bank_kyrgyzstan', (ctx) => {
+    state[ctx.from.id].bank = 'Кыргызстан банк';
+    finishSurvey(ctx)
+});
+
+
+function finishSurvey(ctx) {
+    const userId = ctx.from.id;
+    const currentState = state[userId];
+
+    if (currentState) {
+        // Выводим результаты опроса
+        const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
+        const keyboard = Markup.inlineKeyboard([
+            Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
+            Markup.button.callback('Заполнить позиции', 'fill_positions')
+        ]);
+        ctx.reply(resultMessage, keyboard);
+        delete state[userId]; // Очистка состояния для данного пользователя
+    }
+}
+
+
+bot.action('select_status_bank', (ctx) => {
+    state[ctx.from.id].status = 'Банк';
+    askFIO(ctx); // Переходим к следующему этапу опроса
+});
+
+bot.action('select_status_card', (ctx) => {
+    state[ctx.from.id].status = 'Карта';
+    askFIO(ctx); // Переходим к следующему этапу опроса
+});
+
 export default bot
