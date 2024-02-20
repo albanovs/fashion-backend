@@ -1,6 +1,6 @@
 import { Telegraf, Markup } from 'telegraf';
 
-const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY";
+const token = "YOUR_BOT_TOKEN";
 const bot = new Telegraf(token);
 
 const state = {};
@@ -15,7 +15,6 @@ bot.start((ctx) => {
     );
 });
 
-// Объект для хранения состояния пользователя
 bot.command('command1', (ctx) => {
     state[ctx.from.id] = {}; // Инициализация состояния для данного пользователя
     askManager(ctx);
@@ -73,10 +72,26 @@ bot.on('text', (ctx) => {
             // Например, сохранить в базу данных и т.д.
             // После сохранения выведите результат
             const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
-            ctx.reply(resultMessage);
+
+            const keyboard = Markup.inlineKeyboard([
+                Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
+                Markup.button.callback('Заполнить позиции', 'fill_positions')
+            ]);
+
+            ctx.replyWithMarkdown(resultMessage, keyboard);
             delete state[userId]; // Очистка состояния для данного пользователя
         }
     }
+});
+
+bot.action('delete_invoice', (ctx) => {
+    // Ваш код для удаления счета-фактуры
+    ctx.reply('Счет-фактура удалена.');
+});
+
+bot.action('fill_positions', (ctx) => {
+    // Ваш код для заполнения позиций
+    ctx.reply('Заполняем позиции.');
 });
 
 export default bot
