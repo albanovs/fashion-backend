@@ -74,36 +74,7 @@ bot.on('text', (ctx) => {
             currentState.city = ctx.message.text;
             askBank(ctx);
         } else if (!currentState.bank) {
-            // Удаляем предыдущие сообщения
-            ctx.deleteMessage(ctx.message.message_id - 1);
-            ctx.deleteMessage(ctx.message.message_id - 2);
-            ctx.deleteMessage(ctx.message.message_id - 3);
-            ctx.deleteMessage(ctx.message.message_id - 4);
-            ctx.deleteMessage(ctx.message.message_id - 5);
-            ctx.deleteMessage(ctx.message.message_id - 6);
-
-            // Выводим результаты опроса
-            const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
-            const keyboard = Markup.inlineKeyboard([
-                Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
-                Markup.button.callback('Заполнить позиции', 'fill_positions')
-            ]);
-            ctx.reply(resultMessage, keyboard);
-            delete state[userId]; // Очистка состояния для данного пользователя
-
-            // Удаляем клавиатуру с выбором банка (при необходимости)
-            if (currentState.bank) {
-                ctx.editMessageReplyMarkup({
-                    inline_keyboard: []
-                });
-            }
-
-            // Удаляем клавиатуру с выбором статуса (при необходимости)
-            if (currentState.status) {
-                ctx.editMessageReplyMarkup({
-                    inline_keyboard: []
-                });
-            }
+            finishSurvey(ctx)
         }
     }
 });
@@ -172,15 +143,6 @@ function finishSurvey(ctx) {
         ctx.deleteMessage(ctx.message.message_id - 5);
         ctx.deleteMessage(ctx.message.message_id - 6);
 
-        // Выводим результаты опроса
-        const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
-        const keyboard = Markup.inlineKeyboard([
-            Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
-            Markup.button.callback('Заполнить позиции', 'fill_positions')
-        ]);
-        ctx.reply(resultMessage, keyboard);
-        delete state[userId]; // Очистка состояния для данного пользователя
-
         // Удаляем клавиатуру с выбором банка (при необходимости)
         if (currentState.bank) {
             ctx.editMessageReplyMarkup({
@@ -194,6 +156,15 @@ function finishSurvey(ctx) {
                 inline_keyboard: []
             });
         }
+
+        // Выводим результаты опроса
+        const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
+        const keyboard = Markup.inlineKeyboard([
+            Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
+            Markup.button.callback('Заполнить позиции', 'fill_positions')
+        ]);
+        ctx.reply(resultMessage, keyboard);
+        delete state[userId]; // Очистка состояния для данного пользователя
     }
 }
 
