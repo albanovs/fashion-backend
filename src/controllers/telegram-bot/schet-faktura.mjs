@@ -73,18 +73,6 @@ bot.on('text', (ctx) => {
         } else if (!currentState.city) {
             currentState.city = ctx.message.text;
             askBank(ctx);
-        } else if (!currentState.bank) {
-            currentState.bank = ctx.message.text;
-            // Вы можете выполнить здесь какую-то логику с полученными данными
-            // Например, сохранить в базу данных и т.д.
-            // После сохранения выведите результат
-            const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
-            const keyboard = Markup.inlineKeyboard([
-                Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
-                Markup.button.callback('Заполнить позиции', 'fill_positions')
-            ]);
-            ctx.reply(resultMessage, keyboard);
-            delete state[userId]; // Очистка состояния для данного пользователя
         }
     }
 });
@@ -145,6 +133,14 @@ function finishSurvey(ctx) {
     const currentState = state[userId];
 
     if (currentState) {
+        // Удаляем предыдущие сообщения
+        ctx.deleteMessage(ctx.message.message_id - 1);
+        ctx.deleteMessage(ctx.message.message_id - 2);
+        ctx.deleteMessage(ctx.message.message_id - 3);
+        ctx.deleteMessage(ctx.message.message_id - 4);
+        ctx.deleteMessage(ctx.message.message_id - 5);
+        ctx.deleteMessage(ctx.message.message_id - 6);
+
         // Выводим результаты опроса
         const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
         const keyboard = Markup.inlineKeyboard([
@@ -155,6 +151,7 @@ function finishSurvey(ctx) {
         delete state[userId]; // Очистка состояния для данного пользователя
     }
 }
+
 
 
 bot.action('select_status_bank', (ctx) => {
