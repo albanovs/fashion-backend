@@ -166,13 +166,16 @@ function finishSurvey(ctx) {
             Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
             Markup.button.callback('Заполнить позиции', 'fill_positions')
         ]);
-        ctx.reply(resultMessage, keyboard);
+        ctx.reply(resultMessage, keyboard).then((message) => {
+            // Сохраняем идентификатор сообщения с результатами опроса
+            currentState.resultMessageId = message.message_id;
+        }).catch((error) => {
+            console.error('Ошибка при отправке сообщения с результатами опроса:', error);
+        });
+
         delete state[userId]; // Очистка состояния для данного пользователя
     }
 }
-
-
-
 
 bot.action('select_status_bank', (ctx) => {
     state[ctx.from.id].status = 'Банк';
@@ -183,5 +186,6 @@ bot.action('select_status_card', (ctx) => {
     state[ctx.from.id].status = 'Карта';
     askFIO(ctx); // Переходим к следующему этапу опроса
 });
+
 
 export default bot
