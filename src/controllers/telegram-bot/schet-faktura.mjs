@@ -1,11 +1,90 @@
 import { Telegraf, Markup } from 'telegraf';
+import SimModelLider from '../../models/simcard/simlider.mjs';
+import SimModelFenix from '../../models/simcard/simfenix.mjs';
+import SimModelLiberty from '../../models/simcard/simliberty.mjs';
+import SimModelMonaco from '../../models/simcard/simmonaco.mjs';
+import SimModelNewOtdel from '../../models/simcard/simnewotdel.mjs';
+import SimModelTuran from '../../models/simcard/simturan.mjs';
+
+import SimModelLiderLog from '../../models/simcardlogist/liderlogist.mjs';
+import SimModelFenixLog from '../../models/simcardlogist/fenixlogist.mjs';
+import SimModelLibertyLog from '../../models/simcardlogist/libertylogist.mjs';
+import SimModelMonacoLog from '../../models/simcardlogist/monacologist.mjs';
+import SimModelNewOtdelLog from '../../models/simcardlogist/newotdellogist.mjs';
+import SimModelTuranLog from '../../models/simcardlogist/turanlogist.mjs';
 
 const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY";
 const bot = new Telegraf(token);
 
 const state = {};
+const authorizedUsers = new Map();
+const simModels = [
+    SimModelLider,
+    SimModelFenix,
+    SimModelLiberty,
+    SimModelMonaco,
+    SimModelNewOtdel,
+    SimModelTuran
+];
+
+async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
+    try {
+        for (const SimModel of simModels) {
+            const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
+            if (result) {
+                const slot = result.slot.find(elem => elem.number === phoneNumber);
+                if (slot) {
+                    let managerName = slot.buyer;
+                    if (SimModel === SimModelLider) {
+                        const logistData = await SimModelLiderLog.find({}).exec();
+                        if (logistData && logistData.length > 0) {
+                            const logistValues = [];
+
+                            for (const entry of logistData) {
+                                if (entry.slot && Array.isArray(entry.slot)) {
+                                    for (const slotItem of entry.slot) {
+                                        if (slotItem.logist !== '') {
+                                            logistValues.push(slotItem.logist);
+                                        }
+                                    }
+                                }
+                            }
+                            return { isPhoneNumberRegistered: true, managerName, logistValues };
+                        }
+                    }
+                }
+            }
+        }
+        return { isPhoneNumberRegistered: false, managerName: null };
+    } catch (error) {
+        console.error('Ошибка при поиске номера в базе данных:', error);
+        return { isPhoneNumberRegistered: false, managerName: null };
+    }
+}
 
 bot.start((ctx) => {
+    ctx.reply("Пожалуйста, отправьте свой номер телефона.", Markup.keyboard([
+        Markup.button.contactRequest('Отправить номер телефона')
+    ]).resize());
+});
+
+bot.on('contact', async (ctx) => {
+    const userId = ctx.from.id;
+    const phoneNumber = ctx.message.contact.phone_number;
+    console.log(`Получен номер телефона: ${phoneNumber}`);
+    const { isPhoneNumberRegistered, managerName, logistValues } = await checkPhoneNumberAndManagerInDatabase(phoneNumber);
+    if (isPhoneNumberRegistered) {
+        authorizedUsers.set(userId, { authorized: true, manager: managerName, logist: logistValues });
+        if (managerName) {
+            console.log(`Имя менеджера: ${managerName}`)
+            sendCommandsMessage(ctx); // Отправляем сообщения о командах
+        }
+    } else {
+        ctx.reply('Извините, у вас нет доступа к боту.');
+    }
+});
+
+function sendCommandsMessage(ctx) {
     ctx.reply(
         "Привет! Внизу представлены команды для управления ботом:\n\n" +
         "/command1 - для создания нового счета-фактуры\n\n" +
@@ -13,20 +92,39 @@ bot.start((ctx) => {
         "/command3 - для просмотра статистики (количество заказов, коэффициент, комиссия и т.д.)\n\n" +
         "/command4 - для просмотра ежедневных отчетов."
     );
-});
+}
 
 bot.command('command1', (ctx) => {
-    state[ctx.from.id] = {}; // Инициализация состояния для данного пользователя
-    askManager(ctx);
+    state[ctx.from.id] = {};
+    const userId = ctx.from.id;
+
+    const userStatus = authorizedUsers.get(userId);
+    if (userStatus && userStatus.authorized) {
+        const { logist } = userStatus;
+        askAdmin(ctx, logist);
+    } else {
+        ctx.reply('Пожалуйста, авторизуйтесь, отправив свой номер телефона.');
+    }
 });
 
-function askManager(ctx) {
-    ctx.reply("Введите имя менеджера:");
+function askAdmin(ctx, logistValues) {
+    const inlineKeyboard = logistValues.map(admin => [Markup.button.callback(admin, `select_admin_${admin}`)]);
+    const replyMarkup = Markup.inlineKeyboard(inlineKeyboard);
+    ctx.reply("Выберите админа:", replyMarkup);
 }
 
-function askAdmin(ctx) {
-    ctx.reply("Введите имя админа:");
-}
+bot.action(/select_admin_/, (ctx) => {
+    const adminName = ctx.match.input.split('_')[2];
+    const userId = ctx.from.id;
+    const currentState = state[userId];
+    if (currentState) {
+        currentState.admin = adminName;
+        askStatus(ctx);
+    } else {
+        ctx.reply('Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.');
+    }
+});
+
 
 function askStatus(ctx) {
     ctx.reply("Выберите статус:", Markup.inlineKeyboard([
@@ -57,14 +155,7 @@ bot.on('text', (ctx) => {
     const currentState = state[userId];
 
     if (currentState) {
-        // Обработка ответа на вопрос
-        if (!currentState.manager) {
-            currentState.manager = ctx.message.text;
-            askAdmin(ctx);
-        } else if (!currentState.admin) {
-            currentState.admin = ctx.message.text;
-            askStatus(ctx);
-        } else if (!currentState.status) {
+        if (!currentState.status) {
             currentState.status = ctx.message.text;
             askFIO(ctx);
         } else if (!currentState.fio) {
@@ -74,19 +165,16 @@ bot.on('text', (ctx) => {
             currentState.city = ctx.message.text;
             askBank(ctx);
         } else if (!currentState.bank) {
-            // Все параметры опроса заданы, переходим к завершению опроса
             finishSurvey(ctx);
         }
     }
 });
 
 bot.action('delete_invoice', (ctx) => {
-    // Ваш код для удаления счета-фактуры
     ctx.reply('Счет-фактура удалена.');
 });
 
 bot.action('fill_positions', (ctx) => {
-    // Ваш код для заполнения позиций
     ctx.reply('Заполняем позиции.');
 });
 
@@ -154,38 +242,48 @@ bot.action('select_bank_kyrgyzstan', (ctx) => {
     finishSurvey(ctx);
 });
 
+bot.action('select_status_bank', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
+    state[ctx.from.id].status = 'Банк';
+    askFIO(ctx);
+});
+
+bot.action('select_status_card', (ctx) => {
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
+    state[ctx.from.id].status = 'Карта';
+    askFIO(ctx);
+});
+
 
 function finishSurvey(ctx) {
     const userId = ctx.from.id;
     const currentState = state[userId];
 
     if (currentState) {
-        // Выводим результаты опроса
-        const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
-        const keyboard = Markup.inlineKeyboard([
-            Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
-            Markup.button.callback('Заполнить позиции', 'fill_positions')
-        ]);
-        ctx.reply(resultMessage, keyboard).then((message) => {
-            // Сохраняем идентификатор сообщения с результатами опроса
-            currentState.resultMessageId = message.message_id;
-        }).catch((error) => {
-            console.error('Ошибка при отправке сообщения с результатами опроса:', error);
-        });
+        const userStatus = authorizedUsers.get(userId);
+        if (userStatus && userStatus.authorized) {
+            currentState.manager = userStatus.manager;
+            const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
+            const keyboard = Markup.inlineKeyboard([
+                Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
+                Markup.button.callback('Заполнить позиции', 'fill_positions')
+            ]);
+            ctx.reply(resultMessage, keyboard).then((message) => {
+                currentState.resultMessageId = message.message_id;
+            }).catch((error) => {
+                console.error('Ошибка при отправке сообщения с результатами опроса:', error);
+            });
 
-        delete state[userId]; // Очистка состояния для данного пользователя
+            delete state[userId];
+        } else {
+            ctx.reply('Извините, у вас нет доступа к боту.');
+        }
     }
 }
-
-bot.action('select_status_bank', (ctx) => {
-    state[ctx.from.id].status = 'Банк';
-    askFIO(ctx); // Переходим к следующему этапу опроса
-});
-
-bot.action('select_status_card', (ctx) => {
-    state[ctx.from.id].status = 'Карта';
-    askFIO(ctx); // Переходим к следующему этапу опроса
-});
 
 
 export default bot
