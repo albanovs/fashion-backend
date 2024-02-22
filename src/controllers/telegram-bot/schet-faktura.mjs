@@ -1,4 +1,5 @@
 import { Telegraf, Markup } from 'telegraf';
+import cron from 'node-cron'
 import SimModelLider from '../../models/simcard/simlider.mjs';
 import SimModelFenix from '../../models/simcard/simfenix.mjs';
 import SimModelLiberty from '../../models/simcard/simliberty.mjs';
@@ -18,6 +19,8 @@ const bot = new Telegraf(token);
 
 const state = {};
 const authorizedUsers = new Map();
+let allSimData = []
+
 const simModels = [
     SimModelLider,
     SimModelFenix,
@@ -27,19 +30,75 @@ const simModels = [
     SimModelTuran
 ];
 
+async function fetchAllDataFromSimModels() {
+    try {
+        const allData = [];
+        for (const SimModel of simModels) {
+            const data = await SimModel.find({}).exec();
+            allData.push({ model: SimModel, data });
+        }
+        return allData;
+    } catch (error) {
+        console.error('Ошибка при получении данных из моделей SIM-карт:', error);
+        return [];
+    }
+}
+async function updateSimDataDaily() {
+    allSimData = await fetchAllDataFromSimModels();
+}
+cron.schedule('0 0 * * *', async () => {
+    await updateSimDataDaily();
+});
+
+updateSimDataDaily()
+
+// async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
+//     try {
+//         for (const SimModel of simModels) {
+//             const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
+//             if (result) {
+//                 const slot = result.slot.find(elem => elem.number === phoneNumber);
+//                 if (slot) {
+//                     let managerName = slot.buyer;
+//                     if (SimModel === SimModelLider) {
+//                         const logistData = await SimModelLiderLog.find({}).exec();
+//                         if (logistData && logistData.length > 0) {
+//                             const logistValues = [];
+
+//                             for (const entry of logistData) {
+//                                 if (entry.slot && Array.isArray(entry.slot)) {
+//                                     for (const slotItem of entry.slot) {
+//                                         if (slotItem.logist !== '') {
+//                                             logistValues.push(slotItem.logist);
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//                             return { isPhoneNumberRegistered: true, managerName, logistValues };
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         return { isPhoneNumberRegistered: false, managerName: null };
+//     } catch (error) {
+//         console.error('Ошибка при поиске номера в базе данных:', error);
+//         return { isPhoneNumberRegistered: false, managerName: null };
+//     }
+// }
+
 async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
     try {
-        for (const SimModel of simModels) {
-            const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
+        for (const { model, data } of allSimData) {
+            const result = data.find(item => item.slot.some(slot => slot.number === phoneNumber));
             if (result) {
                 const slot = result.slot.find(elem => elem.number === phoneNumber);
                 if (slot) {
                     let managerName = slot.buyer;
-                    if (SimModel === SimModelLider) {
+                    if (model === SimModelLider) {
                         const logistData = await SimModelLiderLog.find({}).exec();
                         if (logistData && logistData.length > 0) {
                             const logistValues = [];
-
                             for (const entry of logistData) {
                                 if (entry.slot && Array.isArray(entry.slot)) {
                                     for (const slotItem of entry.slot) {
@@ -57,10 +116,11 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
         }
         return { isPhoneNumberRegistered: false, managerName: null };
     } catch (error) {
-        console.error('Ошибка при поиске номера в базе данных:', error);
+        console.error('Ошибка при проверке номера телефона и менеджера в базе данных:', error);
         return { isPhoneNumberRegistered: false, managerName: null };
     }
 }
+
 
 bot.start((ctx) => {
     ctx.reply("Пожалуйста, отправьте свой номер телефона.", Markup.keyboard([
@@ -81,6 +141,7 @@ bot.on('contact', async (ctx) => {
         }
     } else {
         ctx.reply('Извините, у вас нет доступа к боту.');
+        console.log(allSimData);
     }
 });
 
@@ -108,7 +169,7 @@ bot.command('command1', (ctx) => {
 });
 
 function askAdmin(ctx, logistValues) {
-    const inlineKeyboard = logistValues.map(admin => [Markup.button.callback(admin, `select_admin_${admin}`)]);
+    const inlineKeyboard = logistValues.map(admin => [Markup.button.callback(admin, admin)]);
     const replyMarkup = Markup.inlineKeyboard(inlineKeyboard);
     ctx.reply("Выберите админа:", replyMarkup);
 }
