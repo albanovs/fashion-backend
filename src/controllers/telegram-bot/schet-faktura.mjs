@@ -121,7 +121,6 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
     }
 }
 
-
 bot.start((ctx) => {
     ctx.reply("Пожалуйста, отправьте свой номер телефона.", Markup.keyboard([
         Markup.button.contactRequest('Отправить номер телефона')
@@ -141,7 +140,6 @@ bot.on('contact', async (ctx) => {
         }
     } else {
         ctx.reply('Извините, у вас нет доступа к боту.');
-        console.log(allSimData);
     }
 });
 
@@ -169,10 +167,31 @@ bot.command('command1', (ctx) => {
 });
 
 function askAdmin(ctx, logistValues) {
-    const inlineKeyboard = logistValues.map(admin => [Markup.button.callback(admin, admin)]);
+    const inlineKeyboard = [];
+    let row = [];
+
+    logistValues.forEach(admin => {
+        const hasInvalidCharacters = /[()]/.test(admin);
+        if (hasInvalidCharacters) {
+            return;
+        }
+        const button = Markup.button.callback(admin, `select_admin_${admin}`);
+        row.push(button);
+        if (row.length === 2) {
+            inlineKeyboard.push(row);
+            row = [];
+        }
+    });
+
+    if (row.length > 0) {
+        inlineKeyboard.push(row);
+    }
+
     const replyMarkup = Markup.inlineKeyboard(inlineKeyboard);
     ctx.reply("Выберите админа:", replyMarkup);
 }
+
+
 
 bot.action(/select_admin_/, (ctx) => {
     const adminName = ctx.match.input.split('_')[2];
@@ -202,6 +221,21 @@ function askCity(ctx) {
     ctx.reply("Введите город:");
 }
 
+bot.on('text', (ctx) => {
+    const userId = ctx.from.id;
+    const currentState = state[userId];
+
+    if (currentState) {
+        if (!currentState.fio) {
+            currentState.fio = ctx.message.text;
+            askCity(ctx); // Запрос города после получения ФИО
+        } else if (!currentState.city) {
+            currentState.city = ctx.message.text;
+            askBank(ctx);
+        }
+    }
+});
+
 function askBank(ctx) {
     ctx.reply("Выберите банк из списка:", Markup.inlineKeyboard([
         [Markup.button.callback('Байкай банк', 'select_bank_baikay'), Markup.button.callback('Оптима банк', 'select_bank_optima')],
@@ -211,23 +245,28 @@ function askBank(ctx) {
     ]));
 }
 
+function askForDetails(ctx) {
+    ctx.reply("Введите перевод, выберите валюту и введите курс в формате:\n\nПеревод: [Ваш перевод]\nВалюта: [Выбранная валюта]\nКурс: [Ваш курс]");
+}
+
 bot.on('text', (ctx) => {
     const userId = ctx.from.id;
-    const currentState = state[userId];
+    const messageText = ctx.message.text;
 
-    if (currentState) {
-        if (!currentState.status) {
-            currentState.status = ctx.message.text;
-            askFIO(ctx);
-        } else if (!currentState.fio) {
-            currentState.fio = ctx.message.text;
-            askCity(ctx);
-        } else if (!currentState.city) {
-            currentState.city = ctx.message.text;
-            askBank(ctx);
-        } else if (!currentState.bank) {
-            finishSurvey(ctx);
+    if (messageText.includes('Перевод:') && messageText.includes('Валюта:') && messageText.includes('Курс:')) {
+        const parts = messageText.split('\n');
+        const translation = parts[0].split(':')[1].trim();
+        const currency = parts[1].split(':')[1].trim();
+        const rate = parts[2].split(':')[1].trim();
+        if (!state[ctx.from.id]) {
+            state[ctx.from.id] = {};
         }
+        state[ctx.from.id].perevod = translation;
+        state[ctx.from.id].valuta = currency;
+        state[ctx.from.id].curs = rate;
+        finishSurvey(ctx)
+    } else {
+        askForDetails(ctx);
     }
 });
 
@@ -244,7 +283,7 @@ bot.action('select_bank_baikay', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Байкай банк';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_bank_optima', (ctx) => {
@@ -252,7 +291,7 @@ bot.action('select_bank_optima', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Оптима банк';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_bank_companion', (ctx) => {
@@ -260,7 +299,7 @@ bot.action('select_bank_companion', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Компаньон банк';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_bank_doskredo', (ctx) => {
@@ -268,7 +307,7 @@ bot.action('select_bank_doskredo', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Дос Кредо банк';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_bank_capital', (ctx) => {
@@ -276,7 +315,7 @@ bot.action('select_bank_capital', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Capital Bank';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_bank_financecredit', (ctx) => {
@@ -284,7 +323,7 @@ bot.action('select_bank_financecredit', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Финанс Кредит банк';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_bank_elsom', (ctx) => {
@@ -292,7 +331,7 @@ bot.action('select_bank_elsom', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Элсом';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_bank_kyrgyzstan', (ctx) => {
@@ -300,7 +339,7 @@ bot.action('select_bank_kyrgyzstan', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Кыргызстан банк';
-    finishSurvey(ctx);
+    askForDetails(ctx);
 });
 
 bot.action('select_status_bank', (ctx) => {
@@ -328,7 +367,18 @@ function finishSurvey(ctx) {
         const userStatus = authorizedUsers.get(userId);
         if (userStatus && userStatus.authorized) {
             currentState.manager = userStatus.manager;
-            const resultMessage = `Счет-фактура создан:\n\nМенеджер: ${currentState.manager}\nАдмин: ${currentState.admin}\nСтатус: ${currentState.status}\nФИО клиента: ${currentState.fio}\nГород: ${currentState.city}\nБанк: ${currentState.bank}`;
+            const resultMessage = `Счет-фактура создан:\n\n
+            Менеджер: ${currentState.manager}\n
+            Админ: ${currentState.admin}\n
+            Статус: ${currentState.status}\n
+            ФИО клиента: ${currentState.fio}\n
+            Город: ${currentState.city}\n
+            Банк: ${currentState.bank}\n
+            Перевод: ${currentState.perevod}\n
+            Валюта: ${currentState.valuta}\n
+            Курс: ${currentState.curs}\n
+
+            `;
             const keyboard = Markup.inlineKeyboard([
                 Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
                 Markup.button.callback('Заполнить позиции', 'fill_positions')
