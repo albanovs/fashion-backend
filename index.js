@@ -73,18 +73,29 @@ import getManagers from './src/routes/managers/getmanager.mjs'
 import itotdel from './src/routes/it/simcard.mjs'
 import bot from './src/controllers/telegram-bot/schet-faktura.mjs';
 import cron from 'node-cron'
+import updateCalcManager from "./src/controllers/calculate/calc-raaiting-month/calc-manager.mjs";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json())
-// bot.launch()
+bot.launch()
 
-// cron.schedule('*/10 * * * *', async () => {
-//   bot.launch()
-// });
+cron.schedule('*/10 * * * *', async () => {
+  bot.launch()
+});
 
-connect(); // Подключение к базе данных
+cron.schedule('0 0 28-31 * *', async () => {
+  try {
+    await updateCalcManager.updateCalcManager();
+  } catch (error) {
+    console.error('Ошибка при выполнении вычислений рейтинга менеджеров:', error);
+  }
+}, {
+  scheduled: true,
+  timezone: 'Europe/Moscow'
+});
+connect();
 
 app.use('/', getManagers)
 

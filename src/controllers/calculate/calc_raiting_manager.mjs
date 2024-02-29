@@ -218,4 +218,4 @@ models.forEach(model => {
     model.on('change', updateCalcManager);
 });
 
-export default { calcRaintingManager, updateCalcManager };
+export default { calcRaintingManager, updateCalcManager, calculateAndCacheData };

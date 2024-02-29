@@ -52,53 +52,19 @@ cron.schedule('0 0 * * *', async () => {
 
 updateSimDataDaily()
 
-// async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
-//     try {
-//         for (const SimModel of simModels) {
-//             const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
-//             if (result) {
-//                 const slot = result.slot.find(elem => elem.number === phoneNumber);
-//                 if (slot) {
-//                     let managerName = slot.buyer;
-//                     if (SimModel === SimModelLider) {
-//                         const logistData = await SimModelLiderLog.find({}).exec();
-//                         if (logistData && logistData.length > 0) {
-//                             const logistValues = [];
-
-//                             for (const entry of logistData) {
-//                                 if (entry.slot && Array.isArray(entry.slot)) {
-//                                     for (const slotItem of entry.slot) {
-//                                         if (slotItem.logist !== '') {
-//                                             logistValues.push(slotItem.logist);
-//                                         }
-//                                     }
-//                                 }
-//                             }
-//                             return { isPhoneNumberRegistered: true, managerName, logistValues };
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         return { isPhoneNumberRegistered: false, managerName: null };
-//     } catch (error) {
-//         console.error('Ошибка при поиске номера в базе данных:', error);
-//         return { isPhoneNumberRegistered: false, managerName: null };
-//     }
-// }
-
 async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
     try {
-        for (const { model, data } of allSimData) {
-            const result = data.find(item => item.slot.some(slot => slot.number === phoneNumber));
+        for (const SimModel of simModels) {
+            const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
             if (result) {
                 const slot = result.slot.find(elem => elem.number === phoneNumber);
                 if (slot) {
                     let managerName = slot.buyer;
-                    if (model === SimModelLider) {
+                    if (SimModel === SimModelLider) {
                         const logistData = await SimModelLiderLog.find({}).exec();
                         if (logistData && logistData.length > 0) {
                             const logistValues = [];
+
                             for (const entry of logistData) {
                                 if (entry.slot && Array.isArray(entry.slot)) {
                                     for (const slotItem of entry.slot) {
@@ -116,10 +82,44 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
         }
         return { isPhoneNumberRegistered: false, managerName: null };
     } catch (error) {
-        console.error('Ошибка при проверке номера телефона и менеджера в базе данных:', error);
+        console.error('Ошибка при поиске номера в базе данных:', error);
         return { isPhoneNumberRegistered: false, managerName: null };
     }
 }
+
+// async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
+//     try {
+//         for (const { model, data } of allSimData) {
+//             const result = data.find(item => item.slot.some(slot => slot.number === phoneNumber));
+//             if (result) {
+//                 const slot = result.slot.find(elem => elem.number === phoneNumber);
+//                 if (slot) {
+//                     let managerName = slot.buyer;
+//                     if (model === SimModelLider) {
+//                         const logistData = await SimModelLiderLog.find({}).exec();
+//                         if (logistData && logistData.length > 0) {
+//                             const logistValues = [];
+//                             for (const entry of logistData) {
+//                                 if (entry.slot && Array.isArray(entry.slot)) {
+//                                     for (const slotItem of entry.slot) {
+//                                         if (slotItem.logist !== '') {
+//                                             logistValues.push(slotItem.logist);
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//                             return { isPhoneNumberRegistered: true, managerName, logistValues };
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         return { isPhoneNumberRegistered: false, managerName: null };
+//     } catch (error) {
+//         console.error('Ошибка при проверке номера телефона и менеджера в базе данных:', error);
+//         return { isPhoneNumberRegistered: false, managerName: null };
+//     }
+// }
 
 bot.start((ctx) => {
     ctx.reply("Пожалуйста, отправьте свой номер телефона.", Markup.keyboard([
@@ -197,8 +197,11 @@ bot.action(/select_admin_/, (ctx) => {
     const adminName = ctx.match.input.split('_')[2];
     const userId = ctx.from.id;
     const currentState = state[userId];
+    if (!state[ctx.from.id]) {
+        state[ctx.from.id] = {};
+    }
     if (currentState) {
-        currentState.admin = adminName;
+        state[ctx.from.id].admin = adminName;
         askStatus(ctx);
     } else {
         ctx.reply('Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.');
@@ -221,6 +224,17 @@ function askCity(ctx) {
     ctx.reply("Введите город:");
 }
 
+function askperevod(ctx) {
+    ctx.reply("Введите сумму перевода:");
+}
+function askvaluta(ctx) {
+    ctx.reply("Введите валюту: \n сом\n доллар\n тенге\n рубль");
+}
+function askcurs(ctx) {
+    ctx.reply("Введите курс:");
+}
+
+
 bot.on('text', (ctx) => {
     const userId = ctx.from.id;
     const currentState = state[userId];
@@ -228,9 +242,18 @@ bot.on('text', (ctx) => {
     if (currentState) {
         if (!currentState.fio) {
             currentState.fio = ctx.message.text;
-            askCity(ctx); // Запрос города после получения ФИО
+            askCity(ctx);
         } else if (!currentState.city) {
             currentState.city = ctx.message.text;
+            askperevod(ctx);
+        } else if (!currentState.perevod) {
+            currentState.perevod = ctx.message.text;
+            askvaluta(ctx);
+        } else if (!currentState.valuta) {
+            currentState.valuta = ctx.message.text;
+            askcurs(ctx);
+        } else if (!currentState.curs) {
+            currentState.curs = ctx.message.text;
             askBank(ctx);
         }
     }
@@ -245,31 +268,6 @@ function askBank(ctx) {
     ]));
 }
 
-function askForDetails(ctx) {
-    ctx.reply("Введите перевод, выберите валюту и введите курс в формате:\n\nПеревод: [Ваш перевод]\nВалюта: [Выбранная валюта]\nКурс: [Ваш курс]");
-}
-
-bot.on('text', (ctx) => {
-    const userId = ctx.from.id;
-    const messageText = ctx.message.text;
-
-    if (messageText.includes('Перевод:') && messageText.includes('Валюта:') && messageText.includes('Курс:')) {
-        const parts = messageText.split('\n');
-        const translation = parts[0].split(':')[1].trim();
-        const currency = parts[1].split(':')[1].trim();
-        const rate = parts[2].split(':')[1].trim();
-        if (!state[ctx.from.id]) {
-            state[ctx.from.id] = {};
-        }
-        state[ctx.from.id].perevod = translation;
-        state[ctx.from.id].valuta = currency;
-        state[ctx.from.id].curs = rate;
-        finishSurvey(ctx)
-    } else {
-        askForDetails(ctx);
-    }
-});
-
 bot.action('delete_invoice', (ctx) => {
     ctx.reply('Счет-фактура удалена.');
 });
@@ -278,28 +276,12 @@ bot.action('fill_positions', (ctx) => {
     ctx.reply('Заполняем позиции.');
 });
 
-bot.action('select_bank_baikay', (ctx) => {
-    if (!state[ctx.from.id]) {
-        state[ctx.from.id] = {};
-    }
-    state[ctx.from.id].bank = 'Байкай банк';
-    askForDetails(ctx);
-});
-
-bot.action('select_bank_optima', (ctx) => {
-    if (!state[ctx.from.id]) {
-        state[ctx.from.id] = {};
-    }
-    state[ctx.from.id].bank = 'Оптима банк';
-    askForDetails(ctx);
-});
-
 bot.action('select_bank_companion', (ctx) => {
     if (!state[ctx.from.id]) {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Компаньон банк';
-    askForDetails(ctx);
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_doskredo', (ctx) => {
@@ -307,7 +289,7 @@ bot.action('select_bank_doskredo', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Дос Кредо банк';
-    askForDetails(ctx);
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_capital', (ctx) => {
@@ -315,7 +297,7 @@ bot.action('select_bank_capital', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Capital Bank';
-    askForDetails(ctx);
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_financecredit', (ctx) => {
@@ -323,7 +305,7 @@ bot.action('select_bank_financecredit', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Финанс Кредит банк';
-    askForDetails(ctx);
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_elsom', (ctx) => {
@@ -331,7 +313,7 @@ bot.action('select_bank_elsom', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Элсом';
-    askForDetails(ctx);
+    finishSurvey(ctx);
 });
 
 bot.action('select_bank_kyrgyzstan', (ctx) => {
@@ -339,7 +321,7 @@ bot.action('select_bank_kyrgyzstan', (ctx) => {
         state[ctx.from.id] = {};
     }
     state[ctx.from.id].bank = 'Кыргызстан банк';
-    askForDetails(ctx);
+    finishSurvey(ctx);
 });
 
 bot.action('select_status_bank', (ctx) => {

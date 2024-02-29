@@ -15,6 +15,14 @@ import newotdellibertyCalc_raiting_manager from "../calculate/newotdelliberty.ca
 
 const getCurator = async () => {
     try {
+        // Определение первого и последнего дня текущего месяца
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+        const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+        const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+        // Получение всех менеджеров из базы данных
         const [managersleader, managersmonaco, managersfenix, managersturan, managerfbox, managerliberty] = await Promise.all([
             SimModelLider.find(),
             SimModelMonaco.find(),
@@ -24,39 +32,34 @@ const getCurator = async () => {
             SimModelLiberty.find()
         ]);
 
+        // Объединение всех менеджеров в один массив
         const managers = [...managersleader, ...managersmonaco, ...managersfenix, ...managersturan, ...managerfbox, ...managerliberty];
 
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-
-        const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-        const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-
+        // Проверка каждого менеджера
         for (const manager of managers) {
             if (manager.curator) {
+                // Проверка, существуют ли данные для текущего менеджера в текущем месяце
                 const existingData = await ManagerPersent.findOne({
-                    datas: {
-                        $elemMatch: { $gte: firstDayOfMonth, $lt: lastDayOfMonth }
-                    },
+                    datas: { $gte: firstDayOfMonth, $lt: lastDayOfMonth },
                     manager: manager.curator,
                 });
-                if (existingData) {
-                    continue;
+                // Если нет данных, добавьте новую запись
+                if (!existingData) {
+                    const newManagerPersent = new ManagerPersent({
+                        datas: currentDate,
+                        manager: manager.curator,
+                        persent: []
+                    });
+                    await newManagerPersent.save();
                 }
-                const newManagerPersent = new ManagerPersent({
-                    datas: currentDate,
-                    manager: manager.curator,
-                    persent: []
-                });
-
-                await newManagerPersent.save();
             }
         }
     } catch (error) {
         console.log(error);
     }
 }
+getCurator();
+
 
 cron.schedule('0 0 * * *', () => {
     getCurator();

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const ManagerPersentSchema = new mongoose.Schema({
-    datas: String,
+    datas: Date,
     manager: String,
     persent: Array
 })

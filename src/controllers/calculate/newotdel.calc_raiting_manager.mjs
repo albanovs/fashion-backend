@@ -209,4 +209,4 @@ NewOtdelModel.on('change', updateCalcManager);
 LibertyDataModel.on('change', updateCalcManager);
 ManagerPersent.on('change', updateCalcManager);
 
-export default { calcRaintingManagerNewOtdel, updateCalcManager };
+export default { calcRaintingManagerNewOtdel, updateCalcManager, calculateAndCacheData };
