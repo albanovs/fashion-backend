@@ -75,6 +75,7 @@ import bot from './src/controllers/telegram-bot/schet-faktura.mjs';
 import cron from 'node-cron'
 import updateCalcManager from "./src/controllers/calculate/calc-raaiting-month/calc-manager.mjs";
 
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -98,6 +99,7 @@ cron.schedule('0 0 28-31 * *', async () => {
 connect();
 
 app.use('/', getManagers)
+app.use('/', updateCalcManager.getManagerRaiting)
 
 app.use('/', liderDataRouter)
 app.use('/', liderOtchetBetaRouter)
