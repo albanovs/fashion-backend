@@ -74,6 +74,7 @@ import itotdel from './src/routes/it/simcard.mjs'
 import bot from './src/controllers/telegram-bot/schet-faktura.mjs';
 import cron from 'node-cron'
 import updateCalcManager from "./src/controllers/calculate/calc-raaiting-month/calc-manager.mjs";
+import getManagersRait from './src/routes/calculate/calcraiting.mjs'
 
 
 const app = express();
@@ -99,7 +100,7 @@ cron.schedule('0 0 28-31 * *', async () => {
 connect();
 
 app.use('/', getManagers)
-app.use('/', updateCalcManager.getManagerRaiting)
+app.use('/', getManagersRait)
 
 app.use('/', liderDataRouter)
 app.use('/', liderOtchetBetaRouter)
