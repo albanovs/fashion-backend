@@ -39,17 +39,7 @@ const updateCalcManager = async () => {
 
 const getManagerRaiting = async (req, res) => {
     try {
-        const today = new Date();
-        let year = today.getFullYear();
-        let month = today.getMonth() + 1;
-        if (month === 1) {
-            year -= 1;
-            month = 12;
-        } else {
-            month -= 1;
-        }
-        const prevMonthData = `${year}-${month.toString().padStart(2, '0')}`;
-        const data = await ManagerRaiting.findOne({ datas: prevMonthData });
+        const data = await ManagerRaiting.find();
         if (data) {
             res.status(200).json(data);
         } else {
