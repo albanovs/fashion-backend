@@ -13,6 +13,7 @@ import SimModelLibertyLog from '../../models/simcardlogist/libertylogist.mjs';
 import SimModelMonacoLog from '../../models/simcardlogist/monacologist.mjs';
 import SimModelNewOtdelLog from '../../models/simcardlogist/newotdellogist.mjs';
 import SimModelTuranLog from '../../models/simcardlogist/turanlogist.mjs';
+import schetfakturaModel from '../../models/schet-factura/schet-faktura.mjs';
 
 const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY";
 const bot = new Telegraf(token);
@@ -52,53 +53,19 @@ cron.schedule('0 0 * * *', async () => {
 
 updateSimDataDaily()
 
-async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
-    try {
-        for (const SimModel of simModels) {
-            const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
-            if (result) {
-                const slot = result.slot.find(elem => elem.number === phoneNumber);
-                if (slot) {
-                    let managerName = slot.buyer;
-                    if (SimModel === SimModelLider) {
-                        const logistData = await SimModelLiderLog.find({}).exec();
-                        if (logistData && logistData.length > 0) {
-                            const logistValues = [];
-
-                            for (const entry of logistData) {
-                                if (entry.slot && Array.isArray(entry.slot)) {
-                                    for (const slotItem of entry.slot) {
-                                        if (slotItem.logist !== '') {
-                                            logistValues.push(slotItem.logist);
-                                        }
-                                    }
-                                }
-                            }
-                            return { isPhoneNumberRegistered: true, managerName, logistValues };
-                        }
-                    }
-                }
-            }
-        }
-        return { isPhoneNumberRegistered: false, managerName: null };
-    } catch (error) {
-        console.error('Ошибка при поиске номера в базе данных:', error);
-        return { isPhoneNumberRegistered: false, managerName: null };
-    }
-}
-
 // async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
 //     try {
-//         for (const { model, data } of allSimData) {
-//             const result = data.find(item => item.slot.some(slot => slot.number === phoneNumber));
+//         for (const SimModel of simModels) {
+//             const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
 //             if (result) {
 //                 const slot = result.slot.find(elem => elem.number === phoneNumber);
 //                 if (slot) {
 //                     let managerName = slot.buyer;
-//                     if (model === SimModelLider) {
+//                     if (SimModel === SimModelLider) {
 //                         const logistData = await SimModelLiderLog.find({}).exec();
 //                         if (logistData && logistData.length > 0) {
 //                             const logistValues = [];
+
 //                             for (const entry of logistData) {
 //                                 if (entry.slot && Array.isArray(entry.slot)) {
 //                                     for (const slotItem of entry.slot) {
@@ -116,10 +83,44 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
 //         }
 //         return { isPhoneNumberRegistered: false, managerName: null };
 //     } catch (error) {
-//         console.error('Ошибка при проверке номера телефона и менеджера в базе данных:', error);
+//         console.error('Ошибка при поиске номера в базе данных:', error);
 //         return { isPhoneNumberRegistered: false, managerName: null };
 //     }
 // }
+
+async function checkPhoneNumberAndManagerInDatabase(phoneNumber) {
+    try {
+        for (const { model, data } of allSimData) {
+            const result = data.find(item => item.slot.some(slot => slot.number === phoneNumber));
+            if (result) {
+                const slot = result.slot.find(elem => elem.number === phoneNumber);
+                if (slot) {
+                    let managerName = slot.buyer;
+                    if (model === SimModelLider) {
+                        const logistData = await SimModelLiderLog.find({}).exec();
+                        if (logistData && logistData.length > 0) {
+                            const logistValues = [];
+                            for (const entry of logistData) {
+                                if (entry.slot && Array.isArray(entry.slot)) {
+                                    for (const slotItem of entry.slot) {
+                                        if (slotItem.logist !== '') {
+                                            logistValues.push(slotItem.logist);
+                                        }
+                                    }
+                                }
+                            }
+                            return { isPhoneNumberRegistered: true, managerName, logistValues };
+                        }
+                    }
+                }
+            }
+        }
+        return { isPhoneNumberRegistered: false, managerName: null };
+    } catch (error) {
+        console.error('Ошибка при проверке номера телефона и менеджера в базе данных:', error);
+        return { isPhoneNumberRegistered: false, managerName: null };
+    }
+}
 
 bot.start((ctx) => {
     ctx.reply("Пожалуйста, отправьте свой номер телефона.", Markup.keyboard([
@@ -235,7 +236,7 @@ function askcurs(ctx) {
 }
 
 
-bot.on('text', (ctx) => {
+bot.on('text', async (ctx) => {
     const userId = ctx.from.id;
     const currentState = state[userId];
 
@@ -255,6 +256,58 @@ bot.on('text', (ctx) => {
         } else if (!currentState.curs) {
             currentState.curs = ctx.message.text;
             askBank(ctx);
+        } else {
+            const messageText = ctx.message.text;
+            const parts = messageText.split('-');
+
+            if (parts.length === 3) {
+                const name = parts[0];
+                const count = parseInt(parts[1], 10);
+                const price = parseInt(parts[2], 10);
+
+                if (!isNaN(count) && !isNaN(price)) {
+                    const newPosition = { name, count, price };
+
+                    try {
+                        await updateInvoicePosition(userId, newPosition);
+                        ctx.reply(`Позиция "${name}" (${count} шт, ${price} сом) успешно добавлена.`);
+                        set_position(ctx);
+                    } catch (error) {
+                        console.error('Ошибка при обновлении данных в базе данных:', error);
+                        ctx.reply('Произошла ошибка при добавлении позиции. Пожалуйста, попробуйте еще раз.');
+                    }
+                } else {
+                    ctx.reply('Неверный формат количества или цены. Пожалуйста, введите числовые значения.');
+                }
+            } else {
+                ctx.reply('Неверный формат текста. Пожалуйста, введите данные в формате "наименование-количество-цена".');
+            }
+        }
+    } else {
+        const messageText = ctx.message.text;
+        const parts = messageText.split('-');
+
+        if (parts.length === 3) {
+            const name = parts[0];
+            const count = parseInt(parts[1], 10);
+            const price = parseInt(parts[2], 10);
+
+            if (!isNaN(count) && !isNaN(price)) {
+                const newPosition = { name, count, price };
+
+                try {
+                    await updateInvoicePosition(userId, newPosition);
+                    ctx.reply(`Позиция "${name}" (${count} шт, ${price} сом) успешно добавлена.`);
+                    set_position(ctx);
+                } catch (error) {
+                    console.error('Ошибка при обновлении данных в базе данных:', error);
+                    ctx.reply('Произошла ошибка при добавлении позиции. Пожалуйста, попробуйте еще раз.');
+                }
+            } else {
+                ctx.reply('Неверный формат количества или цены. Пожалуйста, введите числовые значения.');
+            }
+        } else {
+            ctx.reply('Неверный формат текста. Пожалуйста, введите данные в формате "наименование-количество-цена".');
         }
     }
 });
@@ -268,12 +321,38 @@ function askBank(ctx) {
     ]));
 }
 
-bot.action('delete_invoice', (ctx) => {
-    ctx.reply('Счет-фактура удалена.');
+bot.action('create_invoice', async (ctx) => {
+    const userId = ctx.from.id;
+    const currentState = state[userId];
+    if (currentState) {
+        try {
+            await saveDataToDatabase(currentState, userId);
+            await ctx.reply("Счет фактура создан и сохранен на сайт, можете заполнять позиции:", Markup.inlineKeyboard([
+                Markup.button.callback('заполнить позицию', 'set_position'),
+            ]));
+        } catch (error) {
+            console.error('Ошибка при сохранении данных в базу данных:', error);
+            ctx.reply('Произошла ошибка при создании счета-фактуры. Пожалуйста, попробуйте еще раз.');
+        }
+    }
 });
 
-bot.action('fill_positions', (ctx) => {
-    ctx.reply('Заполняем позиции.');
+function set_position(ctx) {
+    ctx.reply("Заполните позицию в формате 'наименование-количество-цена', например: блузка-40-420",
+        Markup.inlineKeyboard([
+            Markup.button.callback('завершить счет фактуру', 'success_position'),
+        ]));
+}
+
+bot.action('set_position', (ctx) => {
+    ctx.reply("Заполните позицию в формате 'наименование-количество-цена', например: блузка-40-420",
+        Markup.inlineKeyboard([
+            Markup.button.callback('завершить счет фактуру', 'success_position'),
+        ]));
+});
+
+bot.action('success_position', (ctx) => {
+    ctx.reply('Счет фактура успешно завершена');
 });
 
 bot.action('select_bank_companion', (ctx) => {
@@ -349,7 +428,7 @@ function finishSurvey(ctx) {
         const userStatus = authorizedUsers.get(userId);
         if (userStatus && userStatus.authorized) {
             currentState.manager = userStatus.manager;
-            const resultMessage = `Счет-фактура создан:\n\n
+            const resultMessage = `Проверьте данные счет-фактуры:\n\n
             Менеджер: ${currentState.manager}\n
             Админ: ${currentState.admin}\n
             Статус: ${currentState.status}\n
@@ -362,19 +441,72 @@ function finishSurvey(ctx) {
 
             `;
             const keyboard = Markup.inlineKeyboard([
-                Markup.button.callback('Удалить счет-фактуру', 'delete_invoice'),
-                Markup.button.callback('Заполнить позиции', 'fill_positions')
+                Markup.button.callback('Создать счет-фактуру', 'create_invoice'),
+                Markup.button.callback('Заново заполнить', 'reload')
             ]);
             ctx.reply(resultMessage, keyboard).then((message) => {
                 currentState.resultMessageId = message.message_id;
             }).catch((error) => {
                 console.error('Ошибка при отправке сообщения с результатами опроса:', error);
             });
-
-            delete state[userId];
         } else {
             ctx.reply('Извините, у вас нет доступа к боту.');
         }
+    }
+}
+
+function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+}
+
+async function saveDataToDatabase(data, userId) {
+    try {
+        const today = new Date();
+        const formattedDate = formatDate(today);
+        const newSchetFaktura = new schetfakturaModel({
+            user_id: userId,
+            datas: formattedDate,
+            manager: data.manager,
+            admin: data.admin,
+            status: data.status,
+            FIO: data.fio,
+            city: data.city,
+            bank: data.bank,
+            perevod: parseFloat(data.perevod),
+            valuta: data.valuta,
+            curs: parseFloat(data.curs),
+            position: []
+        });
+        const savedData = await newSchetFaktura.save();
+    } catch (error) {
+        console.error('Ошибка при сохранении данных в базу данных:', error);
+        throw error;
+    }
+}
+
+async function updateInvoicePosition(userId, newPosition) {
+    const currentDate = new Date();
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = currentDate.getFullYear().toString();
+
+    const formattedDate = `${day}.${month}.${year}`;
+    try {
+        const invoice = await schetfakturaModel.findOne({ user_id: userId, datas: formattedDate });
+        if (invoice) {
+            invoice.position.push(newPosition);
+            await invoice.save();
+            console.log('Позиция успешно добавлена к существующим данным в базе данных.');
+        } else {
+            console.error('Счет-фактура для пользователя с указанной датой не найдена.');
+            throw new Error('Счет-фактура для пользователя с указанной датой не найдена.');
+        }
+    } catch (error) {
+        console.error('Ошибка при добавлении позиции к существующим данным в базе данных:', error);
+        throw error;
     }
 }
 
