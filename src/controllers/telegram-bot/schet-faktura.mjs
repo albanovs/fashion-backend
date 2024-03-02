@@ -265,9 +265,10 @@ bot.on('text', async (ctx) => {
                 const name = parts[0];
                 const count = parseInt(parts[1], 10);
                 const price = parseInt(parts[2], 10);
+                const summa = parseFloat(count) * parseFloat(price)
 
                 if (!isNaN(count) && !isNaN(price)) {
-                    const newPosition = { name, count, price };
+                    const newPosition = { name, count, price, summa };
 
                     try {
                         await updateInvoicePosition(userId, newPosition);
