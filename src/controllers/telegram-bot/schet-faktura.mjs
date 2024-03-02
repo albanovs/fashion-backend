@@ -292,9 +292,10 @@ bot.on('text', async (ctx) => {
             const name = parts[0];
             const count = parseInt(parts[1], 10);
             const price = parseInt(parts[2], 10);
+            const summa = parseFloat(count) * parseFloat(price)
 
             if (!isNaN(count) && !isNaN(price)) {
-                const newPosition = { name, count, price };
+                const newPosition = { name, count, price, summa };
 
                 try {
                     await updateInvoicePosition(userId, newPosition);
@@ -481,7 +482,7 @@ async function saveDataToDatabase(data, userId) {
             valuta: data.valuta,
             curs: parseFloat(data.curs),
             ostatok: 0,
-            budjet: 0,
+            budjet: parseFloat(data.perevod) * parseFloat(data.curs),
             position: [],
             balans: 0,
             all_sum: 0,

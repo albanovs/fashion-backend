@@ -15,13 +15,8 @@ const updateSchetData = async () => {
     try {
         const data = await schetfakturaModel.find();
         for (const item of data) {
-            // Обновляем значение поля 'budjet' (perevod * curs)
-            item.budjet = item.perevod * item.curs;
-
-            // Обходим каждый элемент массива 'position' и вычисляем сумму (count * price)
             let summaTotal = 0;
             for (const position of item.position) {
-                position.summa = position.count * position.price;
                 summaTotal += position.summa;
             }
 
@@ -29,7 +24,9 @@ const updateSchetData = async () => {
             item.comission = summaTotal * 0.06;
 
             // Добавляем комиссию к итоговой сумме
+            item.all_sum = summaTotal
             item.itogs = summaTotal + item.comission;
+            item.balans = item.budjet - (summaTotal + item.comission)
 
             // Сохраняем обновленные данные
             await item.save();
