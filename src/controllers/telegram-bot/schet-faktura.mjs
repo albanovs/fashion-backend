@@ -14,6 +14,7 @@ import SimModelMonacoLog from '../../models/simcardlogist/monacologist.mjs';
 import SimModelNewOtdelLog from '../../models/simcardlogist/newotdellogist.mjs';
 import SimModelTuranLog from '../../models/simcardlogist/turanlogist.mjs';
 import schetfakturaModel from '../../models/schet-factura/schet-faktura.mjs';
+import updateSchetData from '../telegram-bot/schet-control.mjs'
 
 const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY";
 const bot = new Telegraf(token);
@@ -351,8 +352,9 @@ bot.action('set_position', (ctx) => {
         ]));
 });
 
-bot.action('success_position', (ctx) => {
+bot.action('success_position', async (ctx) => {
     ctx.reply('Счет фактура успешно завершена');
+    await updateSchetData.updateSchetData()
 });
 
 bot.action('select_bank_companion', (ctx) => {
