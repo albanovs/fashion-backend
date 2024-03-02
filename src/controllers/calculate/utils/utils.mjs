@@ -15,7 +15,7 @@ export const calculateTotalCommissionPercent = (adminDataItog, elem, nonEmptyBuy
     return adminDataItog.reduce((acc, cur) => {
         const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
             if (nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer) && cur2.sm === 1) {
-                return acc2 + cur2.itog;
+                return acc2 + cur2.comPersent100;
             }
             return acc2;
         }, 0);
