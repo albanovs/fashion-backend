@@ -14,7 +14,7 @@ export const calculateTotalCommission = (adminDataItog, elem, nonEmptyBuyers) =>
 export const calculateTotalCommissionPercent = (adminDataItog, elem, nonEmptyBuyers) => {
     return adminDataItog.reduce((acc, cur) => {
         const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-            if ((cur2.buyer === elem.curator || (nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer) && cur2.sm === 1))) {
+            if (nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer) && cur2.sm === 1) {
                 return acc2 + cur2.itog;
             }
             return acc2;
