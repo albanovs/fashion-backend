@@ -40,9 +40,13 @@ const getCurator = async () => {
             if (manager.curator) {
                 // Проверка, существуют ли данные для текущего менеджера в текущем месяце
                 const existingData = await ManagerPersent.findOne({
-                    datas: { $gte: firstDayOfMonth, $lt: lastDayOfMonth },
-                    manager: manager.curator,
-                });
+                    datas: {
+                        $gte: firstDayOfMonth,
+                        $lt: lastDayOfMonth
+                    },
+                    manager: manager.curator
+                }).lean();
+
                 // Если нет данных, добавьте новую запись
                 if (!existingData) {
                     const newManagerPersent = new ManagerPersent({
@@ -58,8 +62,6 @@ const getCurator = async () => {
         console.log(error);
     }
 }
-getCurator();
-
 
 cron.schedule('0 0 * * *', () => {
     getCurator();
