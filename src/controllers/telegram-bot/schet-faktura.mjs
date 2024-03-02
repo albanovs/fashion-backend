@@ -478,7 +478,15 @@ async function saveDataToDatabase(data, userId) {
             perevod: parseFloat(data.perevod),
             valuta: data.valuta,
             curs: parseFloat(data.curs),
-            position: []
+            ostatok: 0,
+            budjet: 0,
+            position: [],
+            balans: 0,
+            all_sum: 0,
+            upakovka: 0,
+            dostavka: 0,
+            comission: 0,
+            itogs: 0
         });
         const savedData = await newSchetFaktura.save();
     } catch (error) {
