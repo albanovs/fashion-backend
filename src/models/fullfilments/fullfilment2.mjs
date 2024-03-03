@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const Fullfilment2Schema = new mongoose.Schema({
     date: String,
-    last_date: String,
     otchet: [{
         date: String,
         clients: String,

@@ -65,8 +65,6 @@ import clientLiberty from './src/routes/client-privlechennyi/client-liberty.mjs'
 
 import fullfilment1 from './src/routes/fullfilment/fullfilment-1.mjs'
 import fullfilment2 from './src/routes/fullfilment/fullfilment-2.mjs'
-import fullfilment3 from './src/routes/fullfilment/fullfilment-3.mjs'
-import fullfilment4 from './src/routes/fullfilment/fullfilment-4.mjs'
 
 import getManagers from './src/routes/managers/getmanager.mjs'
 
@@ -159,8 +157,6 @@ app.use('/', clientLiberty)
 
 app.use('/', fullfilment1)
 app.use('/', fullfilment2)
-app.use('/', fullfilment3)
-app.use('/', fullfilment4)
 
 app.use('/', itotdel)
 

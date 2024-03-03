@@ -4,7 +4,7 @@ import cron from 'node-cron'
 
 const createFullfilmentTable = async (req, res) => {
     try {
-        const { date, last_date } = req.body;
+        const { date } = req.body;
 
         const otchetArray = Array.from({ length: 30 }, () => ({
             date: '',
@@ -22,7 +22,6 @@ const createFullfilmentTable = async (req, res) => {
 
         const newData = new Fullfilment1Model({
             date: date,
-            last_date: last_date,
             otchet: otchetArray
         });
 
@@ -119,22 +118,6 @@ const getFullfilmentTable = async (req, res) => {
     }
 }
 
-const deleteSlot = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const updatedfullfilment = await Fullfilment1Model.findOneAndUpdate(
-            { "otchet._id": id },
-            { $pull: { otchet: { _id: id } } },
-            { new: true }
-        );
-        res.json(updatedfullfilment);
-    } catch (error) {
-        res.status(500).json({
-            error: "Что-то пошло не так при удалении слота",
-        });
-    }
-};
-
 const deleteOtchet = async (req, res) => {
     const { id } = req.params
     try {
@@ -149,15 +132,13 @@ const deleteOtchet = async (req, res) => {
 }
 
 
-const checkAndMoveDocuments = async () => {
+const checkAndMoveDocuments = async (req, res) => {
     try {
-        const today = new Date().toISOString().split('T')[0];
-        const documentsToMove = await Fullfilment1Model.find({ last_date: today });
+        const documentsToMove = await Fullfilment1Model.find();
 
         if (documentsToMove && documentsToMove.length > 0) {
             await Fullfilment1dataModel.insertMany(documentsToMove);
-            await Fullfilment1Model.deleteMany({ last_date: today });
-            console.log('Документы успешно перенесены из Fullfilment1Model в Fullfilment1dataModel.');
+            await Fullfilment1Model.deleteMany();
         } else {
             console.log('Документов для переноса не найдено для сегодняшней даты.');
         }
@@ -177,12 +158,8 @@ const getSuccesData = async (req, res) => {
     }
 }
 
-
-cron.schedule('0 0 * * *', () => {
-    checkAndMoveDocuments();
-}, {
-    scheduled: true,
-    timezone: "Europe/Moscow"
-});
-
-export default { createFullfilmentTable, addFullfilmentSlot, editFullfilmentTable, getFullfilmentTable, deleteSlot, deleteOtchet, getSuccesData }
+export default {
+    createFullfilmentTable, addFullfilmentSlot,
+    editFullfilmentTable, getFullfilmentTable,
+    deleteOtchet, getSuccesData, checkAndMoveDocuments
+}

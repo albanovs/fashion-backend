@@ -7,7 +7,7 @@ router.get('/fullfilment2-datas', fullfilmentController2.getFullfilmentTable)
 router.get('/fullfilment2-datas-success', fullfilmentController2.getSuccesData)
 router.patch('/updatefullfilment2/:id', fullfilmentController2.editFullfilmentTable)
 router.post('/fullfilment2-addslot/:id', fullfilmentController2.addFullfilmentSlot)
-router.delete('/fullfilment2-slotdelete/:id', fullfilmentController2.deleteSlot)
 router.delete('/fullfilment2-delete/:id', fullfilmentController2.deleteOtchet)
+router.post('/fufullfilment2-insert', fullfilmentController2.checkAndMoveDocuments)
 
 export default router;
