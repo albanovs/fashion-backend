@@ -137,7 +137,9 @@ const checkAndMoveDocuments = async (req, res) => {
         const documentsToMove = await Fullfilment1Model.find();
 
         if (documentsToMove && documentsToMove.length > 0) {
-            const filteredDocuments = documentsToMove.filter(doc => doc.otchet.some(item => item.clients && item.sum_itog));
+            const filteredDocuments = documentsToMove.filter(doc =>
+                doc.otchet.some(item => item.clients !== "" && item.sum_itog !== null)
+            );
 
             if (filteredDocuments.length > 0) {
                 await Fullfilment1dataModel.insertMany(filteredDocuments);
@@ -152,6 +154,7 @@ const checkAndMoveDocuments = async (req, res) => {
         console.error('Ошибка при переносе документов:', error);
     }
 };
+
 
 
 const getSuccesData = async (req, res) => {
