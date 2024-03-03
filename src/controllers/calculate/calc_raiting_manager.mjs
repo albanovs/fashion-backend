@@ -74,7 +74,7 @@ async function calculateAndCacheData() {
 
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
                 const yourCommission = percentVM(elem.curator, totalCommissionpercentAll);
-                const commissionVM = (parseFloat(totalCommissionpercentAll) * 0.03).toFixed(0);
+                const commissionVM = !elem.curator.includes("ВМ") ? (parseFloat(totalCommissionpercentAll) * 0.03).toFixed(0) : 0
                 const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel + totalOrdersLiberty
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 

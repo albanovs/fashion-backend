@@ -73,7 +73,7 @@ async function calculateAndCacheData() {
 
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyBuyers.length).toFixed(0)).toFixed(0) / 1000).toFixed(1);
                 const yourCommission = percVM(elem.curator, totalCommissionpercentAll);
-                const сomissionVM = ((totalCommissionpercentAll) * 0.03).toFixed(0);
+                const сomissionVM = !elem.curator.includes("ВМ") ? (parseFloat(totalCommissionpercentAll) * 0.03).toFixed(0) : 0
                 const totalOrdersAll = totalOrders + totalOrdersMonaco + totalOrdersTuran + totalOrdersFenix + totalOrdersNewOtdel + totalOrdersLiberty
                 const coefficentOrder = (parseFloat(totalOrdersAll) / parseFloat(nonEmptyBuyers.length)).toFixed(1)
 
@@ -210,4 +210,4 @@ LibertyDataModel.on('change', updateCalcManager);
 NewOtdelDataModel.on('change', updateCalcManager);
 ManagerPersent.on('change', updateCalcManager);
 
-export default { calcRaintingManagerLiberty, updateCalcManager,calculateAndCacheData };
+export default { calcRaintingManagerLiberty, updateCalcManager, calculateAndCacheData };
