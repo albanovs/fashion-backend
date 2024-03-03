@@ -137,8 +137,14 @@ const checkAndMoveDocuments = async (req, res) => {
         const documentsToMove = await Fullfilment1Model.find();
 
         if (documentsToMove && documentsToMove.length > 0) {
-            await Fullfilment1dataModel.insertMany(documentsToMove);
-            await Fullfilment1Model.deleteMany();
+            const filteredDocuments = documentsToMove.filter(doc => doc.otchet.some(item => item.clients && item.sum_itog));
+
+            if (filteredDocuments.length > 0) {
+                await Fullfilment1dataModel.insertMany(filteredDocuments);
+                await Fullfilment1Model.deleteMany({ _id: { $in: filteredDocuments.map(doc => doc._id) } });
+            } else {
+                console.log('Документов для переноса с заполненными ключами clients и sum_itog не найдено.');
+            }
         } else {
             console.log('Документов для переноса не найдено для сегодняшней даты.');
         }
@@ -146,6 +152,7 @@ const checkAndMoveDocuments = async (req, res) => {
         console.error('Ошибка при переносе документов:', error);
     }
 };
+
 
 const getSuccesData = async (req, res) => {
     try {
