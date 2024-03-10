@@ -11,6 +11,7 @@ const createFullfilmentTable = async (req, res) => {
             clients: '',
             services: [],
             packages: '',
+            packages: '',
             count_product: '',
             status: '',
             expiration_date: '',
@@ -22,7 +23,11 @@ const createFullfilmentTable = async (req, res) => {
 
         const newData = new Fullfilment1Model({
             date: date,
-            otchet: otchetArray
+            otchet: otchetArray,
+            itogs: {
+                all_expenses: 0,
+                itog100: 0
+            }
         });
 
         await newData.save();
@@ -47,9 +52,6 @@ const addFullfilmentSlot = async (req, res) => {
                         services: [],
                         packages: '',
                         count_product: '',
-                        status: '',
-                        expiration_date: '',
-                        sale: '',
                         sum_itog: '',
                         expenses: '',
                         sum_arrived: ''
@@ -74,9 +76,6 @@ const editFullfilmentTable = async (req, res) => {
         services,
         packages,
         count_product,
-        status,
-        expiration_date,
-        sale,
         sum_itog,
         expenses,
         sum_arrived,
@@ -90,9 +89,6 @@ const editFullfilmentTable = async (req, res) => {
                 "otchet.$.services": services,
                 "otchet.$.packages": packages,
                 "otchet.$.count_product": count_product,
-                "otchet.$.status": status,
-                "otchet.$.expiration_date": expiration_date,
-                "otchet.$.sale": sale,
                 "otchet.$.sum_itog": sum_itog,
                 "otchet.$.expenses": expenses,
                 "otchet.$.sum_arrived": sum_arrived,
@@ -152,6 +148,7 @@ const checkAndMoveDocuments = async (req, res) => {
         }
     } catch (error) {
         console.error('Ошибка при переносе документов:', error);
+        res.status(500).json({ error: "Ошибка при переносе документов" });
     }
 };
 

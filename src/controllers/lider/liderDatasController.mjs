@@ -90,12 +90,13 @@ const updateLiderData = async (req, res) => {
 const getLiderData = async (req, res) => {
     try {
         const data = await LiderDataModel.find();
-        res.status(200).json(data)
+        res.status(200).json(data);
     } catch (error) {
         res.status(500).json({
-            error: "Что то пошло не так",
+            error: "Что-то пошло не так",
         });
     }
 }
+
 
 export default { createLiderData, updateLiderData, getLiderData };

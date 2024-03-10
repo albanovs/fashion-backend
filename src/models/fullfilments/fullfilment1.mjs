@@ -8,13 +8,14 @@ const Fullfilment1Schema = new mongoose.Schema({
         services: Array,
         packages: Number,
         count_product: Number,
-        status: String,
-        expiration_date: String,
-        sale: String,
         sum_itog: Number,
         expenses: Number,
         sum_arrived: Number
-    }]
+    }],
+    itogs: {
+        all_expenses: Number,
+        itog100: Number
+    }
 })
 
 const Fullfilment1Model = mongoose.model('fullfilment-1', Fullfilment1Schema)
