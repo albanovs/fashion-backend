@@ -103,6 +103,36 @@ const editFullfilmentTable = async (req, res) => {
     }
 }
 
+const updateResult = async (req, res) => {
+    const { id } = req.params;
+    const { all_expenses, itog100 } = req.body;
+
+    try {
+        const updatedDocument = await Fullfilment1Model.findOneAndUpdate(
+            { _id: id },
+            {
+                $set: {
+                    "itogs.all_expenses": all_expenses,
+                    "itogs.itog100": itog100
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedDocument) {
+            return res.status(404).json({ error: "Документ для обновления itogs не найден" });
+        }
+
+        res.json(updatedDocument);
+    } catch (error) {
+        console.error('Ошибка при обновлении itogs:', error);
+        res.status(500).json({
+            error: "Что-то пошло не так при обновлении itogs",
+        });
+    }
+};
+
+
 const getFullfilmentTable = async (req, res) => {
     try {
         const data = await Fullfilment1Model.find();
@@ -168,5 +198,5 @@ const getSuccesData = async (req, res) => {
 export default {
     createFullfilmentTable, addFullfilmentSlot,
     editFullfilmentTable, getFullfilmentTable,
-    deleteOtchet, getSuccesData, checkAndMoveDocuments
+    deleteOtchet, getSuccesData, checkAndMoveDocuments, updateResult
 }
