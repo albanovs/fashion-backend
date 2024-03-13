@@ -11,11 +11,7 @@ const createFullfilmentTable = async (req, res) => {
             clients: '',
             services: [],
             packages: '',
-            packages: '',
             count_product: '',
-            status: '',
-            expiration_date: '',
-            sale: '',
             sum_itog: '',
             expenses: '',
             sum_arrived: ''
