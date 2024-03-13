@@ -36,7 +36,7 @@ const createFullfilmentTable = async (req, res) => {
 
 const addFullfilmentSlot = async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
 
         const newData = await Fullfilment1Model.findByIdAndUpdate(
             id,
