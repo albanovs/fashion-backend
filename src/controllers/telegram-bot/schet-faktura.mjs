@@ -219,43 +219,45 @@ function askStatus(ctx) {
 }
 
 function askFIO(ctx) {
-    ctx.reply("Введите ФИО клиента:");
-}
-
-function askCity(ctx) {
-    ctx.reply("Введите город:");
+    ctx.reply("Введите имя и город клиента в формате: 'имя-город', например: Анна-москва");
 }
 
 function askperevod(ctx) {
-    ctx.reply("Введите сумму перевода:");
+    ctx.reply("Введите сумму перевода, валюту и курс в формате: 'сумма-валюта-курс', например: 5000-доллар-89");
 }
-function askvaluta(ctx) {
-    ctx.reply("Введите валюту: \n сом\n доллар\n тенге\n рубль");
-}
-function askcurs(ctx) {
-    ctx.reply("Введите курс:");
-}
-
 
 bot.on('text', async (ctx) => {
     const userId = ctx.from.id;
     const currentState = state[userId];
 
     if (currentState) {
-        if (!currentState.fio) {
-            currentState.fio = ctx.message.text;
-            askCity(ctx);
-        } else if (!currentState.city) {
-            currentState.city = ctx.message.text;
-            askperevod(ctx);
-        } else if (!currentState.perevod) {
-            currentState.perevod = ctx.message.text;
-            askvaluta(ctx);
-        } else if (!currentState.valuta) {
-            currentState.valuta = ctx.message.text;
-            askcurs(ctx);
-        } else if (!currentState.curs) {
-            currentState.curs = ctx.message.text;
+        if (!currentState.fio && !currentState.city) {
+            const messageText = ctx.message.text;
+            const parts = messageText.split('-');
+
+            if (parts.length === 2) {
+                const name = parts[0];
+                const city = parts[1];
+                currentState.fio = name
+                currentState.city = city
+
+            } else {
+                ctx.reply('Неверный формат текста. Пожалуйста, введите данные в формате "имя-город".');
+            }
+            askperevod(ctx)
+        } else if (!currentState.perevod && !currentState.valuta && !currentState.curs) {
+            const massageText = ctx.message.text
+            const parts = massageText.split('-')
+            if (parts.length === 3) {
+                const perevod = parts[0];
+                const valuta = parts[1];
+                const curs = parts[2];
+                currentState.perevod = perevod
+                currentState.valuta = valuta
+                currentState.curs = curs
+            } else {
+                ctx.reply('Неверный формат текста. Пожалуйста, введите данные в формате "сумма-валюта-курс".');
+            }
             askBank(ctx);
         } else {
             const messageText = ctx.message.text;
