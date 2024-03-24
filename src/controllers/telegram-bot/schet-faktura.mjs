@@ -244,7 +244,7 @@ bot.on('text', async (ctx) => {
             } else {
                 ctx.reply('Неверный формат текста. Пожалуйста, введите данные в формате "имя-город".');
             }
-            askperevod(ctx)
+            askBank(ctx);
         } else if (!currentState.perevod && !currentState.valuta && !currentState.curs) {
             const massageText = ctx.message.text
             const parts = massageText.split('-')
@@ -252,9 +252,19 @@ bot.on('text', async (ctx) => {
                 const perevod = parts[0];
                 const valuta = parts[1];
                 const curs = parts[2];
-                currentState.perevod = perevod
-                currentState.valuta = valuta
-                currentState.curs = curs
+                if (!isNaN(perevod) && !isNaN(curs)) {
+                    const newPosition = { perevod, valuta, curs };
+                    try {
+                        await updateInvoiceTransfer(userId, newPosition);
+                        ctx.reply(`Перевод : ${perevod} , Валюта: ${valuta}, Курс: ${curs} успешно добавлена.`);
+                        set_position(ctx);
+                    } catch (error) {
+                        console.error('Ошибка при обновлении данных в базе данных:', error);
+                        ctx.reply('Произошла ошибка при добавлении позиции. Пожалуйста, попробуйте еще раз.');
+                    }
+                } else {
+                    ctx.reply('Неверный формат количества или цены. Пожалуйста, введите числовые значения.');
+                }
             } else {
                 ctx.reply('Неверный формат текста. Пожалуйста, введите данные в формате "сумма-валюта-курс".');
             }
@@ -332,8 +342,8 @@ bot.action('create_invoice', async (ctx) => {
     if (currentState) {
         try {
             await saveDataToDatabase(currentState, userId);
-            await ctx.reply("Счет фактура создан и сохранен на сайт, можете заполнять позиции:", Markup.inlineKeyboard([
-                Markup.button.callback('заполнить позицию', 'set_position'),
+            await ctx.reply("Счет фактура создан и сохранен на сайт, введите сумму перевода:", Markup.inlineKeyboard([
+                Markup.button.callback('Ввести', 'set_perevod'),
             ]));
         } catch (error) {
             console.error('Ошибка при сохранении данных в базу данных:', error);
@@ -341,6 +351,10 @@ bot.action('create_invoice', async (ctx) => {
         }
     }
 });
+
+bot.action('set_pervevod', (ctx) => {
+    askperevod(ctx)
+})
 
 function set_position(ctx) {
     ctx.reply("Заполните позицию в формате 'наименование-количество-цена', например: блузка-40-420",
@@ -441,10 +455,6 @@ function finishSurvey(ctx) {
             ФИО клиента: ${currentState.fio}\n
             Город: ${currentState.city}\n
             Банк: ${currentState.bank}\n
-            Перевод: ${currentState.perevod}\n
-            Валюта: ${currentState.valuta}\n
-            Курс: ${currentState.curs}\n
-
             `;
             const keyboard = Markup.inlineKeyboard([
                 Markup.button.callback('Создать счет-фактуру', 'create_invoice'),
@@ -481,9 +491,7 @@ async function saveDataToDatabase(data, userId) {
             FIO: data.fio,
             city: data.city,
             bank: data.bank,
-            perevod: parseFloat(data.perevod),
-            valuta: data.valuta,
-            curs: parseFloat(data.curs),
+            transfer: [],
             ostatok: 0,
             budjet: parseFloat(data.perevod) * parseFloat(data.curs),
             position: [],
@@ -497,6 +505,29 @@ async function saveDataToDatabase(data, userId) {
         const savedData = await newSchetFaktura.save();
     } catch (error) {
         console.error('Ошибка при сохранении данных в базу данных:', error);
+        throw error;
+    }
+}
+
+async function updateInvoiceTransfer(userId, newPosition) {
+    const currentDate = new Date();
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = currentDate.getFullYear().toString();
+
+    const formattedDate = `${day}.${month}.${year}`;
+    try {
+        const invoice = await schetfakturaModel.findOne({ user_id: userId, datas: formattedDate });
+        if (invoice) {
+            invoice.transfer.push(newPosition);
+            await invoice.save();
+            console.log('Сумма успешно добавлена к существующим данным в базе данных.');
+        } else {
+            console.error('Счет-фактура для пользователя с указанной датой не найдена.');
+            throw new Error('Счет-фактура для пользователя с указанной датой не найдена.');
+        }
+    } catch (error) {
+        console.error('Ошибка при добавлении позиции к существующим данным в базе данных:', error);
         throw error;
     }
 }
