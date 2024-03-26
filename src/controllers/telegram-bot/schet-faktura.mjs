@@ -21,7 +21,7 @@ const bot = new Telegraf(token);
 
 const state = {};
 const authorizedUsers = new Map();
-let allSimData = []
+let allSimData = {}
 
 const simModels = [
     SimModelLider,
@@ -58,9 +58,10 @@ async function fetchAllDataFromSimModels() {
         return allData;
     } catch (error) {
         console.error('Ошибка при получении данных из моделей SIM-карт:', error);
-        return [];
+        return {};
     }
 }
+
 async function updateSimDataDaily() {
     allSimData = await fetchAllDataFromSimModels();
 }
@@ -103,8 +104,7 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber, selectedTeam) {
                 const slot = result.slot.find(elem => elem.number === phoneNumber);
                 if (slot) {
                     let managerName = slot.buyer;
-                    const logistData = await logistModel.find({}).exec();
-                    const logistValues = logistData.reduce((values, entry) => {
+                    const logistData = logistModel.reduce((values, entry) => {
                         if (entry.slot && Array.isArray(entry.slot)) {
                             for (const slotItem of entry.slot) {
                                 if (slotItem.logist !== '') {
@@ -114,7 +114,7 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber, selectedTeam) {
                         }
                         return values;
                     }, []);
-                    return { isPhoneNumberRegistered: true, managerName, logistValues, team: selectedTeam };
+                    return { isPhoneNumberRegistered: true, managerName, logistValues: logistData, team: selectedTeam };
                 }
             }
         }
@@ -124,6 +124,7 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber, selectedTeam) {
         return { isPhoneNumberRegistered: false, managerName: null, logistValues: [] };
     }
 }
+
 
 
 bot.start((ctx) => {
