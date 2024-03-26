@@ -21,7 +21,7 @@ const bot = new Telegraf(token);
 
 const state = {};
 const authorizedUsers = new Map();
-let allSimData = {}
+let allSimData = []
 
 const simModels = [
     SimModelLider,
@@ -32,36 +32,19 @@ const simModels = [
     SimModelTuran
 ];
 
-const simModellogist = [
-    SimModelLiderLog,
-    SimModelFenixLog,
-    SimModelLibertyLog,
-    SimModelMonacoLog,
-    SimModelNewOtdelLog,
-    SimModelTuranLog
-];
-
 async function fetchAllDataFromSimModels() {
     try {
-        const allData = {
-            buyer: [],
-            logist: [],
-        };
+        const allData = [];
         for (const SimModel of simModels) {
             const data = await SimModel.find({}).exec();
-            allData.buyer.push({ model: SimModel, data });
-        }
-        for (const SimModel of simModellogist) {
-            const data = await SimModel.find({}).exec();
-            allData.logist.push({ model: SimModel, data });
+            allData.push({ model: SimModel, data });
         }
         return allData;
     } catch (error) {
         console.error('Ошибка при получении данных из моделей SIM-карт:', error);
-        return {};
+        return [];
     }
 }
-
 async function updateSimDataDaily() {
     allSimData = await fetchAllDataFromSimModels();
 }
@@ -73,38 +56,39 @@ updateSimDataDaily()
 
 async function checkPhoneNumberAndManagerInDatabase(phoneNumber, selectedTeam) {
     try {
-        let logistModelIndex;
+        let logistModel;
         switch (selectedTeam) {
             case 'leader':
-                logistModelIndex = 0;
+                logistModel = SimModelLiderLog;
                 break;
             case 'monaco':
-                logistModelIndex = 3;
+                logistModel = SimModelMonacoLog;
                 break;
             case 'ilyas':
-                logistModelIndex = 1;
+                logistModel = SimModelFenixLog;
                 break;
             case 'turan':
-                logistModelIndex = 5;
+                logistModel = SimModelTuranLog;
                 break;
             case 'yntymak':
-                logistModelIndex = 4;
+                logistModel = SimModelNewOtdelLog;
                 break;
             case 'liberty':
-                logistModelIndex = 2;
+                logistModel = SimModelLibertyLog;
                 break;
             default:
                 console.error('Выбран неверный отдел:', selectedTeam);
                 return { isPhoneNumberRegistered: false, managerName: null, logistValues: [] };
         }
-        const logistModel = allSimData.logist[logistModelIndex].data;
-        for (const { model, data } of allSimData.buyer) {
-            const result = data.find(doc => doc.slot.some(slot => slot.number === phoneNumber));
+
+        for (const SimModel of simModels) {
+            const result = await SimModel.findOne({ "slot.number": phoneNumber }).exec();
             if (result) {
                 const slot = result.slot.find(elem => elem.number === phoneNumber);
                 if (slot) {
                     let managerName = slot.buyer;
-                    const logistData = logistModel.reduce((values, entry) => {
+                    const logistData = await logistModel.find({}).exec();
+                    const logistValues = logistData.reduce((values, entry) => {
                         if (entry.slot && Array.isArray(entry.slot)) {
                             for (const slotItem of entry.slot) {
                                 if (slotItem.logist !== '') {
@@ -114,18 +98,16 @@ async function checkPhoneNumberAndManagerInDatabase(phoneNumber, selectedTeam) {
                         }
                         return values;
                     }, []);
-                    return { isPhoneNumberRegistered: true, managerName, logistValues: logistData, team: selectedTeam };
+                    return { isPhoneNumberRegistered: true, managerName, logistValues, team: selectedTeam };
                 }
             }
         }
         return { isPhoneNumberRegistered: false, managerName: null, logistValues: [] };
     } catch (error) {
-        console.error('Ошибка при поиске номера в кэшированных данных:', error);
+        console.error('Ошибка при поиске номера в базе данных:', error);
         return { isPhoneNumberRegistered: false, managerName: null, logistValues: [] };
     }
 }
-
-
 
 bot.start((ctx) => {
     ctx.reply("Пожалуйста, отправьте свой номер телефона.", Markup.keyboard([
@@ -491,7 +473,6 @@ bot.action('set_position', (ctx) => {
             Markup.button.callback('Добавить перевод', 'set_perevod'),
         ]));
 });
-
 bot.action('success_position', async (ctx) => {
     ctx.reply('Счет фактура успешно завершена');
     await updateSchetData.updateSchetTeam()
