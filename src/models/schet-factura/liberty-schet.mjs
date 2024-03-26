@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const schetFacturaSchema = new mongoose.Schema({
+const schetFacturaLibertySchema = new mongoose.Schema({
     user_id: String,
     team: String,
     datas: String,
@@ -23,7 +23,7 @@ const schetFacturaSchema = new mongoose.Schema({
 
 });
 
-const schetfakturaModel = mongoose.model('schetfaktura', schetFacturaSchema);
+const schetfakturaLibertyModel = mongoose.model('schetfakturaliberty', schetFacturaLibertySchema);
 
 
-export default schetfakturaModel;
+export default schetfakturaLibertyModel;
