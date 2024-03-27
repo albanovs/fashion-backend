@@ -107,6 +107,7 @@ const updateSchetTeam = async () => {
                                     obj.admin = item.admin;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    break;
                                 }
                             }
                             await firstItem.save();
@@ -121,7 +122,7 @@ const updateSchetTeam = async () => {
                 case 'monaco':
                     await schetfakturaMonacoModel.findOneAndUpdate({ _id: item._id }, item, { upsert: true });
                     const dataotchetmonaco = await monacoOtchetBetaModel.find();
-                    if (dataotchet.length > 0) {
+                    if (dataotchetmonaco.length > 0) {
                         const firstItem = dataotchetmonaco[0];
                         if (firstItem.otchet && firstItem.otchet.length > 0) {
                             for (const obj of firstItem.otchet) {
@@ -130,6 +131,7 @@ const updateSchetTeam = async () => {
                                     obj.admin = item.admin;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    break;
                                 }
                             }
                             await firstItem.save();
@@ -143,7 +145,7 @@ const updateSchetTeam = async () => {
                 case 'turan':
                     await schetfakturaTuranModel.findOneAndUpdate({ _id: item._id }, item, { upsert: true });
                     const dataotchetturan = await TuranOtchetBetaModel.find();
-                    if (dataotchet.length > 0) {
+                    if (dataotchetturan.length > 0) {
                         const firstItem = dataotchetturan[0];
                         if (firstItem.otchet && firstItem.otchet.length > 0) {
                             for (const obj of firstItem.otchet) {
@@ -152,6 +154,7 @@ const updateSchetTeam = async () => {
                                     obj.admin = item.admin;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    break;
                                 }
                             }
                             await firstItem.save();
@@ -165,7 +168,7 @@ const updateSchetTeam = async () => {
                 case 'liberty':
                     await schetfakturaLibertyModel.findOneAndUpdate({ _id: item._id }, item, { upsert: true });
                     const dataotchetliberty = await libertyOtchetBetaModel.find();
-                    if (dataotchet.length > 0) {
+                    if (dataotchetliberty.length > 0) {
                         const firstItem = dataotchetliberty[0];
                         if (firstItem.otchet && firstItem.otchet.length > 0) {
                             for (const obj of firstItem.otchet) {
@@ -174,6 +177,7 @@ const updateSchetTeam = async () => {
                                     obj.admin = item.admin;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    break;
                                 }
                             }
                             await firstItem.save();
@@ -187,7 +191,7 @@ const updateSchetTeam = async () => {
                 case 'ilyas':
                     await schetfakturaFenixModel.findOneAndUpdate({ _id: item._id }, item, { upsert: true });
                     const dataotchetfenix = await fenixOtchetBetaModel.find();
-                    if (dataotchet.length > 0) {
+                    if (dataotchetfenix.length > 0) {
                         const firstItem = dataotchetfenix[0];
                         if (firstItem.otchet && firstItem.otchet.length > 0) {
                             for (const obj of firstItem.otchet) {
@@ -196,6 +200,7 @@ const updateSchetTeam = async () => {
                                     obj.admin = item.admin;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    break;
                                 }
                             }
                             await firstItem.save();
@@ -218,6 +223,7 @@ const updateSchetTeam = async () => {
                                     obj.admin = item.admin;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    break;
                                 }
                             }
                             await firstItem.save();
