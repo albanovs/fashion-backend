@@ -105,8 +105,12 @@ const updateSchetTeam = async () => {
                                 if (!obj.sity && !obj.admin && !obj.comPersent100) {
                                     obj.sity = `${item.FIO} ${item.city}`;
                                     obj.admin = item.admin;
+                                    obj.sm = 1;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    obj.comPersent2 = (item.comission * 0.3).toFixed(0);
+                                    obj.comPersent3 = (item.comission * 0.1).toFixed(0);
+                                    obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -129,8 +133,12 @@ const updateSchetTeam = async () => {
                                 if (!obj.sity && !obj.admin && !obj.comPersent100) {
                                     obj.sity = `${item.FIO} ${item.city}`;
                                     obj.admin = item.admin;
+                                    obj.sm = 1;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    obj.comPersent2 = (item.comission * 0.3).toFixed(0);
+                                    obj.comPersent3 = (item.comission * 0.1).toFixed(0);
+                                    obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -152,8 +160,12 @@ const updateSchetTeam = async () => {
                                 if (!obj.sity && !obj.admin && !obj.comPersent100) {
                                     obj.sity = `${item.FIO} ${item.city}`;
                                     obj.admin = item.admin;
+                                    obj.sm = 1;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    obj.comPersent2 = (item.comission * 0.3).toFixed(0);
+                                    obj.comPersent3 = (item.comission * 0.1).toFixed(0);
+                                    obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -175,8 +187,12 @@ const updateSchetTeam = async () => {
                                 if (!obj.sity && !obj.admin && !obj.comPersent100) {
                                     obj.sity = `${item.FIO} ${item.city}`;
                                     obj.admin = item.admin;
+                                    obj.sm = 1;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    obj.comPersent2 = (item.comission * 0.3).toFixed(0);
+                                    obj.comPersent3 = (item.comission * 0.1).toFixed(0);
+                                    obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -198,8 +214,12 @@ const updateSchetTeam = async () => {
                                 if (!obj.sity && !obj.admin && !obj.comPersent100) {
                                     obj.sity = `${item.FIO} ${item.city}`;
                                     obj.admin = item.admin;
+                                    obj.sm = 1;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    obj.comPersent2 = (item.comission * 0.3).toFixed(0);
+                                    obj.comPersent3 = (item.comission * 0.1).toFixed(0);
+                                    obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -221,8 +241,12 @@ const updateSchetTeam = async () => {
                                 if (!obj.sity && !obj.admin && !obj.comPersent100) {
                                     obj.sity = `${item.FIO} ${item.city}`;
                                     obj.admin = item.admin;
+                                    obj.sm = 1;
                                     obj.buyer = item.manager;
                                     obj.comPersent100 = item.comission;
+                                    obj.comPersent2 = (item.comission * 0.3).toFixed(0);
+                                    obj.comPersent3 = (item.comission * 0.1).toFixed(0);
+                                    obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }

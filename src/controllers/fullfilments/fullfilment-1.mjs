@@ -13,6 +13,7 @@ const createFullfilmentTable = async (req, res) => {
             packages: '',
             count_product: '',
             sum_itog: '',
+            obslujival: '',
             expenses: '',
             sum_arrived: ''
         }));
@@ -49,6 +50,7 @@ const addFullfilmentSlot = async (req, res) => {
                         packages: '',
                         count_product: '',
                         sum_itog: '',
+                        obslujival: '',
                         expenses: '',
                         sum_arrived: ''
                     }
@@ -73,6 +75,7 @@ const editFullfilmentTable = async (req, res) => {
         packages,
         count_product,
         sum_itog,
+        obslujival,
         expenses,
         sum_arrived,
     } = req.body
@@ -86,6 +89,7 @@ const editFullfilmentTable = async (req, res) => {
                 "otchet.$.packages": packages,
                 "otchet.$.count_product": count_product,
                 "otchet.$.sum_itog": sum_itog,
+                "otchet.$.obslujival": obslujival,
                 "otchet.$.expenses": expenses,
                 "otchet.$.sum_arrived": sum_arrived,
             },
