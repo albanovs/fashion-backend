@@ -111,6 +111,7 @@ const updateSchetTeam = async () => {
                                     obj.comPersent2 = (item.comission * 0.3).toFixed(0);
                                     obj.comPersent3 = (item.comission * 0.1).toFixed(0);
                                     obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
+                                    obj.itog = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -139,6 +140,7 @@ const updateSchetTeam = async () => {
                                     obj.comPersent2 = (item.comission * 0.3).toFixed(0);
                                     obj.comPersent3 = (item.comission * 0.1).toFixed(0);
                                     obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
+                                    obj.itog = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -166,6 +168,7 @@ const updateSchetTeam = async () => {
                                     obj.comPersent2 = (item.comission * 0.3).toFixed(0);
                                     obj.comPersent3 = (item.comission * 0.1).toFixed(0);
                                     obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
+                                    obj.itog = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -193,6 +196,7 @@ const updateSchetTeam = async () => {
                                     obj.comPersent2 = (item.comission * 0.3).toFixed(0);
                                     obj.comPersent3 = (item.comission * 0.1).toFixed(0);
                                     obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
+                                    obj.itog = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -220,6 +224,7 @@ const updateSchetTeam = async () => {
                                     obj.comPersent2 = (item.comission * 0.3).toFixed(0);
                                     obj.comPersent3 = (item.comission * 0.1).toFixed(0);
                                     obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
+                                    obj.itog = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
@@ -247,6 +252,7 @@ const updateSchetTeam = async () => {
                                     obj.comPersent2 = (item.comission * 0.3).toFixed(0);
                                     obj.comPersent3 = (item.comission * 0.1).toFixed(0);
                                     obj.comPersent4 = (item.comission * 0.6 + 40).toFixed(0);
+                                    obj.itog = (item.comission * 0.6 + 40).toFixed(0);
                                     break;
                                 }
                             }
