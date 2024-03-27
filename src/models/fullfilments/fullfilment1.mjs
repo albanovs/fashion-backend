@@ -9,6 +9,7 @@ const Fullfilment1Schema = new mongoose.Schema({
         packages: Number,
         count_product: Number,
         sum_itog: Number,
+        obslujival: String,
         expenses: Number,
         sum_arrived: Number
     }],

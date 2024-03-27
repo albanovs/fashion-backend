@@ -1,6 +1,5 @@
 import Fullfilment1Model from "../../models/fullfilments/fullfilment1.mjs"
 import Fullfilment1dataModel from "../../models/fullfilments/fullfilment1data.mjs";
-import cron from 'node-cron'
 
 const createFullfilmentTable = async (req, res) => {
     try {
