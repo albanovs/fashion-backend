@@ -477,11 +477,12 @@ bot.action('set_position', (ctx) => {
         ]));
 });
 bot.action('success_position', async (ctx) => {
-    const currentState = ctx.from.id
-    ctx.reply('Счет фактура успешно завершена');
-    const html = generateHTML(currentState);
+    const currentState = state[ctx.from.id]
+    ctx.reply('Счет фактура успешно завершена, подождите немного, отправим вам результат');
+    const invoice = await schetfakturaModel.findOne({ FIO: currentState.fio || currentState.change, user_id: ctx.from.id });
+    const html = generateHTML(invoice);
     const pdfBuffer = await convertHTMLToPDF(html);
-    await ctx.telegram.sendDocument(currentState, {
+    await ctx.telegram.sendDocument(ctx.from.id, {
         source: pdfBuffer,
         filename: 'данные.pdf',
     });
