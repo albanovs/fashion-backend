@@ -15,6 +15,9 @@ import SimModelNewOtdelLog from '../../models/simcardlogist/newotdellogist.mjs';
 import SimModelTuranLog from '../../models/simcardlogist/turanlogist.mjs';
 import schetfakturaModel from '../../models/schet-factura/schet-faktura.mjs';
 import updateSchetData from '../telegram-bot/schet-control.mjs'
+import pdf from 'html-pdf'
+import fs from 'fs'
+import { generateHTML, convertHTMLToPDF } from './generateHTML.mjs';
 
 const token = "6928660684:AAH8rryO_0FdwaBHuGyKp6z90Rn2dPnrZKY";
 const bot = new Telegraf(token);
@@ -474,7 +477,14 @@ bot.action('set_position', (ctx) => {
         ]));
 });
 bot.action('success_position', async (ctx) => {
+    const currentState = ctx.from.id
     ctx.reply('Счет фактура успешно завершена');
+    const html = generateHTML(currentState);
+    const pdfBuffer = await convertHTMLToPDF(html);
+    await ctx.telegram.sendDocument(currentState, {
+        source: pdfBuffer,
+        filename: 'данные.pdf',
+    });
     await updateSchetData.updateSchetTeam()
 });
 
