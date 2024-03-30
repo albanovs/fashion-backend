@@ -478,8 +478,9 @@ bot.action('set_position', (ctx) => {
 });
 bot.action('success_position', async (ctx) => {
     const currentState = state[ctx.from.id]
+
     ctx.reply('Счет фактура успешно завершена, подождите немного, отправим вам результат');
-    const invoice = await schetfakturaModel.findOne({ FIO: currentState.fio || currentState.change, user_id: ctx.from.id });
+    const invoice = await schetfakturaModel.findOne({ user_id: ctx.from.id });
     const html = generateHTML(invoice);
     const pdfBuffer = await convertHTMLToPDF(html);
     await ctx.telegram.sendDocument(ctx.from.id, {
