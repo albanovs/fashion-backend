@@ -8,7 +8,6 @@ import User from "./src/models/User.js";
 import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
 import SimModelManager from "./src/models/simcard/simmanager.js";
-import UserForTeam from "./src/models/forRegist.js";
 
 import liderDataRouter from './src/routes/lider/liderDatasRouter.mjs'
 import liderOtchetBetaRouter from './src/routes/lider/otchetBetaRoutes.mjs'
@@ -54,7 +53,6 @@ import calcFenixLog from './src/routes/calculate-logist/fenix.mjs'
 import calcNewOtdelLog from './src/routes/calculate-logist/newOtdel.mjs'
 import calcLibertyLog from './src/routes/calculate-logist/liberty.mjs'
 
-import roles from './src/routes/roles/roles.mjs'
 import itogs from './src/routes/calculate-itog/itog.mjs'
 import clientLeader from './src/routes/client-privlechennyi/client-lider.mjs'
 import clientMonaco from './src/routes/client-privlechennyi/client-monaco.mjs'
@@ -145,7 +143,6 @@ app.use('/', calcFenixLog)
 app.use('/', calcNewOtdelLog)
 app.use('/', calcLibertyLog)
 
-app.use('/', roles)
 app.use('/', itogs)
 app.use('/', clientLeader)
 app.use('/', clientMonaco)
@@ -386,88 +383,6 @@ app.post("/test/logins", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Что-то пошло не так" });
-  }
-});
-
-app.post("/test/loginforteam", async (req, res) => {
-  try {
-    const { fullName, username, password, team, role } = req.body;
-
-    const existingUser = await UserForTeam.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 8);
-
-    const user = new UserForTeam({ fullName, username, password: hashedPassword, team, role });
-    await user.save();
-
-    res.status(200).json({ message: "Регистрация прошла успешно" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Что-то пошло не так" });
-  }
-});
-
-
-app.post("/test/loginforteamin", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    const user = await UserForTeam.findOne({ username });
-    if (!user) {
-      return res.status(400).json({ message: "Неправильное имя пользователя" });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Неверный пароль" });
-    }
-    const roles = await UserForTeam.findOne({ username })
-
-    res.status(200).json({ roles });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Что-то пошло не так" });
-  }
-});
-
-app.get("/test/loginforteams", async (req, res) => {
-  try {
-    const data = await UserForTeam.find();
-    res.status(200).json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
-});
-
-app.delete('/test/loginforteams/:id', async (req, res) => {
-  const id = req.params.id;
-
-  try {
-    const deletedUser = await UserForTeam.findByIdAndDelete(id);
-    if (!deletedUser) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
-    }
-    res.status(200).json({ message: 'Пользователь успешно удален' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Что-то пошло не так' });
-  }
-});
-
-app.put('/test/loginforteams/:id', async (req, res) => {
-  const userId = req.params.id;
-  const updatedData = req.body;
-
-  try {
-    const updatedUser = await UserForTeam.findByIdAndUpdate(userId, updatedData, { new: true });
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Произошла ошибка при обновлении данных пользователя' });
   }
 });
 

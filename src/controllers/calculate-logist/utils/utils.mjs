@@ -1,8 +1,7 @@
-
 export const calculateTotalCommission = (adminDataItog, elem, nonEmptyLogist) => {
     return adminDataItog.reduce((acc, cur) => {
         const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-            if (cur2.admin === elem.curator || nonEmptyLogist.some(logist => logist.logist === cur2.admin)) {
+            if (cur2.admin.replace(/\s/g, '').toLowerCase() === elem.curator.replace(/\s/g, '').toLowerCase() || nonEmptyLogist.some(logist => logist.logist.replace(/\s/g, '').toLowerCase() === cur2.admin.replace(/\s/g, '').toLowerCase())) {
                 return acc2 + cur2.comPersent100;
             }
             return acc2;
@@ -14,8 +13,8 @@ export const calculateTotalCommission = (adminDataItog, elem, nonEmptyLogist) =>
 export const calculateTotalOrders = (adminDataItog, elem, nonEmptyLogist) => {
     return adminDataItog.reduce((acc, cur) => {
         return acc + cur.otchet.reduce((acc2, cur2) => {
-            const matchesCurator = cur2.admin === elem.curator;
-            const matchesNonEmptyLogist = nonEmptyLogist.some((logistItem) => cur2.admin === logistItem.logist);
+            const matchesCurator = cur2.admin.replace(/\s/g, '').toLowerCase() === elem.curator.replace(/\s/g, '').toLowerCase();
+            const matchesNonEmptyLogist = nonEmptyLogist.some((logistItem) => cur2.admin.replace(/\s/g, '').toLowerCase() === logistItem.logist.replace(/\s/g, '').toLowerCase());
             return acc2 + (matchesCurator || matchesNonEmptyLogist ? 1 : 0);
         }, 0);
     }, 0);

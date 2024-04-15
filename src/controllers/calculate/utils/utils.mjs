@@ -1,8 +1,7 @@
-
 export const calculateTotalCommission = (adminDataItog, elem, nonEmptyBuyers) => {
     return adminDataItog.reduce((acc, cur) => {
         const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-            if (cur2.buyer === elem.curator || nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer)) {
+            if (cur2.buyer.replace(/\s/g, '').toLowerCase() === elem.curator.replace(/\s/g, '').toLowerCase() || nonEmptyBuyers.some(logist => logist.buyer.replace(/\s/g, '').toLowerCase() === cur2.buyer.replace(/\s/g, '').toLowerCase())) {
                 return acc2 + cur2.itog;
             }
             return acc2;
@@ -14,7 +13,7 @@ export const calculateTotalCommission = (adminDataItog, elem, nonEmptyBuyers) =>
 export const calculateTotalCommissionPercent = (adminDataItog, elem, nonEmptyBuyers) => {
     return adminDataItog.reduce((acc, cur) => {
         const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
-            if (nonEmptyBuyers.some(logist => logist.buyer === cur2.buyer) && cur2.sm === 1) {
+            if (nonEmptyBuyers.some(logist => logist.buyer.replace(/\s/g, '').toLowerCase() === cur2.buyer.replace(/\s/g, '').toLowerCase()) && cur2.sm === 1) {
                 return acc2 + cur2.comPersent100;
             }
             return acc2;
@@ -26,8 +25,8 @@ export const calculateTotalCommissionPercent = (adminDataItog, elem, nonEmptyBuy
 export const calculateTotalOrders = (adminDataItog, elem, nonEmptyBuyers) => {
     return adminDataItog.reduce((acc, cur) => {
         return acc + cur.otchet.reduce((acc2, cur2) => {
-            const matchesCurator = cur2.buyer === elem.curator;
-            const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer === buyerItem.buyer);
+            const matchesCurator = cur2.buyer.replace(/\s/g, '').toLowerCase() === elem.curator.replace(/\s/g, '').toLowerCase();
+            const matchesNonEmptyBuyers = nonEmptyBuyers.some((buyerItem) => cur2.buyer.replace(/\s/g, '').toLowerCase() === buyerItem.buyer.replace(/\s/g, '').toLowerCase());
             return acc2 + (matchesCurator || matchesNonEmptyBuyers ? 1 : 0);
         }, 0);
     }, 0);

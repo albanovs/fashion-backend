@@ -37,7 +37,6 @@ async function calculateAndCacheData() {
         const filteredliberty = dataItogLiberty.filter((item) => isCurrentMonthAndYear(item.date));
 
         const result = managers.map((elem) => {
-            const nonEmptyBuyersStatic = elem.slot.filter((item) => item.buyer !== '');
             const nonEmptyBuyers = elem.slot.filter((item) => item.buyer !== '' && item.status === "2");
 
             if (nonEmptyBuyers.length > 0) {
