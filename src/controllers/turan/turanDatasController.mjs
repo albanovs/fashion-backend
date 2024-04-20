@@ -1,8 +1,28 @@
+import ExpensesModel from "../../models/expences/expences.mjs";
 import TuranDataModel from "../../models/turan/turanData.mjs";
 
 
-const createTuranData = (req, res) => {
+const createTuranData = async (req, res) => {
     const { date, otchet, itog } = req.body
+
+    const existingExpense = await ExpensesModel.findOne({ "departmentExpenses.expenses": { $elemMatch: { date: date } } });
+
+    if (existingExpense) {
+        existingExpense.departmentExpenses.forEach(department => {
+            if (department.names === "туран") {
+                const foundExpense = department.expenses.find(expense => expense.date === date);
+                if (foundExpense) {
+                    const index = department.expenses.indexOf(foundExpense);
+                    if (index !== -1) {
+                        department.expenses[index].amount = itog[0].itogs;
+                    }
+                }
+            }
+        });
+        await existingExpense.save();
+    } else {
+        console.error('Расход для указанной даты не найден');
+    }
 
     let data = {
         date: date,
