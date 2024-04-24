@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const TestModel = new mongoose.Schema({
     username: String,
-    descripton: String
+    descripiton: String
 })
 
 const Test = mongoose.model('test', TestModel);
