@@ -7,7 +7,7 @@ const changeData = async (req, res) => {
     try {
         const existingExpense = await Test.findById(id);
         existingExpense.username = username
-        existingExpense.description = description
+        existingExpense.descripiton = description
 
         await existingExpense.save();
         res.sendStatus(200);
