@@ -36,11 +36,10 @@ const postData = async (req, res) => {
 const deleteDatas = async (req, res) => {
     const { id } = req.params;
     try {
-        const existingExpense = await Test.findByIdAndDelete(id);
-        await existingExpense.save();
+        await Test.findByIdAndDelete(id);
         res.sendStatus(200);
     } catch (error) {
-        console.error('Ошибка при сохранении данных:', error);
+        console.error('Ошибка при удалении данных:', error);
         res.sendStatus(500);
     }
 };
