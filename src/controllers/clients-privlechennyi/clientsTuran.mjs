@@ -14,8 +14,6 @@ const newClient = async (req, res) => {
     }
 }
 
-
-
 const getClient = async (req, res) => {
     try {
         const data = await TuranClientsModel.find();
@@ -62,8 +60,6 @@ const updatedatas = async (req, res) => {
         console.error('Ошибка при обновлении клиентов:', error);
     }
 };
-
-updatedatas()
 
 cron.schedule('0 0 * * *', () => {
     updatedatas();

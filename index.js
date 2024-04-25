@@ -74,7 +74,6 @@ import schetfactura from './src/routes/schetfactura/schetfactura.mjs'
 
 // import setExpenses from './src/controllers/expences/expences.mjs'
 import expences from './src/routes/expences/expences.mjs'
-import test from './src/routes/test/test.mjs'
 
 const app = express();
 app.use(express.json());
@@ -99,7 +98,6 @@ cron.schedule('0 0 28-31 * *', async () => {
 connect();
 
 app.use('/', expences)
-app.use('/', test)
 
 app.use('/', getManagers)
 app.use('/', getManagersRait)

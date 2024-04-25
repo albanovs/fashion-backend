@@ -63,8 +63,6 @@ const updatedatas = async (req, res) => {
     }
 };
 
-updatedatas()
-
 cron.schedule('0 0 * * *', () => {
     updatedatas();
 }, {

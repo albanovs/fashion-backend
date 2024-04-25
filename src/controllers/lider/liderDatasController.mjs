@@ -6,6 +6,13 @@ const createLiderData = async (req, res) => {
 
     try {
 
+        const existingData = await LiderDataModel.findOne({ date: date });
+
+        if (existingData) {
+            console.error('Документ с указанной датой уже существует');
+            return res.sendStatus(400);
+        }
+
         const existingExpense = await ExpensesModel.findOne({ "departmentExpenses.expenses": { $elemMatch: { date: date } } });
 
         if (existingExpense) {

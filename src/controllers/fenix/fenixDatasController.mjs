@@ -5,6 +5,13 @@ import FenixDataModel from "../../models/fenix/fenixData.mjs";
 const createFenixData = async (req, res) => {
     const { date, otchet, itog } = req.body
 
+    const existingData = await FenixDataModel.findOne({ date: date });
+
+    if (existingData) {
+        console.error('Документ с указанной датой уже существует');
+        return res.sendStatus(400);
+    }
+
     const existingExpense = await ExpensesModel.findOne({ "departmentExpenses.expenses": { $elemMatch: { date: date } } });
 
     if (existingExpense) {

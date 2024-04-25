@@ -5,6 +5,13 @@ import MonacoDataModel from "../../models/monaco/monacoData.mjs";
 const createMonacoData = async (req, res) => {
     const { date, otchet, itog } = req.body
 
+    const existingData = await MonacoDataModel.findOne({ date: date });
+
+    if (existingData) {
+        console.error('Документ с указанной датой уже существует');
+        return res.sendStatus(400);
+    }
+
     const existingExpense = await ExpensesModel.findOne({ "departmentExpenses.expenses": { $elemMatch: { date: date } } });
 
     if (existingExpense) {
