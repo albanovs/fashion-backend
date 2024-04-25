@@ -5,7 +5,7 @@ const Fullfilment1Schema = new mongoose.Schema({
     otchet: [{
         date: String,
         clients: String,
-        services: Array,
+        services: String,
         packages: Number,
         count_product: Number,
         sum_itog: Number,

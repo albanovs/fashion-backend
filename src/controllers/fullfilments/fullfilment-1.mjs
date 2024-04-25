@@ -8,7 +8,7 @@ const createFullfilmentTable = async (req, res) => {
         const otchetArray = Array.from({ length: 30 }, () => ({
             date: '',
             clients: '',
-            services: [],
+            services: '',
             packages: '',
             count_product: '',
             sum_itog: '',
@@ -45,7 +45,7 @@ const addFullfilmentSlot = async (req, res) => {
                     otchet: {
                         date: '',
                         clients: '',
-                        services: [],
+                        services: '',
                         packages: '',
                         count_product: '',
                         sum_itog: '',
@@ -180,8 +180,6 @@ const checkAndMoveDocuments = async (req, res) => {
         res.status(500).json({ error: "Ошибка при переносе документов" });
     }
 };
-
-
 
 const getSuccesData = async (req, res) => {
     try {
