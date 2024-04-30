@@ -85,12 +85,10 @@ const createLiderData = async (req, res) => {
 
         const liderData = new LiderDataModel(data);
         await liderData.save();
-        await liderOtchetController.deleteOtchetBeta()
-        await liderOtchetController.createOtchet()
-        res.sendStatus(200);
+        await liderOtchetController.deleteOtchetBeta(req, res)
+        await liderOtchetController.createOtchet(req, res)
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
-        res.sendStatus(500);
     }
 };
 
