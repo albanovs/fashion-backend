@@ -84,8 +84,7 @@ bot.launch()
 cron.schedule('*/10 * * * *', async () => {
   bot.launch()
 });
-
-cron.schedule('0 0 28-31 * *', async () => {
+cron.schedule('0 0 L * *', async () => {
   try {
     await updateCalcManager.updateCalcManager();
   } catch (error) {
@@ -95,6 +94,7 @@ cron.schedule('0 0 28-31 * *', async () => {
   scheduled: true,
   timezone: 'Europe/Moscow'
 });
+
 connect();
 
 app.use('/', expences)
