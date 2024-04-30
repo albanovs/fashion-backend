@@ -1,5 +1,6 @@
 import ExpensesModel from "../../models/expences/expences.mjs";
 import LiderDataModel from "../../models/lider/liderData.mjs";
+import liderOtchetController from "./liderOtchetController.mjs";
 
 const createLiderData = async (req, res) => {
     const { date, otchet, itog } = req.body;
@@ -84,7 +85,8 @@ const createLiderData = async (req, res) => {
 
         const liderData = new LiderDataModel(data);
         await liderData.save();
-        console.log('Данные успешно сохранены');
+        await liderOtchetController.deleteOtchetBeta()
+        await liderOtchetController.createOtchet()
         res.sendStatus(200);
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
