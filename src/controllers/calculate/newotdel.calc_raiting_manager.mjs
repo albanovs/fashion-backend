@@ -113,7 +113,7 @@ async function calculateAndCacheData() {
                         summa: allItogs,
                         team: 'Ынтымак',
                         curator: elem.curator,
-                        coeff: ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1),
+                        coeff: allMatches !== 0 ? ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1) : 0
                     };
                 });
 

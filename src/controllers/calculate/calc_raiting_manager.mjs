@@ -113,8 +113,7 @@ async function calculateAndCacheData() {
                         summa: allItogs,
                         team: 'Лидер',
                         curator: elem.curator,
-                        coeff: ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1),
-
+                        coeff: allMatches !== 0 ? ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1) : 0
                     };
                 });
 
@@ -166,10 +165,6 @@ async function calculateAndCacheData() {
                 elem.for_withdrawal = elem.comission - parseFloat(allpercentsum);
             }
         });
-
-        const allDetailInfo = result.reduce((allDetails, manager) => {
-            return allDetails.concat(manager.detail);
-        }, []);
 
         return result;
 
