@@ -112,6 +112,8 @@ async function calculateAndCacheData() {
                         status: logistItem.status,
                         orders: allMatches,
                         summa: allItogs,
+                        team: 'Ильяс',
+                        curator: elem.curator,
                     };
                 });
 

@@ -111,9 +111,11 @@ async function calculateAndCacheData() {
                         status: logistItem.status,
                         orders: allMatches,
                         summa: allItogs,
+                        team: 'Туран',
+                        curator: elem.curator,
                     };
                 });
-
+                
                 return {
                     curator: elem.curator,
                     buyerLength: nonEmptyBuyers.length,

@@ -111,6 +111,8 @@ async function calculateAndCacheData() {
                         status: logistItem.status,
                         orders: allMatches,
                         summa: allItogs,
+                        team: 'Ынтымак',
+                        curator: elem.curator,
                     };
                 });
 

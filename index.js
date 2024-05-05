@@ -71,7 +71,6 @@ import cron from 'node-cron'
 import updateCalcManager from "./src/controllers/calculate/calc-raaiting-month/calc-manager.mjs";
 import getManagersRait from './src/routes/calculate/calcraiting.mjs'
 import schetfactura from './src/routes/schetfactura/schetfactura.mjs'
-
 // import setExpenses from './src/controllers/expences/expences.mjs'
 import expences from './src/routes/expences/expences.mjs'
 

@@ -111,6 +111,9 @@ async function calculateAndCacheData() {
                         status: logistItem.status,
                         orders: allMatches,
                         summa: allItogs,
+                        team: 'Лидер',
+                        curator: elem.curator,
+
                     };
                 });
 
@@ -162,6 +165,10 @@ async function calculateAndCacheData() {
                 elem.for_withdrawal = elem.comission - parseFloat(allpercentsum);
             }
         });
+
+        const allDetailInfo = result.reduce((allDetails, manager) => {
+            return allDetails.concat(manager.detail);
+        }, []);
 
         return result;
 
