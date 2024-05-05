@@ -55,10 +55,14 @@ const extractDetailData = async (req, res) => {
         for (const func of calculationFunctions) {
             const result = await func();
             result.forEach(manager => {
-                allDetails.push(...manager.detail);
+
+                allDetails.push({
+                    ...manager.detail,
+                    coefficient: (manager.detail.summa / manager.detail.orders) / 1000
+                });
             });
         }
-        allDetails.sort((a, b) => b.orders - a.orders);
+        allDetails.sort((a, b) => b.coefficient - a.coefficient);
 
         return allDetails;
     } catch (error) {
@@ -66,6 +70,7 @@ const extractDetailData = async (req, res) => {
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 };
+
 
 const updateCalcBuyer = async () => {
     try {
