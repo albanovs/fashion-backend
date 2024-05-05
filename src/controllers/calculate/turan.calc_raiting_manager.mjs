@@ -113,9 +113,10 @@ async function calculateAndCacheData() {
                         summa: allItogs,
                         team: 'Туран',
                         curator: elem.curator,
+                        coeff: ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1),
                     };
                 });
-                
+
                 return {
                     curator: elem.curator,
                     buyerLength: nonEmptyBuyers.length,

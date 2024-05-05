@@ -114,6 +114,7 @@ async function calculateAndCacheData() {
                         summa: allItogs,
                         team: 'Ильяс',
                         curator: elem.curator,
+                        coeff: ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1),
                     };
                 });
 
