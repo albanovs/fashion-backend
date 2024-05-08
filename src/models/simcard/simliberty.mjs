@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const ModelLibertySchema = new mongoose.Schema({
+    data_register: String,
     curator: String,
     slot: [{
         num: Number,
@@ -15,6 +16,7 @@ const ModelLibertySchema = new mongoose.Schema({
         registration: String,
         WAcod: String,
         TGcod: String,
+        data_register: String,
     }]
 }, { strict: false });
 

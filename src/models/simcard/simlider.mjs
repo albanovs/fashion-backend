@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const ModelLiderSchema = new mongoose.Schema({
+    data_register: String,
     curator: String,
     slot: [{
         num: Number,
@@ -15,10 +16,10 @@ const ModelLiderSchema = new mongoose.Schema({
         registration: String,
         WAcod: String,
         TGcod: String,
+        data_register: String,
     }]
 }, { strict: false });
 
 const SimModelLider = mongoose.model('simCardLider', ModelLiderSchema);
 
 export default SimModelLider;
- 

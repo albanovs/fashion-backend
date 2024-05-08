@@ -5,22 +5,11 @@ import cron from 'node-cron'
 const createSimTable = async (req, res) => {
     try {
         const { curator } = req.body
+        const datas = new Date().toLocaleDateString()
         const newData = new SimModelMonaco({
+            data_register: datas,
             curator: curator,
-            slot: [{
-                num: 1,
-                number: '',
-                status: '1',
-                buyer: '',
-                personal_number: '',
-                date_of_verification: '',
-                days_since_verifiation: '',
-                status_simCard: '1',
-                physical_simCard: '1',
-                registration: '',
-                WAcod: '',
-                TGcod: '',
-            }]
+            slot: []
         })
         await newData.save()
         res.status(200).json({ massage: `${JSON.stringify(newData)}` })
@@ -33,6 +22,7 @@ const addSimSlot = async (req, res) => {
     try {
         const { id } = req.body;
 
+        const datas = new Date().toLocaleDateString()
         const newData = await SimModelMonaco.findByIdAndUpdate(
             id,
             {
@@ -50,6 +40,7 @@ const addSimSlot = async (req, res) => {
                         registration: '',
                         WAcod: '',
                         TGcod: '',
+                        data_register: datas,
                     }
                 }
             },

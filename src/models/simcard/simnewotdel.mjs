@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const ModelnewOtdelSchema = new mongoose.Schema({
+    data_register: String,
     curator: String,
     slot: [{
         num: Number,
@@ -15,6 +16,7 @@ const ModelnewOtdelSchema = new mongoose.Schema({
         registration: String,
         WAcod: String,
         TGcod: String,
+        data_register: String,
     }]
 }, { strict: false });
 
