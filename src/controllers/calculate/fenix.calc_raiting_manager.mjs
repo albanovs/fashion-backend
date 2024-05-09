@@ -121,6 +121,7 @@ async function calculateAndCacheData() {
 
                 return {
                     curator: elem.curator,
+                    data_register: elem.data_register ? elem.data_register : 'до 09.05.2024',
                     buyerLength: nonEmptyBuyers.length,
                     totalcom: totalCommissionall,
                     order: totalOrdersAll,
