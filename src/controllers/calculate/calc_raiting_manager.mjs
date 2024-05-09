@@ -114,7 +114,7 @@ async function calculateAndCacheData() {
                         team: 'Лидер',
                         curator: elem.curator,
                         coeff: allMatches !== 0 ? ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1) : 0,
-                        data_register: logistItem.data_register ? logistItem.data_register : 'до 09/05/2024',
+                        data_register: logistItem.data_register ? logistItem.data_register : 'до 09.05.2024',
                     };
                 });
 

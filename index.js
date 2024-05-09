@@ -90,6 +90,7 @@ cron.schedule('0 0 28-31 * *', async () => {
   if (today.getDate() === lastDayOfMonth) {
     try {
       await updateCalcManager.updateCalcManager();
+      await updateCalcManager.saveBuyerRaiting()
     } catch (error) {
       console.error('Ошибка при выполнении вычислений рейтинга менеджеров:', error);
     }

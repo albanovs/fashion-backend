@@ -4,9 +4,13 @@ import cron from 'node-cron'
 const createSimTable = async (req, res) => {
     try {
         const { curator } = req.body
-        const datas = new Date().toLocaleDateString()
+        const currentDate = new Date();
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = currentDate.getFullYear();
+        const formattedDate = `${day}.${month}.${year}`;
         const newData = new SimModelLider({
-            data_register: datas,
+            data_register: formattedDate,
             curator: curator,
             slot: []
         })
@@ -20,7 +24,11 @@ const createSimTable = async (req, res) => {
 const addSimSlot = async (req, res) => {
     try {
         const { id } = req.body;
-        const datas = new Date().toLocaleDateString()
+        const currentDate = new Date();
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = currentDate.getFullYear();
+        const formattedDate = `${day}.${month}.${year}`;
         const newData = await SimModelLider.findByIdAndUpdate(
             id,
             {
@@ -38,7 +46,7 @@ const addSimSlot = async (req, res) => {
                         registration: '',
                         WAcod: '',
                         TGcod: '',
-                        data_register: datas,
+                        data_register: formattedDate,
                     }
                 }
             },

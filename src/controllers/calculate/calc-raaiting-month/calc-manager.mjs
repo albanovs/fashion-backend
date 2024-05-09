@@ -6,6 +6,7 @@ import calcLiberty from '../newotdelliberty.calc_raiting_manager.mjs';
 import calcTuran from '../turan.calc_raiting_manager.mjs';
 import ManagerRaiting from '../../../models/manager-raiting/managerRaiting.mjs';
 import cron from 'node-cron';
+import BuyerRaiting from '../../../models/manager-raiting/buyer-raiting.mjs';
 
 const updateCalcManager = async () => {
     try {
@@ -76,6 +77,24 @@ const updateCalcBuyer = async () => {
     }
 }
 
+const saveBuyerRaiting = async () => {
+    try {
+        const result = await extractDetailData();
+        if (result) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const dataToSave = {
+                datas: `${year}-${month}`,
+                managers: result
+            };
+            await BuyerRaiting.create(dataToSave);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 updateCalcBuyer()
 
 cron.schedule('*/20 * * * *', async () => {
@@ -110,4 +129,4 @@ const getBuyerRaiting = async (req, res) => {
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 };
-export default { updateCalcManager, getManagerRaiting, getBuyerRaiting }
+export default { updateCalcManager, getManagerRaiting, getBuyerRaiting , saveBuyerRaiting}
