@@ -279,7 +279,7 @@ app.post("/insert/telegram", async (req, res) => {
 });
 app.get("/test/telegramSlot", async (req, res) => {
   try {
-    const data = await MyModelForTg.find().sort({ account: 1, num: 1 });
+    const data = await MyModelForTg.find().sort({ account: 1, num: 'asc' });
     res.status(200).json(data);
   } catch (error) {
     console.error(error);
