@@ -277,16 +277,16 @@ app.post("/insert/telegram", async (req, res) => {
     res.status(500).json({ error: "Что-то пошло не так" });
   }
 });
-
 app.get("/test/telegramSlot", async (req, res) => {
   try {
-    const data = await MyModelForTg.find();
+    const data = await MyModelForTg.find().sort({ account: 1, num: 1 });
     res.status(200).json(data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Что-то пошло не так" });
   }
 });
+
 
 app.post("/test/whatsappslot", async (req, res) => {
   try {
