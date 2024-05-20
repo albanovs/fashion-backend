@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
-const ModelLiderLogSchema = new mongoose.Schema({
-    curator: String,
+const ModelLogistAndAdmin = new mongoose.Schema({
+    team: String,
+    select: String,
     slot: [{
-        data_register: String,
         num: Number,
         number: String,
         status: String,
@@ -19,6 +19,6 @@ const ModelLiderLogSchema = new mongoose.Schema({
     }]
 }, { strict: false });
 
-const SimModelLiderLog = mongoose.model('simCardLiderLog', ModelLiderLogSchema);
+const LogistAndAdmin = mongoose.model('logistandadmin', ModelLogistAndAdmin);
 
-export default SimModelLiderLog;
+export default LogistAndAdmin;

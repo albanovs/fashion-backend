@@ -64,6 +64,7 @@ import clientLiberty from './src/routes/client-privlechennyi/client-liberty.mjs'
 import fullfilment1 from './src/routes/fullfilment/fullfilment-1.mjs'
 
 import getManagers from './src/routes/managers/getmanager.mjs'
+import adminLogistraiting from './src/routes/logistandadmin/logistandadmin.mjs'
 
 import itotdel from './src/routes/it/simcard.mjs'
 import bot from './src/controllers/telegram-bot/schet-faktura.mjs';
@@ -73,6 +74,7 @@ import getManagersRait from './src/routes/calculate/calcraiting.mjs'
 import schetfactura from './src/routes/schetfactura/schetfactura.mjs'
 // import setExpenses from './src/controllers/expences/expences.mjs'
 import expences from './src/routes/expences/expences.mjs'
+import logistadmin from './src/routes/logistandadmin/logistandadmin.mjs'
 
 const app = express();
 app.use(express.json());
@@ -103,6 +105,9 @@ cron.schedule('0 0 28-31 * *', async () => {
 connect();
 
 app.use('/', expences)
+
+app.use('/', logistadmin)
+app.use('/', adminLogistraiting)
 
 app.use('/', getManagers)
 app.use('/', getManagersRait)
@@ -279,7 +284,7 @@ app.post("/insert/telegram", async (req, res) => {
 });
 app.get("/test/telegramSlot", async (req, res) => {
   try {
-    const data = await MyModelForTg.find().sort({  account: 1, num: 1 });
+    const data = await MyModelForTg.find().sort({ account: 1, num: 1 });
     res.status(200).json(data);
   } catch (error) {
     console.error(error);
