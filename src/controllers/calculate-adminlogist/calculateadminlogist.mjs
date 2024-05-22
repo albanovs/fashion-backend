@@ -7,10 +7,11 @@ import NewOtdelDataModel from "../../models/new-otel/newOtdelData.mjs";
 import LibertyDataModel from "../../models/liberty/libertyData.mjs";
 import { calculateMatchesLogist, calculateSumComPersent100 } from "../calculate/utils/detail-utils.mjs";
 import { isCurrentMonthAndYear } from "../calculate/utils/utils.mjs";
-
+import cron from 'node-cron'; 
 
 let cachedData = null;
-async function calculateAndCasheData() {
+
+async function calculateAndCacheData() {
     try {
         const [adminAndLogist, leader, monaco, turan, ilyas, yntymak, liberty] = await Promise.all([
             LogistAndAdmin.find(),
@@ -32,35 +33,35 @@ async function calculateAndCasheData() {
         };
 
         adminAndLogist.forEach(item => {
-            let filtereditog;
+            let filteredItems;
             switch (item.team) {
                 case 'leader':
-                    filtereditog = leader.filter(leaderItem => isCurrentMonthAndYear(leaderItem.date));
+                    filteredItems = leader.filter(leaderItem => isCurrentMonthAndYear(leaderItem.date));
                     break;
                 case 'monaco':
-                    filtereditog = monaco.filter(monacoItem => isCurrentMonthAndYear(monacoItem.date));
+                    filteredItems = monaco.filter(monacoItem => isCurrentMonthAndYear(monacoItem.date));
                     break;
                 case 'turan':
-                    filtereditog = turan.filter(turanItem => isCurrentMonthAndYear(turanItem.date));
+                    filteredItems = turan.filter(turanItem => isCurrentMonthAndYear(turanItem.date));
                     break;
                 case 'liberty':
-                    filtereditog = liberty.filter(libertyItem => isCurrentMonthAndYear(libertyItem.date));
+                    filteredItems = liberty.filter(libertyItem => isCurrentMonthAndYear(libertyItem.date));
                     break;
                 case 'ilyas':
-                    filtereditog = ilyas.filter(ilyasItem => isCurrentMonthAndYear(ilyasItem.date));
+                    filteredItems = ilyas.filter(ilyasItem => isCurrentMonthAndYear(ilyasItem.date));
                     break;
                 case 'yntymak':
-                    filtereditog = yntymak.filter(yntymakItem => isCurrentMonthAndYear(yntymakItem.date));
+                    filteredItems = yntymak.filter(yntymakItem => isCurrentMonthAndYear(yntymakItem.date));
                     break;
                 default:
-                    filtereditog = [];
+                    filteredItems = [];
             }
 
             const nonEmptyLogist = item.slot.filter(slotItem => slotItem.logist !== '' && slotItem.status === '2');
 
-            const datasRaiting = nonEmptyLogist.map(elem => {
-                const matchesLogist = calculateMatchesLogist(filtereditog, elem);
-                const sumComPersent100 = calculateSumComPersent100(filtereditog, elem);
+            const dataRatings = nonEmptyLogist.map(elem => {
+                const matchesLogist = calculateMatchesLogist(filteredItems, elem);
+                const sumComPersent100 = calculateSumComPersent100(filteredItems, elem);
 
                 const coeff = (sumComPersent100 === 0 || matchesLogist === 0) ? 0 : ((parseFloat(sumComPersent100) / parseFloat(matchesLogist).toFixed(0)) / 10000).toFixed(1);
 
@@ -74,27 +75,27 @@ async function calculateAndCasheData() {
             });
 
             if (item.team in allRatings) {
-                allRatings[item.team] = allRatings[item.team].concat(datasRaiting);
+                allRatings[item.team] = allRatings[item.team].concat(dataRatings);
             }
         });
 
         return allRatings;
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 
-async function calculateAndCacheDataCash() {
-    const result = await calculateAndCasheData();
+async function calculateAndCacheDataWrapper() {
+    const result = await calculateAndCacheData();
     cachedData = result;
 }
 
-calculateAndCacheDataCash();
+calculateAndCacheDataWrapper();
 
 cron.schedule('*/10 * * * *', async () => {
     try {
-        await calculateAndCacheDataCash();
+        await calculateAndCacheDataWrapper();
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
     }
@@ -103,7 +104,7 @@ cron.schedule('*/10 * * * *', async () => {
 const calcRaintingLogistAdmin = async (req, res) => {
     try {
         if (!cachedData) {
-            await calculateAndCasheData();
+            await calculateAndCacheData();
         }
         res.json(cachedData);
     } catch (error) {
