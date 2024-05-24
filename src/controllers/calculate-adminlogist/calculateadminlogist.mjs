@@ -5,9 +5,9 @@ import TuranDataModel from "../../models/turan/turanData.mjs";
 import FenixDataModel from "../../models/fenix/fenixData.mjs";
 import NewOtdelDataModel from "../../models/new-otel/newOtdelData.mjs";
 import LibertyDataModel from "../../models/liberty/libertyData.mjs";
-import { calculateMatchesLogist, calculateSumComPersent100 } from "../calculate/utils/detail-utils.mjs";
+import { calculateMatchesLogist, calculateSumComPersent100 } from "../calculate-logist/utils/detail-logist.mjs";
 import { isCurrentMonthAndYear } from "../calculate/utils/utils.mjs";
-import cron from 'node-cron'; 
+import cron from 'node-cron';
 
 let cachedData = null;
 
