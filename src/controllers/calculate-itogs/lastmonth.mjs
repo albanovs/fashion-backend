@@ -92,12 +92,12 @@ async function calculateAndCacheData() {
         };
 
 
-        const filteredLiderData = filterDataByCurrentMonth(liderData);
-        const filteredMonacoData = filterDataByCurrentMonth(monacoData);
-        const filteredFenixData = filterDataByCurrentMonth(fenixData);
-        const filteredTuranData = filterDataByCurrentMonth(turanData);
-        const filteredNewOtdelData = filterDataByCurrentMonth(newOtdelData);
-        const filteredLibertyData = filterDataByCurrentMonth(libertyData);
+        const filteredLiderData = filterDataByPreviousMonth(liderData);
+        const filteredMonacoData = filterDataByPreviousMonth(monacoData);
+        const filteredFenixData = filterDataByPreviousMonth(fenixData);
+        const filteredTuranData = filterDataByPreviousMonth(turanData);
+        const filteredNewOtdelData = filterDataByPreviousMonth(newOtdelData);
+        const filteredLibertyData = filterDataByPreviousMonth(libertyData);
 
         itogs.otdel.lider = filteredLiderData
         itogs.otdel.monaco = filteredMonacoData
@@ -169,7 +169,7 @@ async function calculateAndCacheDataCash() {
 
 calculateAndCacheDataCash();
 
-const calcItogs = async (req, res) => {
+const calcItogslast = async (req, res) => {
     try {
         if (!cachedData) {
             await calculateAndCacheData();
@@ -181,4 +181,4 @@ const calcItogs = async (req, res) => {
     }
 };
 
-export default { calcItogs };
+export default { calcItogslast };
