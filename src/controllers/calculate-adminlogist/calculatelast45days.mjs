@@ -8,11 +8,8 @@ import LibertyDataModel from "../../models/liberty/libertyData.mjs";
 import { calculateMatchesLogist, calculateSumComPersent100 } from "../calculate-logist/utils/detail-logist.mjs";
 import { isCurrentMonthAndYear, isWithinLast45Days } from "../calculate-logist/utils/utils.mjs";
 import cron from 'node-cron';
-import AdminLogistRaiting from "../../models/adminlogistraiting/adminlogistraiting.mjs";
 
-let cachedData = null;
-
-async function calculateAndCacheData() {
+async function calculateAdminData() {
     try {
         const [adminAndLogist, leader, monaco, turan, ilyas, yntymak, liberty] = await Promise.all([
             LogistAndAdmin.find(),
@@ -24,31 +21,30 @@ async function calculateAndCacheData() {
             LibertyDataModel.find(),
         ]);
 
-        const allRatings = {
-            logist: [],
-            admin: [],
-        };
+        const adminRatings = [];
 
         adminAndLogist.forEach(item => {
+            if (item.select !== 'admin') return;
+
             let filteredItems = [];
             switch (item.team) {
                 case 'leader':
-                    filteredItems = leader.filter(leaderItem => isCurrentMonthAndYear(leaderItem.date));
+                    filteredItems = leader.filter(leaderItem => isWithinLast45Days(leaderItem.date));
                     break;
                 case 'monaco':
-                    filteredItems = monaco.filter(monacoItem => isCurrentMonthAndYear(monacoItem.date));
+                    filteredItems = monaco.filter(monacoItem => isWithinLast45Days(monacoItem.date));
                     break;
                 case 'turan':
-                    filteredItems = turan.filter(turanItem => isCurrentMonthAndYear(turanItem.date));
+                    filteredItems = turan.filter(turanItem => isWithinLast45Days(turanItem.date));
                     break;
                 case 'liberty':
-                    filteredItems = liberty.filter(libertyItem => isCurrentMonthAndYear(libertyItem.date));
+                    filteredItems = liberty.filter(libertyItem => isWithinLast45Days(libertyItem.date));
                     break;
                 case 'ilyas':
-                    filteredItems = ilyas.filter(ilyasItem => isCurrentMonthAndYear(ilyasItem.date));
+                    filteredItems = ilyas.filter(ilyasItem => isWithinLast45Days(ilyasItem.date));
                     break;
                 case 'yntymak':
-                    filteredItems = yntymak.filter(yntymakItem => isCurrentMonthAndYear(yntymakItem.date));
+                    filteredItems = yntymak.filter(yntymakItem => isWithinLast45Days(yntymakItem.date));
                     break;
                 default:
                     filteredItems = [];
@@ -71,18 +67,13 @@ async function calculateAndCacheData() {
                     coeff: coeff
                 };
 
-                if (item.select === 'admin') {
-                    allRatings.admin.push(dataRating);
-                } else if (item.select === 'logist') {
-                    allRatings.logist.push(dataRating);
-                }
+                adminRatings.push(dataRating);
             });
         });
 
-        allRatings.admin.sort((a, b) => b.coeff - a.coeff);
-        allRatings.logist.sort((a, b) => b.coeff - a.coeff);
+        adminRatings.sort((a, b) => b.coeff - a.coeff);
 
-        return allRatings;
+        return adminRatings;
 
     } catch (error) {
         console.error(error);
@@ -90,55 +81,33 @@ async function calculateAndCacheData() {
     }
 }
 
-async function saveAdminLogistRaiting() {
-    try {
-        const result = await calculateAndCacheData();
-        if (result) {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = today.getMonth() + 1;
-            const dateString = `${year}-${month}`;
-
-            const existingRecord = await AdminLogistRaiting.findOne({ datas: dateString });
-
-            if (!existingRecord) {
-                const dataToSave = {
-                    datas: dateString,
-                    adminandlogist: result
-                };
-                await AdminLogistRaiting.create(dataToSave);
-            } 
-        }
-    } catch (error) {
-        console.log(error);
-    }
+async function calculateAndCacheAdminDataWrapper() {
+    const result = await calculateAdminData();
+    cachedAdminData = result;
 }
 
-async function calculateAndCacheDataWrapper() {
-    const result = await calculateAndCacheData();
-    cachedData = result;
-}
+let cachedAdminData = null;
 
-calculateAndCacheDataWrapper();
+calculateAndCacheAdminDataWrapper();
 
 cron.schedule('*/10 * * * *', async () => {
     try {
-        await calculateAndCacheDataWrapper();
+        await calculateAndCacheAdminDataWrapper();
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
     }
 });
 
-const calcRaintingLogistAdmin = async (req, res) => {
+const calcRaintingAdmin45days = async (req, res) => {
     try {
-        if (!cachedData) {
-            await calculateAndCacheData();
+        if (!cachedAdminData) {
+            await calculateAndCacheAdminDataWrapper();
         }
-        res.json(cachedData);
+        res.json(cachedAdminData);
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 };
 
-export default { calcRaintingLogistAdmin, saveAdminLogistRaiting };
+export default { calcRaintingAdmin45days };

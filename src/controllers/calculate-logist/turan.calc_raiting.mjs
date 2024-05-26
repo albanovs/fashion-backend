@@ -100,4 +100,4 @@ const calcRaintingLogist = async (req, res) => {
 simTuranLog.on("change", calculateAndCacheDataCash)
 TuranDataModel.on("change", calculateAndCacheDataCash)
 
-export default { calcRaintingLogist };
+export default { calcRaintingLogist, calculateAndCacheData };

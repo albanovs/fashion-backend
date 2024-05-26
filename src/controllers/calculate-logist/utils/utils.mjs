@@ -26,3 +26,15 @@ export const isCurrentMonthAndYear = (dateString) => {
     return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
     // return 2023 === year && 8 === month;
 }
+
+export const isWithinLast45Days = (dateString) => {
+    const currentDate = new Date();
+    const [day, month, year] = dateString.split('.').map(Number);
+    const date = new Date(year, month - 1, day);
+
+    const startOfCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const pastDate = new Date(startOfCurrentMonth);
+    pastDate.setDate(pastDate.getDate() - 45);
+
+    return date >= pastDate && date < startOfCurrentMonth;
+};

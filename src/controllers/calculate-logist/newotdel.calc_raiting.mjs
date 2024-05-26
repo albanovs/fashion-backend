@@ -99,4 +99,4 @@ const calcRaintingLogistNewOtdel = async (req, res) => {
 simNewOtdelLog.on("change", calculateAndCacheDataCash)
 NewOtdelDataModel.on("change", calculateAndCacheDataCash)
 
-export default { calcRaintingLogistNewOtdel };
+export default { calcRaintingLogistNewOtdel, calculateAndCacheData };

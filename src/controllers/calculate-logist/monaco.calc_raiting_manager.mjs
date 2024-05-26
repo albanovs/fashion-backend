@@ -102,4 +102,4 @@ const calcRaintingLogist = async (req, res) => {
 simMonacoLog.on("change", calculateAndCacheDataCash)
 MonacoDataModel.on("change", calculateAndCacheDataCash)
 
-export default { calcRaintingLogist };
+export default { calcRaintingLogist , calculateAndCacheData};

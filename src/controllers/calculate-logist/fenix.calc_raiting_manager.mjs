@@ -100,4 +100,4 @@ const calcRaintingLogist = async (req, res) => {
 simFenixLog.on("change", calculateAndCacheDataCash)
 FenixDataModel.on("change", calculateAndCacheDataCash)
 
-export default { calcRaintingLogist };
+export default { calcRaintingLogist, calculateAndCacheData };

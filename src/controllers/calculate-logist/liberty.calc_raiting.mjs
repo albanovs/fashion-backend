@@ -26,7 +26,6 @@ async function calculateAndCacheData() {
                 const coefficent = ((parseFloat(totalCommission) / parseFloat(nonEmptyLogist.length).toFixed(0)).toFixed(0) / 10000).toFixed(1);
                 const yourCommission = ((totalCommission) * 0.15).toFixed(0);
                 const totalOrdersAll = totalOrders;
-
                 const detailInfo = nonEmptyLogist.map(logistItem => {
 
                     const matchesCurator = calculateMatchesCurator(filtereditog, elem);
@@ -102,4 +101,4 @@ const calcRaintingLogistLiberty = async (req, res) => {
 simLibertyLog.on("change", calculateAndCacheDataCash)
 LibertyDataModel.on("change", calculateAndCacheDataCash)
 
-export default { calcRaintingLogistLiberty };
+export default { calcRaintingLogistLiberty , calculateAndCacheData};

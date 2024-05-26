@@ -29,11 +29,16 @@ const updateCalcManager = async () => {
         const today = new Date();
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
-        const dataToSave = {
-            datas: `${year}-${month}`,
-            managers: raitingManager
-        };
-        await ManagerRaiting.create(dataToSave);
+        const dateString = `${year}-${month}`;
+
+        const existingRecord = await ManagerRaiting.findOne({ datas: dateString });
+        if (!existingRecord) {
+            const dataToSave = {
+                datas: dateString,
+                managers: raitingManager
+            };
+            await ManagerRaiting.create(dataToSave);
+        }
     } catch (error) {
         console.error('Ошибка при выполнении вычислений и сохранении данных:', error);
     }
@@ -84,11 +89,17 @@ const saveBuyerRaiting = async () => {
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth() + 1;
-            const dataToSave = {
-                datas: `${year}-${month}`,
-                managers: result
-            };
-            await BuyerRaiting.create(dataToSave);
+            const dateString = `${year}-${month}`;
+
+            const existingRecord = await BuyerRaiting.findOne({ datas: dateString });
+
+            if (!existingRecord) {
+                const dataToSave = {
+                    datas: dateString,
+                    managers: result
+                };
+                await BuyerRaiting.create(dataToSave);
+            }
         }
     } catch (error) {
         console.log(error);
@@ -97,13 +108,7 @@ const saveBuyerRaiting = async () => {
 
 updateCalcBuyer()
 
-cron.schedule('*/20 * * * *', async () => {
-    try {
-        await updateCalcBuyer();
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-});
+
 const getManagerRaiting = async (req, res) => {
     try {
         const data = await ManagerRaiting.find();
@@ -129,4 +134,85 @@ const getBuyerRaiting = async (req, res) => {
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 };
-export default { updateCalcManager, getManagerRaiting, getBuyerRaiting , saveBuyerRaiting}
+
+const getPreviousMonthDateString = (offset) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - offset);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    return `${year}-${month}`;
+};
+
+const getDataForLastTwoMonths = async () => {
+    const dateString1 = getPreviousMonthDateString(1);
+    const dateString2 = getPreviousMonthDateString(2);
+
+    const [data1, data2] = await Promise.all([
+        ManagerRaiting.findOne({ datas: dateString1 }),
+        ManagerRaiting.findOne({ datas: dateString2 })
+    ]);
+
+    return [data1, data2];
+};
+
+const sumAllCoeff = (data1, data2) => {
+    const sum = {};
+
+    const addToSum = (data) => {
+        if (data && data.managers) {
+            data.managers.forEach(manager => {
+                if (manager.allCoeff && !manager.curator.includes('ВМ')) {
+                    if (!sum[manager.curator]) {
+                        sum[manager.curator] = {
+                            allCoeff: 0,
+                            buyerLength: manager.buyerLength
+                        };
+                    }
+                    sum[manager.curator].allCoeff += parseFloat(manager.allCoeff);
+                }
+            });
+        }
+    };
+
+    addToSum(data1);
+    addToSum(data2);
+
+    const sortedArray = Object.entries(sum).map(([curator, values]) => ({ curator, ...values }));
+    sortedArray.sort((a, b) => b.allCoeff - a.allCoeff);
+
+    return sortedArray;
+};
+
+let cachedData2 = null;
+
+const calculateSumAllCoeffAndBuyerLengthForLastTwoMonths = async () => {
+
+    const [data1, data2] = await getDataForLastTwoMonths();
+    const sumCoeffs = sumAllCoeff(data1, data2);
+    cachedData2 = sumCoeffs;
+};
+
+calculateSumAllCoeffAndBuyerLengthForLastTwoMonths()
+
+const getmanagerlast2Raiting = async (req, res) => {
+    try {
+        if (!cachedData2) {
+            await calculateSumAllCoeffAndBuyerLengthForLastTwoMonths();
+        }
+        res.json(cachedData2);
+    } catch (error) {
+        console.error('Ошибка при выполнении вычислений:', error);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+};
+
+cron.schedule('*/20 * * * *', async () => {
+    try {
+        await updateCalcBuyer();
+        await calculateSumAllCoeffAndBuyerLengthForLastTwoMonths()
+    } catch (error) {
+        console.error('Ошибка при выполнении вычислений:', error);
+    }
+});
+
+export default { updateCalcManager, getManagerRaiting, getBuyerRaiting, saveBuyerRaiting, getmanagerlast2Raiting }

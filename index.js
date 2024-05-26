@@ -64,7 +64,7 @@ import clientLiberty from './src/routes/client-privlechennyi/client-liberty.mjs'
 import fullfilment1 from './src/routes/fullfilment/fullfilment-1.mjs'
 
 import getManagers from './src/routes/managers/getmanager.mjs'
-import adminLogistraiting from './src/routes/logistandadmin/logistandadmin.mjs'
+import adminLogistraiting from './src/routes/calculate-logist/adminlogist.mjs'
 
 import itotdel from './src/routes/it/simcard.mjs'
 import bot from './src/controllers/telegram-bot/schet-faktura.mjs';
@@ -75,6 +75,8 @@ import schetfactura from './src/routes/schetfactura/schetfactura.mjs'
 // import setExpenses from './src/controllers/expences/expences.mjs'
 import expences from './src/routes/expences/expences.mjs'
 import logistadmin from './src/routes/logistandadmin/logistandadmin.mjs'
+import calculateadminlogist from "./src/controllers/calculate-adminlogist/calculateadminlogist.mjs";
+import stadmins from './src/controllers/calculate/calc-raaiting-month/calc-st_admin.mjs'
 
 const app = express();
 app.use(express.json());
@@ -93,6 +95,8 @@ cron.schedule('0 0 28-31 * *', async () => {
     try {
       await updateCalcManager.updateCalcManager();
       await updateCalcManager.saveBuyerRaiting()
+      await calculateadminlogist.saveAdminLogistRaiting()
+      await stadmins.saveCalcStAdmin()
     } catch (error) {
       console.error('Ошибка при выполнении вычислений рейтинга менеджеров:', error);
     }

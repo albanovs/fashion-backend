@@ -101,4 +101,4 @@ const calcRaintingLogist = async (req, res) => {
 simLiderLog.on("change", calculateAndCacheDataCash)
 LiderDataModel.on("change", calculateAndCacheDataCash)
 
-export default { calcRaintingLogist };
+export default { calcRaintingLogist, calculateAndCacheData };
