@@ -193,6 +193,7 @@ const getClickedDatas = async (req, res) => {
         const data = await OtdelLink.find();
         res.status(200).json(data);
     } catch (error) {
+        console.error('Ошибка при получении данных:', error);
         res.status(500).json({
             error: "Что-то пошло не так",
         });
