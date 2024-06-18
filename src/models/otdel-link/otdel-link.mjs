@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const otdelLinkSchema = new mongoose.Schema({
     clicked: Number,
+    link: String,
     num1: {
         click: Number,
         otdel: String,

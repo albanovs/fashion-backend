@@ -190,6 +190,7 @@ async function calculateAndCacheData() {
         } else {
             const otdelLink = new OtdelLink({
                 clicked: 0,
+                link: '',
                 num1: {
                     click: 7,
                     otdel: departments[0].name,
