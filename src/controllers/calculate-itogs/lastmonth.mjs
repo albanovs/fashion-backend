@@ -5,6 +5,7 @@ import TuranDataModel from "../../models/turan/turanData.mjs";
 import LibertyDataModel from "../../models/liberty/libertyData.mjs";
 import NewOtdelDataModel from "../../models/new-otel/newOtdelData.mjs";
 import OtdelLink from "../../models/otdel-link/otdel-link.mjs";
+import mongoose from 'mongoose';
 
 let cachedData = null;
 
@@ -19,53 +20,13 @@ async function calculateAndCacheData() {
             liberty: []
         },
         totalAllItog: {
-            lider: {
-                itog: 0,
-                index: 0,
-                allItog: 0,
-                percentItog: 0,
-                percentIndex: 0,
-            },
-            monaco: {
-                itog: 0,
-                index: 0,
-                allItog: 0,
-                percentItog: 0,
-                percentIndex: 0,
-            },
-            fenix: {
-                itog: 0,
-                index: 0,
-                allItog: 0,
-                percentItog: 0,
-                percentIndex: 0,
-            },
-            turan: {
-                itog: 0,
-                index: 0,
-                allItog: 0,
-                percentItog: 0,
-                percentIndex: 0,
-            },
-            fbox: {
-                itog: 0,
-                index: 0,
-                allItog: 0,
-                percentItog: 0,
-                percentIndex: 0,
-            },
-            liberty: {
-                itog: 0,
-                index: 0,
-                allItog: 0,
-                percentItog: 0,
-                percentIndex: 0,
-            },
-            allItogs: {
-                itog: 0,
-                itogIndex: 0,
-                allItog: 0,
-            },
+            lider: { itog: 0, index: 0, allItog: 0, percentItog: 0, percentIndex: 0 },
+            monaco: { itog: 0, index: 0, allItog: 0, percentItog: 0, percentIndex: 0 },
+            fenix: { itog: 0, index: 0, allItog: 0, percentItog: 0, percentIndex: 0 },
+            turan: { itog: 0, index: 0, allItog: 0, percentItog: 0, percentIndex: 0 },
+            fbox: { itog: 0, index: 0, allItog: 0, percentItog: 0, percentIndex: 0 },
+            liberty: { itog: 0, index: 0, allItog: 0, percentItog: 0, percentIndex: 0 },
+            allItogs: { itog: 0, itogIndex: 0, allItog: 0 },
         },
     };
 
@@ -108,12 +69,8 @@ async function calculateAndCacheData() {
 
         const calculateTotalAllItog = (data) => {
             return data.reduce((acc, elem) => {
-                const itogSum = elem.itog.reduce((subAcc, item) => {
-                    return subAcc + item.allItog;
-                }, 0);
-                const itogIndexSum = elem.itog.reduce((subAcc, item) => {
-                    return subAcc + item.allItogIndex;
-                }, 0);
+                const itogSum = elem.itog.reduce((subAcc, item) => subAcc + item.allItog, 0);
+                const itogIndexSum = elem.itog.reduce((subAcc, item) => subAcc + item.allItogIndex, 0);
                 return {
                     itog: acc.itog + itogSum,
                     index: acc.index + itogIndexSum,
@@ -137,22 +94,11 @@ async function calculateAndCacheData() {
             ...filteredLibertyData
         ]);
 
-        const allPercentIndex = (
-            itogs.totalAllItog.lider.index +
-            itogs.totalAllItog.monaco.index +
-            itogs.totalAllItog.turan.index +
-            itogs.totalAllItog.fenix.index +
-            itogs.totalAllItog.fbox.index +
-            itogs.totalAllItog.liberty.index
-        );
+        const allPercentIndex = (itogs.totalAllItog.lider.index + itogs.totalAllItog.monaco.index +
+            itogs.totalAllItog.turan.index + itogs.totalAllItog.fenix.index + itogs.totalAllItog.fbox.index + itogs.totalAllItog.liberty.index);
 
-        const allPercentComission = (
-            itogs.totalAllItog.lider.itog +
-            itogs.totalAllItog.monaco.itog +
-            itogs.totalAllItog.fenix.itog +
-            itogs.totalAllItog.turan.itog +
-            itogs.totalAllItog.liberty.itog
-        );
+        const allPercentComission = (itogs.totalAllItog.lider.itog + itogs.totalAllItog.monaco.itog +
+            itogs.totalAllItog.fenix.itog + itogs.totalAllItog.turan.itog + itogs.totalAllItog.liberty.itog);
 
         itogs.totalAllItog.lider.percentIndex = ((itogs.totalAllItog.lider.index / allPercentIndex) * 100).toFixed(0);
         itogs.totalAllItog.monaco.percentIndex = ((itogs.totalAllItog.monaco.index / allPercentIndex) * 100).toFixed(0);
@@ -179,44 +125,42 @@ async function calculateAndCacheData() {
         departments.sort((a, b) => b.itog - a.itog);
 
         const existingOtdelLink = await OtdelLink.findOne();
-        if (existingOtdelLink) {
-            existingOtdelLink.num1.otdel = departments[0].name;
-            existingOtdelLink.num2.otdel = departments[1].name;
-            existingOtdelLink.num3.otdel = departments[2].name;
-            existingOtdelLink.num4.otdel = departments[3].name;
-            existingOtdelLink.num5.otdel = departments[4].name;
-            existingOtdelLink.num6.otdel = departments[5].name;
-            await existingOtdelLink.save();
-        } else {
+        if (!existingOtdelLink) {
             const otdelLink = new OtdelLink({
                 clicked: 0,
                 num1: {
-                    click: 7,
+                    _id: new mongoose.Types.ObjectId(),
+                    click: 0,
                     otdel: departments[0].name,
                     link: ''
                 },
                 num2: {
-                    click: 5,
+                    _id: new mongoose.Types.ObjectId(),
+                    click: 0,
                     otdel: departments[1].name,
                     link: ''
                 },
                 num3: {
-                    click: 3,
+                    _id: new mongoose.Types.ObjectId(),
+                    click: 0,
                     otdel: departments[2].name,
                     link: ''
                 },
                 num4: {
-                    click: 2,
+                    _id: new mongoose.Types.ObjectId(),
+                    click: 0,
                     otdel: departments[3].name,
                     link: ''
                 },
                 num5: {
-                    click: 1,
+                    _id: new mongoose.Types.ObjectId(),
+                    click: 0,
                     otdel: departments[4].name,
                     link: ''
                 },
                 num6: {
-                    click: 1,
+                    _id: new mongoose.Types.ObjectId(),
+                    click: 0,
                     otdel: departments[5].name,
                     link: ''
                 }
@@ -225,19 +169,12 @@ async function calculateAndCacheData() {
             await otdelLink.save();
         }
 
-        return itogs;
-
+        cachedData = itogs;
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
+        throw error;
     }
 }
-
-async function calculateAndCacheDataCash() {
-    const result = await calculateAndCacheData();
-    cachedData = result;
-}
-
-calculateAndCacheDataCash();
 
 const calcItogslast = async (req, res) => {
     try {
@@ -251,4 +188,15 @@ const calcItogslast = async (req, res) => {
     }
 };
 
-export default { calcItogslast };
+const getClickedDatas = async (req, res) => {
+    try {
+        const data = await OtdelLink.find();
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что-то пошло не так",
+        });
+    }
+};
+
+export default { updateLink, getClickedDatas, calcItogslast };
