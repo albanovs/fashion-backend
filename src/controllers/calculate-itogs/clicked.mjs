@@ -15,19 +15,31 @@ const incrementClickedData = async (req, res) => {
     const { id } = req.body;
 
     try {
-        const updatedData = await OtdelLink.findByIdAndUpdate(
-            id,
-            { $inc: { clicked: 1 } },
-            { new: true }
-        );
+        const data = await OtdelLink.findById(id);
 
-        if (!updatedData) {
+        if (!data) {
             return res.status(404).json({
                 error: "Документ не найден",
             });
         }
 
-        res.status(200).json(updatedData);
+        data.clicked += 1;
+
+        let totalClicks = 0;
+        let newLink = "";
+
+        for (let i = 1; i <= 6; i++) {
+            totalClicks += data[`num${i}`].click;
+            if (data.clicked <= totalClicks) {
+                newLink = data[`num${i}`].link;
+                break;
+            }
+        }
+
+        data.link = newLink;
+        await data.save();
+
+        res.status(200).json(data);
     } catch (error) {
         res.status(500).json({
             error: "Что-то пошло не так",
@@ -35,4 +47,4 @@ const incrementClickedData = async (req, res) => {
     }
 };
 
-export { getClickedDatas, incrementClickedData };
+export default { getClickedDatas, incrementClickedData };
