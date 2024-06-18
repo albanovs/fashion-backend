@@ -25,6 +25,15 @@ const incrementClickedData = async (req, res) => {
 
         data.clicked += 1;
 
+        let totalClicksSum = 0;
+        for (let i = 1; i <= 6; i++) {
+            totalClicksSum += data[`num${i}`].click;
+        }
+
+        if (data.clicked > totalClicksSum) {
+            data.clicked = 1;
+        }
+
         let totalClicks = 0;
         let newLink = "";
 
