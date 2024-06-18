@@ -199,4 +199,4 @@ const getClickedDatas = async (req, res) => {
     }
 };
 
-export default { updateLink, getClickedDatas, calcItogslast };
+export default { getClickedDatas, calcItogslast };
