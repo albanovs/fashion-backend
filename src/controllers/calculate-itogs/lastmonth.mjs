@@ -191,32 +191,32 @@ async function calculateAndCacheData() {
             const otdelLink = new OtdelLink({
                 clicked: 0,
                 num1: {
-                    click: 0,
+                    click: 7,
                     otdel: departments[0].name,
                     link: ''
                 },
                 num2: {
-                    click: 0,
+                    click: 5,
                     otdel: departments[1].name,
                     link: ''
                 },
                 num3: {
-                    click: 0,
+                    click: 3,
                     otdel: departments[2].name,
                     link: ''
                 },
                 num4: {
-                    click: 0,
+                    click: 2,
                     otdel: departments[3].name,
                     link: ''
                 },
                 num5: {
-                    click: 0,
+                    click: 1,
                     otdel: departments[4].name,
                     link: ''
                 },
                 num6: {
-                    click: 0,
+                    click: 1,
                     otdel: departments[5].name,
                     link: ''
                 }
