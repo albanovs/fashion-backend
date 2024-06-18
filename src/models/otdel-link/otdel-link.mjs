@@ -1,22 +1,39 @@
 import mongoose from 'mongoose';
 
-const numSchema = new mongoose.Schema({
-    _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
-    click: { type: Number, default: 0 },
-    otdel: { type: String, required: true },
-    link: { type: String, default: '' }
-});
-
 const otdelLinkSchema = new mongoose.Schema({
-    clicked: { type: Number, default: 0 },
-    num1: numSchema,
-    num2: numSchema,
-    num3: numSchema,
-    num4: numSchema,
-    num5: numSchema,
-    num6: numSchema
-});
+    clicked: Number,
+    num1: {
+        click: Number,
+        otdel: String,
+        link: String
+    },
+    num2: {
+        click: Number,
+        otdel: String,
+        link: String
+    },
+    num3: {
+        click: Number,
+        otdel: String,
+        link: String
+    },
+    num4: {
+        click: Number,
+        otdel: String,
+        link: String
+    },
+    num5: {
+        click: Number,
+        otdel: String,
+        link: String
+    },
+    num6: {
+        click: Number,
+        otdel: String,
+        link: String
+    }
+})
 
-const OtdelLink = mongoose.model('OtdelLink', otdelLinkSchema);
+const OtdelLink = mongoose.model('otdel-link', otdelLinkSchema);
 
 export default OtdelLink;
