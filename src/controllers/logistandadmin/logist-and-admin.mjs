@@ -9,7 +9,7 @@ const CreateTableSim = async (req, res) => {
         const year = currentDate.getFullYear();
         const formattedDate = `${day}.${month}.${year}`;
         const newData = new LogistAndAdmin({
-            team: 'yntymak',
+            team: '',
             select: "logist",
             slot: [{
                 data_register: formattedDate,

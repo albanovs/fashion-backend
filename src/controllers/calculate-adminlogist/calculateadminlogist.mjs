@@ -98,16 +98,11 @@ async function saveAdminLogistRaiting() {
             const year = today.getFullYear();
             const month = today.getMonth() + 1;
             const dateString = `${year}-${month}`;
-
-            const existingRecord = await AdminLogistRaiting.findOne({ datas: dateString });
-
-            if (!existingRecord) {
-                const dataToSave = {
-                    datas: dateString,
-                    adminandlogist: result
-                };
-                await AdminLogistRaiting.create(dataToSave);
-            } 
+            const dataToSave = {
+                datas: dateString,
+                adminandlogist: result
+            };
+            await AdminLogistRaiting.create(dataToSave);
         }
     } catch (error) {
         console.log(error);

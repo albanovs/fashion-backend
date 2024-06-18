@@ -90,16 +90,11 @@ const saveBuyerRaiting = async () => {
             const year = today.getFullYear();
             const month = today.getMonth() + 1;
             const dateString = `${year}-${month}`;
-
-            const existingRecord = await BuyerRaiting.findOne({ datas: dateString });
-
-            if (!existingRecord) {
-                const dataToSave = {
-                    datas: dateString,
-                    managers: result
-                };
-                await BuyerRaiting.create(dataToSave);
+            const dataToSave = {
+                datas: dateString,
+                managers: result
             }
+            await BuyerRaiting.create(dataToSave);
         }
     } catch (error) {
         console.log(error);

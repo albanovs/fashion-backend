@@ -29,14 +29,11 @@ const saveCalcStAdmin = async () => {
         const month = today.getMonth() + 1;
         const dateString = `${year}-${month}`;
 
-        const existingRecord = await StAdminRaiting.findOne({ datas: dateString });
-        if (!existingRecord) {
-            const dataToSave = {
-                datas: dateString,
-                st_admins: raitingStAdmin
-            };
-            await StAdminRaiting.create(dataToSave);
-        }
+        const dataToSave = {
+            datas: dateString,
+            st_admins: raitingStAdmin
+        };
+        await StAdminRaiting.create(dataToSave);
     } catch (error) {
         console.error('Ошибка при выполнении вычислений и сохранении данных:', error);
     }
