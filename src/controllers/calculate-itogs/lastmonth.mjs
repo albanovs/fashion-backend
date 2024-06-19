@@ -4,7 +4,6 @@ import FenixDataModel from "../../models/fenix/fenixData.mjs";
 import TuranDataModel from "../../models/turan/turanData.mjs";
 import LibertyDataModel from "../../models/liberty/libertyData.mjs";
 import NewOtdelDataModel from "../../models/new-otel/newOtdelData.mjs";
-import OtdelLink from "../../models/otdel-link/otdel-link.mjs";
 
 let cachedData = null;
 
@@ -166,65 +165,6 @@ async function calculateAndCacheData() {
         itogs.totalAllItog.fenix.percentItog = ((itogs.totalAllItog.fenix.itog / allPercentComission) * 100).toFixed(0);
         itogs.totalAllItog.fbox.percentItog = ((itogs.totalAllItog.fbox.itog / allPercentComission) * 100).toFixed(0);
         itogs.totalAllItog.liberty.percentItog = ((itogs.totalAllItog.liberty.itog / allPercentComission) * 100).toFixed(0);
-
-        const departments = [
-            { name: 'Лидер', itog: itogs.totalAllItog.lider.itog },
-            { name: 'Монако', itog: itogs.totalAllItog.monaco.itog },
-            { name: 'Ильяс', itog: itogs.totalAllItog.fenix.itog },
-            { name: 'Туран', itog: itogs.totalAllItog.turan.itog },
-            { name: 'Ынтымак', itog: itogs.totalAllItog.fbox.itog },
-            { name: 'liberty', itog: itogs.totalAllItog.liberty.itog }
-        ];
-
-        departments.sort((a, b) => b.itog - a.itog);
-
-        const existingOtdelLink = await OtdelLink.findOne();
-        if (existingOtdelLink) {
-            existingOtdelLink.num1.otdel = departments[0].name;
-            existingOtdelLink.num2.otdel = departments[1].name;
-            existingOtdelLink.num3.otdel = departments[2].name;
-            existingOtdelLink.num4.otdel = departments[3].name;
-            existingOtdelLink.num5.otdel = departments[4].name;
-            existingOtdelLink.num6.otdel = departments[5].name;
-            await existingOtdelLink.save();
-        } else {
-            const otdelLink = new OtdelLink({
-                clicked: 0,
-                link: '',
-                num1: {
-                    click: 7,
-                    otdel: departments[0].name,
-                    link: ''
-                },
-                num2: {
-                    click: 5,
-                    otdel: departments[1].name,
-                    link: ''
-                },
-                num3: {
-                    click: 3,
-                    otdel: departments[2].name,
-                    link: ''
-                },
-                num4: {
-                    click: 2,
-                    otdel: departments[3].name,
-                    link: ''
-                },
-                num5: {
-                    click: 1,
-                    otdel: departments[4].name,
-                    link: ''
-                },
-                num6: {
-                    click: 1,
-                    otdel: departments[5].name,
-                    link: ''
-                }
-            });
-
-            await otdelLink.save();
-        }
 
         return itogs;
 
