@@ -114,7 +114,7 @@ async function calculateAndCacheData() {
                         team: 'Лидер',
                         curator: elem.curator,
                         coeff: allMatches !== 0 ? ((parseFloat(allItogs) / parseFloat(allMatches)) / 1000).toFixed(1) : 0,
-                        data_register: logistItem.data_register ? logistItem.data_register : 'до 09.05.2024',
+                        data_register: logistItem.data_register || 'до 09.05.2024',
                     };
                 });
 
@@ -177,12 +177,12 @@ async function calculateAndCacheData() {
 
 const calcRaintingManager = async (req, res) => {
     try {
-        if (!cachedData) {
-            await calculateAndCacheData();
-        }
-        res.json(cachedData);
-        // const result = await calculateAndCacheData()
-        // res.json(result)
+        // if (!cachedData) {
+        //     await calculateAndCacheData();
+        // }
+        // res.json(cachedData);
+        const result = await calculateAndCacheData()
+        res.json(result)
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
