@@ -31,8 +31,11 @@ const incrementClickedData = async (req, res) => {
 
         // Собираем все доступные ссылки
         for (let i = 1; i <= 6; i++) {
-            if (data[`num${i}`]) {
-                availableLinks.push(data[`num${i}`]);
+            const num = data[`num${i}`];
+            if (num) {
+                for (let j = 0; j < num.click; j++) {
+                    availableLinks.push(num);
+                }
             }
         }
 
@@ -41,26 +44,28 @@ const incrementClickedData = async (req, res) => {
         const nextLink = availableLinks[data.lastClickedIndex];
 
         // Увеличиваем счетчик кликов
-        nextLink.click++;
+        data.clicked++;
 
-        // Если ссылка достигла максимального количества кликов, удаляем ее
-        if (nextLink.click >= data.clicked) {
-            availableLinks.splice(data.lastClickedIndex, 1);
-            data.lastClickedIndex--;  // Корректируем индекс
+        // Обновляем ссылку
+        data.link = nextLink.link;
+
+        // Если отдел исчерпал свои клики, удаляем его из доступных
+        nextLink.click--;
+        if (nextLink.click === 0) {
+            availableLinks = availableLinks.filter(link => link.click > 0);
         }
 
         // Если осталась только одна ссылка, начинаем заново
         if (availableLinks.length === 1) {
             for (let i = 1; i <= 6; i++) {
-                if (data[`num${i}`]) {
-                    data[`num${i}`].click = 0;
+                const num = data[`num${i}`];
+                if (num) {
+                    num.click = data[`num${i}`].click;
                 }
             }
             data.lastClickedIndex = 0;
         }
 
-        // Обновляем ссылку
-        data.link = availableLinks[data.lastClickedIndex].link;
         await data.save();
 
         res.status(200).json(data);
