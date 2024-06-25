@@ -23,29 +23,44 @@ const incrementClickedData = async (req, res) => {
             });
         }
 
-        data.clicked += 1;
-
-        let totalClicksSum = 0;
-        for (let i = 1; i <= 6; i++) {
-            totalClicksSum += data[`num${i}`].click;
+        if (!data.lastClickedIndex) {
+            data.lastClickedIndex = 0;  // Инициализируем, если не существует
         }
 
-        if (data.clicked > totalClicksSum) {
-            data.clicked = 1;
-        }
+        let availableLinks = [];
 
-        let totalClicks = 0;
-        let newLink = "";
-
+        // Собираем все доступные ссылки
         for (let i = 1; i <= 6; i++) {
-            totalClicks += data[`num${i}`].click;
-            if (data.clicked <= totalClicks) {
-                newLink = data[`num${i}`].link;
-                break;
+            if (data[`num${i}`]) {
+                availableLinks.push(data[`num${i}`]);
             }
         }
 
-        data.link = newLink;
+        // Переходим к следующей ссылке в цикле
+        data.lastClickedIndex = (data.lastClickedIndex + 1) % availableLinks.length;
+        const nextLink = availableLinks[data.lastClickedIndex];
+
+        // Увеличиваем счетчик кликов
+        nextLink.click++;
+
+        // Если ссылка достигла максимального количества кликов, удаляем ее
+        if (nextLink.click >= data.clicked) {
+            availableLinks.splice(data.lastClickedIndex, 1);
+            data.lastClickedIndex--;  // Корректируем индекс
+        }
+
+        // Если осталась только одна ссылка, начинаем заново
+        if (availableLinks.length === 1) {
+            for (let i = 1; i <= 6; i++) {
+                if (data[`num${i}`]) {
+                    data[`num${i}`].click = 0;
+                }
+            }
+            data.lastClickedIndex = 0;
+        }
+
+        // Обновляем ссылку
+        data.link = availableLinks[data.lastClickedIndex].link;
         await data.save();
 
         res.status(200).json(data);

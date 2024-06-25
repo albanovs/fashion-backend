@@ -5,7 +5,6 @@ import TuranDataModel from "../../models/turan/turanData.mjs";
 import LibertyDataModel from "../../models/liberty/libertyData.mjs";
 import NewOtdelDataModel from "../../models/new-otel/newOtdelData.mjs";
 import cron from 'node-cron'
-import OtdelLink from "../../models/otdel-link/otdel-link.mjs";
 
 let cachedData = null
 
@@ -152,71 +151,6 @@ async function calculateAndCacheData() {
         itogs.totalAllItog.fenix.percentItog = ((itogs.totalAllItog.fenix.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.fbox.percentItog = ((itogs.totalAllItog.fbox.itog / allPercentComission) * 100).toFixed(0)
         itogs.totalAllItog.liberty.percentItog = ((itogs.totalAllItog.liberty.itog / allPercentComission) * 100).toFixed(0)
-
-        const departments = [
-            { name: 'Лидер', itog: itogs.totalAllItog.lider.itog, link: 'https://chat.whatsapp.com/CLPNpgrJZykA4T5w6SimCP' },
-            { name: 'Монако', itog: itogs.totalAllItog.monaco.itog, link: 'https://chat.whatsapp.com/KwuAL1R6KLl0zxlKWBUmwP' },
-            { name: 'Ильяс', itog: itogs.totalAllItog.fenix.itog, link: 'https://chat.whatsapp.com/KPuKEVKaTGX6Ap6zB7kMgo' },
-            { name: 'Туран', itog: itogs.totalAllItog.turan.itog, link: 'https://chat.whatsapp.com/HeEof7WbQtx6glMfCAXpCD' },
-            { name: 'Ынтымак', itog: itogs.totalAllItog.fbox.itog, link: 'https://chat.whatsapp.com/EZljwZ4vJVZE7dKJUYtDyf' },
-            { name: 'liberty', itog: itogs.totalAllItog.liberty.itog, link: 'https://chat.whatsapp.com/KqXYzjEAX5p2xOR88MOYtt' }
-        ];
-
-        departments.sort((a, b) => b.itog - a.itog);
-
-        const existingOtdelLink = await OtdelLink.findOne();
-        if (existingOtdelLink) {
-            existingOtdelLink.num1.otdel = departments[0].name;
-            existingOtdelLink.num1.link = departments[0].link;
-            existingOtdelLink.num2.otdel = departments[1].name;
-            existingOtdelLink.num2.link = departments[1].link;
-            existingOtdelLink.num3.otdel = departments[2].name;
-            existingOtdelLink.num3.link = departments[2].link;
-            existingOtdelLink.num4.otdel = departments[3].name;
-            existingOtdelLink.num4.link = departments[3].link;
-            existingOtdelLink.num5.otdel = departments[4].name;
-            existingOtdelLink.num5.link = departments[4].link;
-            existingOtdelLink.num6.otdel = departments[5].name;
-            existingOtdelLink.num6.link = departments[5].link;
-            await existingOtdelLink.save();
-        } else {
-            const otdelLink = new OtdelLink({
-                clicked: 0,
-                link: departments[0].link,
-                num1: {
-                    click: 7,
-                    otdel: departments[0].name,
-                    link: departments[0].link
-                },
-                num2: {
-                    click: 5,
-                    otdel: departments[1].name,
-                    link: departments[1].link
-                },
-                num3: {
-                    click: 3,
-                    otdel: departments[2].name,
-                    link: departments[2].link
-                },
-                num4: {
-                    click: 2,
-                    otdel: departments[3].name,
-                    link: departments[3].link
-                },
-                num5: {
-                    click: 1,
-                    otdel: departments[4].name,
-                    link: departments[4].link
-                },
-                num6: {
-                    click: 1,
-                    otdel: departments[5].name,
-                    link: departments[5].link
-                }
-            });
-
-            await otdelLink.save();
-        }
 
         return itogs
 
