@@ -23,7 +23,7 @@ const incrementClickedData = async (req, res) => {
             });
         }
 
-        if (!data.lastClickedIndex) {
+        if (data.lastClickedIndex === undefined) {
             data.lastClickedIndex = 0;  // Инициализируем, если не существует
         }
 
@@ -32,7 +32,26 @@ const incrementClickedData = async (req, res) => {
         for (let i = 1; i <= 6; i++) {
             const num = data[`num${i}`];
             if (num && num.click > 0) {
-                otdels.push(num);
+                otdels.push({ ...num, originalIndex: i });
+            }
+        }
+
+        // Если нет доступных ссылок, инициализируем цикл заново
+        if (otdels.length === 0) {
+            for (let i = 1; i <= 6; i++) {
+                const num = data[`num${i}`];
+                if (num) {
+                    num.click = data[`num${i}`].click;
+                }
+            }
+            data.lastClickedIndex = 0;
+
+            // Обновляем список отделов с перезапуском цикла
+            for (let i = 1; i <= 6; i++) {
+                const num = data[`num${i}`];
+                if (num && num.click > 0) {
+                    otdels.push({ ...num, originalIndex: i });
+                }
             }
         }
 
@@ -47,23 +66,12 @@ const incrementClickedData = async (req, res) => {
         data.link = nextLink.link;
 
         // Уменьшаем количество кликов у текущего отдела
-        nextLink.click--;
+        data[`num${nextLink.originalIndex}`].click--;
 
         // Если отдел исчерпал свои клики, удаляем его из доступных
-        if (nextLink.click === 0) {
+        if (data[`num${nextLink.originalIndex}`].click === 0) {
             otdels = otdels.filter((_, index) => index !== data.lastClickedIndex);
             data.lastClickedIndex--;  // Корректируем индекс
-        }
-
-        // Если осталась только одна ссылка, начинаем заново
-        if (otdels.length === 1) {
-            for (let i = 1; i <= 6; i++) {
-                const num = data[`num${i}`];
-                if (num) {
-                    num.click = data[`num${i}`].click;
-                }
-            }
-            data.lastClickedIndex = 0;
         }
 
         await data.save();
