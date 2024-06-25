@@ -27,21 +27,18 @@ const incrementClickedData = async (req, res) => {
             data.lastClickedIndex = 0;  // Инициализируем, если не существует
         }
 
-        let availableLinks = [];
-
-        // Собираем все доступные ссылки
+        // Собираем все отделы с их кликами и ссылками
+        let otdels = [];
         for (let i = 1; i <= 6; i++) {
             const num = data[`num${i}`];
-            if (num) {
-                for (let j = 0; j < num.click; j++) {
-                    availableLinks.push(num);
-                }
+            if (num && num.click > 0) {
+                otdels.push(num);
             }
         }
 
         // Переходим к следующей ссылке в цикле
-        data.lastClickedIndex = (data.lastClickedIndex + 1) % availableLinks.length;
-        const nextLink = availableLinks[data.lastClickedIndex];
+        data.lastClickedIndex = (data.lastClickedIndex + 1) % otdels.length;
+        const nextLink = otdels[data.lastClickedIndex];
 
         // Увеличиваем счетчик кликов
         data.clicked++;
@@ -49,14 +46,17 @@ const incrementClickedData = async (req, res) => {
         // Обновляем ссылку
         data.link = nextLink.link;
 
-        // Если отдел исчерпал свои клики, удаляем его из доступных
+        // Уменьшаем количество кликов у текущего отдела
         nextLink.click--;
+
+        // Если отдел исчерпал свои клики, удаляем его из доступных
         if (nextLink.click === 0) {
-            availableLinks = availableLinks.filter(link => link.click > 0);
+            otdels = otdels.filter((_, index) => index !== data.lastClickedIndex);
+            data.lastClickedIndex--;  // Корректируем индекс
         }
 
         // Если осталась только одна ссылка, начинаем заново
-        if (availableLinks.length === 1) {
+        if (otdels.length === 1) {
             for (let i = 1; i <= 6; i++) {
                 const num = data[`num${i}`];
                 if (num) {
