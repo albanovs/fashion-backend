@@ -198,6 +198,7 @@ async function calculateAndCacheData() {
             const otdelLink = new OtdelLink({
                 clicked: 0,
                 link: departments[0].link,
+                lastClickedIndex: 0,
                 num1: {
                     click: 7,
                     otdel: departments[0].name,

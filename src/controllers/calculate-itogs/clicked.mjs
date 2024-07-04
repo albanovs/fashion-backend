@@ -15,6 +15,7 @@ const incrementClickedData = async (req, res) => {
     const { id } = req.body;
 
     try {
+        // Находим документ по id
         const data = await OtdelLink.findById(id);
 
         if (!data) {
@@ -23,52 +24,44 @@ const incrementClickedData = async (req, res) => {
             });
         }
 
-        if (data.lastClickedIndex === undefined) {
+        // Если lastClickedIndex не определен или дошел до 1, устанавливаем его в 0 и увеличиваем clicked
+        if (data.lastClickedIndex === undefined || data.lastClickedIndex === 5) {
+            data.clicked = (data.clicked + 1) % 7; // Увеличиваем clicked и берем по модулю 7
             data.lastClickedIndex = 0;
+        } else {
+            // Иначе увеличиваем lastClickedIndex
+            data.lastClickedIndex++;
         }
 
         // Собираем все отделы с их кликами и ссылками
         let otdels = [];
         for (let i = 1; i <= 6; i++) {
             const num = data[`num${i}`];
-            if (num) {
+            if (num && num.click >= data.clicked) { // Проверяем клики
                 otdels.push({ ...num, originalIndex: i });
             }
         }
 
-        // Отфильтровываем отделы с кликами меньше текущего значения clicked
-        otdels = otdels.filter(num => num.click > data.clicked);
-
-        // Если все ссылки были нажаты, увеличиваем значение clicked и начинаем заново
-        if (otdels.length === 0) {
-            data.clicked++;
-            data.lastClickedIndex = 0;
-            for (let i = 1; i <= 6; i++) {
-                const num = data[`num${i}`];
-                if (num) {
-                    otdels.push({ ...num, originalIndex: i });
-                }
-            }
-            otdels = otdels.filter(num => num.click > data.clicked);
-        }
-
+        // Если есть активные отделы, обновляем ссылку на следующую
         if (otdels.length > 0) {
+            // Обновляем lastClickedIndex по модулю длины массива otdels
+            data.lastClickedIndex = data.lastClickedIndex % otdels.length;
             data.link = otdels[data.lastClickedIndex].link;
-            data.lastClickedIndex = (data.lastClickedIndex + 1) % otdels.length;
         } else {
             console.log("No more links to click.");
+            // Можно добавить логику для обнуления ссылки или других действий, если отделы закончились
         }
 
+        // Сохраняем обновленные данные в базе данных
         await data.save();
-
+        
         res.status(200).json(data);
     } catch (error) {
-        console.error("Error in incrementClickedData:", error);
+        console.error("Ошибка в incrementClickedData:", error);
         res.status(500).json({
             error: "Что-то пошло не так",
         });
     }
 };
-
 
 export default { getClickedDatas, incrementClickedData };
