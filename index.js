@@ -81,7 +81,7 @@ import stadmins from './src/controllers/calculate/calc-raaiting-month/calc-st_ad
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://fashion-backend-r8hh.onrender.com'],
+  origin: ['http://localhost:3000', 'https://fashion-backend-r8hh.onrender.com', 'https://fashionrynok.kg'],
 }));
 app.use(bodyParser.json())
 // bot.launch()
