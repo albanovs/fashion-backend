@@ -84,11 +84,11 @@ app.use(cors({
   origin: ['https://fashion-backend-r8hh.onrender.com', 'https://fashionrynok.kg'],
 }));
 app.use(bodyParser.json())
-// bot.launch()
+bot.launch()
 
-// cron.schedule('*/10 * * * *', async () => {
-//   bot.launch()
-// })
+cron.schedule('*/10 * * * *', async () => {
+  bot.launch()
+})
 
 connect();
 
