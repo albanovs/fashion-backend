@@ -12,41 +12,63 @@ const getClickedDatas = async (req, res) => {
 };
 
 const incrementClickedData = async (req, res) => {
+    const { id } = req.body;
+
     try {
-        const data = await OtdelLink.find();
-        if (!data || data.length === 0) {
-            return res.status(404).json({ error: "Нет данных" });
+        const data = await OtdelLink.findById(id);
+
+        if (!data) {
+            return res.status(404).json({
+                error: "Документ не найден",
+            });
         }
 
-        // Получаем текущее значение clicked
-        let clicked = data[0].clicked;
-
-        // Фильтруем объекты, которые участвуют в текущем цикле
-        const activeItems = data.filter(item => item.click >= clicked);
-
-        if (activeItems.length === 0) {
-            // Если активных объектов нет, увеличиваем значение clicked и начинаем заново
-            clicked++;
-            await OtdelLink.updateMany({}, { clicked });
-            return incrementClickedData(req, res); // Рекурсивно вызываем функцию
+        if (data.lastClickedIndex === undefined) {
+            data.lastClickedIndex = 0;
         }
 
-        // Найдем текущий индекс и следующий объект для обновления
-        const currentIndex = activeItems.findIndex(item => item.link === data[0].link);
-        const nextIndex = (currentIndex + 1) % activeItems.length;
-        const nextLink = activeItems[nextIndex].link;
+        // Собираем все отделы с их кликами и ссылками
+        let otdels = [];
+        for (let i = 1; i <= 6; i++) {
+            const num = data[`num${i}`];
+            if (num) {
+                otdels.push({ ...num, originalIndex: i });
+            }
+        }
 
-        // Обновляем значение link и clicked
-        await OtdelLink.updateMany({}, { link: nextLink, clicked });
+        // Отфильтровываем отделы с кликами меньше текущего значения clicked
+        otdels = otdels.filter(num => num.click > data.clicked);
 
-        // Возвращаем обновленные данные
-        const updatedData = await OtdelLink.find();
-        res.status(200).json(updatedData);
+        // Если все ссылки были нажаты, увеличиваем значение clicked и начинаем заново
+        if (otdels.length === 0) {
+            data.clicked++;
+            data.lastClickedIndex = 0;
+            for (let i = 1; i <= 6; i++) {
+                const num = data[`num${i}`];
+                if (num) {
+                    otdels.push({ ...num, originalIndex: i });
+                }
+            }
+            otdels = otdels.filter(num => num.click > data.clicked);
+        }
+
+        if (otdels.length > 0) {
+            data.link = otdels[data.lastClickedIndex].link;
+            data.lastClickedIndex = (data.lastClickedIndex + 1) % otdels.length;
+        } else {
+            console.log("No more links to click.");
+        }
+
+        await data.save();
+
+        res.status(200).json(data);
     } catch (error) {
+        console.error("Error in incrementClickedData:", error);
         res.status(500).json({
             error: "Что-то пошло не так",
         });
     }
 };
+
 
 export default { getClickedDatas, incrementClickedData };
