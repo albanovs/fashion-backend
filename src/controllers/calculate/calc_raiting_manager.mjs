@@ -177,12 +177,12 @@ async function calculateAndCacheData() {
 
 const calcRaintingManager = async (req, res) => {
     try {
-        // if (!cachedData) {
-        //     await calculateAndCacheData();
-        // }
-        // res.json(cachedData);
-        const result = await calculateAndCacheData()
-        res.json(result)
+        if (!cachedData) {
+            await calculateAndCacheData();
+        }
+        res.json(cachedData);
+        // const result = await calculateAndCacheData()
+        // res.json(result)
     } catch (error) {
         console.error('Ошибка при выполнении вычислений:', error);
         res.status(500).json({ error: 'Ошибка сервера' });

@@ -30,19 +30,23 @@ const updateCalcManager = async () => {
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
         const dateString = `${year}-${month}`;
+        // const dateString = `2024-6`;
 
         const existingRecord = await ManagerRaiting.findOne({ datas: dateString });
         if (!existingRecord) {
-            const dataToSave = {
-                datas: dateString,
-                managers: raitingManager
-            };
-            await ManagerRaiting.create(dataToSave);
+        const dataToSave = {
+            datas: dateString,
+            managers: raitingManager
+        };
+        await ManagerRaiting.create(dataToSave);
         }
     } catch (error) {
         console.error('Ошибка при выполнении вычислений и сохранении данных:', error);
     }
 };
+
+updateCalcManager()
+
 let cachedData = null;
 
 const extractDetailData = async (req, res) => {
@@ -100,9 +104,6 @@ const saveBuyerRaiting = async () => {
         console.log(error);
     }
 }
-
-updateCalcBuyer()
-
 
 const getManagerRaiting = async (req, res) => {
     try {

@@ -24,58 +24,31 @@ const incrementClickedData = async (req, res) => {
         }
 
         if (data.lastClickedIndex === undefined) {
-            data.lastClickedIndex = 0;  // Инициализируем, если не существует
+            data.lastClickedIndex = 0;
         }
 
-        // Собираем все отделы с их кликами и ссылками
         let otdels = [];
         for (let i = 1; i <= 6; i++) {
             const num = data[`num${i}`];
-            if (num && num.click > 0) {
+            if (num) {
                 otdels.push({ ...num, originalIndex: i });
             }
         }
-
-        // Если нет доступных ссылок, инициализируем цикл заново
+        otdels = otdels.filter(num => num.click > data.clicked);
         if (otdels.length === 0) {
+            data.clicked = 0;
             for (let i = 1; i <= 6; i++) {
                 const num = data[`num${i}`];
                 if (num) {
-                    num.click = data[`num${i}`].click;
-                }
-            }
-            data.lastClickedIndex = 0;
-
-            // Обновляем список отделов с перезапуском цикла
-            for (let i = 1; i <= 6; i++) {
-                const num = data[`num${i}`];
-                if (num && num.click > 0) {
                     otdels.push({ ...num, originalIndex: i });
                 }
             }
         }
-
-        // Переходим к следующей ссылке в цикле
         data.lastClickedIndex = (data.lastClickedIndex + 1) % otdels.length;
         const nextLink = otdels[data.lastClickedIndex];
-
-        // Увеличиваем счетчик кликов
         data.clicked++;
-
-        // Обновляем ссылку
         data.link = nextLink.link;
-
-        // Уменьшаем количество кликов у текущего отдела
-        data[`num${nextLink.originalIndex}`].click--;
-
-        // Если отдел исчерпал свои клики, удаляем его из доступных
-        if (data[`num${nextLink.originalIndex}`].click === 0) {
-            otdels = otdels.filter((_, index) => index !== data.lastClickedIndex);
-            data.lastClickedIndex--;  // Корректируем индекс
-        }
-
         await data.save();
-
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({

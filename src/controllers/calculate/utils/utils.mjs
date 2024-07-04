@@ -36,7 +36,7 @@ export const isCurrentMonthAndYear = (dateString) => {
     const currentDate = new Date();
     const [day, month, year] = dateString.split('.').map(Number);
     return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
-    // return 2024 === year && 5 === month;
+    // return 2024 === year && 6 === month;
 }
 
 export const percentVM = (curator, totalItog) => {
