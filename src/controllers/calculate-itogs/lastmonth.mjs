@@ -172,8 +172,7 @@ async function calculateAndCacheData() {
             { name: 'Лидер', itog: itogs.totalAllItog.lider.itog, link: 'https://chat.whatsapp.com/CLPNpgrJZykA4T5w6SimCP' },
             { name: 'Монако', itog: itogs.totalAllItog.monaco.itog, link: 'https://chat.whatsapp.com/KwuAL1R6KLl0zxlKWBUmwP' },
             { name: 'Ильяс', itog: itogs.totalAllItog.fenix.itog, link: 'https://chat.whatsapp.com/KPuKEVKaTGX6Ap6zB7kMgo' },
-            { name: 'Туран', itog: itogs.totalAllItog.turan.itog, link: 'https://chat.whatsapp.com/HeEof7WbQtx6glMfCAXpCD' },
-            { name: 'Ынтымак', itog: itogs.totalAllItog.fbox.itog, link: 'https://chat.whatsapp.com/EZljwZ4vJVZE7dKJUYtDyf' },
+            { name: 'Туран', itog: itogs.totalAllItog.turan.itog, link: 'https://chat.whatsapp.com/IHt6E3FdfVc3gvdmtVyxQt' },
             { name: 'liberty', itog: itogs.totalAllItog.liberty.itog, link: 'https://chat.whatsapp.com/KqXYzjEAX5p2xOR88MOYtt' }
         ];
 
@@ -191,8 +190,6 @@ async function calculateAndCacheData() {
             existingOtdelLink.num4.link = departments[3].link;
             existingOtdelLink.num5.otdel = departments[4].name;
             existingOtdelLink.num5.link = departments[4].link;
-            existingOtdelLink.num6.otdel = departments[5].name;
-            existingOtdelLink.num6.link = departments[5].link;
             await existingOtdelLink.save();
         } else {
             const otdelLink = new OtdelLink({
