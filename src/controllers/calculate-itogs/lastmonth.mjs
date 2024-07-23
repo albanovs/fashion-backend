@@ -197,12 +197,12 @@ async function calculateAndCacheData() {
                 link: departments[0].link,
                 lastClickedIndex: 0,
                 num1: {
-                    click: 7,
+                    click: 5,
                     otdel: departments[0].name,
                     link: departments[0].link
                 },
                 num2: {
-                    click: 5,
+                    click: 4,
                     otdel: departments[1].name,
                     link: departments[1].link
                 },
@@ -221,11 +221,6 @@ async function calculateAndCacheData() {
                     otdel: departments[4].name,
                     link: departments[4].link
                 },
-                num6: {
-                    click: 1,
-                    otdel: departments[5].name,
-                    link: departments[5].link
-                }
             });
 
             await otdelLink.save();

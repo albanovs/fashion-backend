@@ -25,8 +25,8 @@ const incrementClickedData = async (req, res) => {
         }
 
         // Если lastClickedIndex не определен или дошел до 1, устанавливаем его в 0 и увеличиваем clicked
-        if (data.lastClickedIndex === undefined || data.lastClickedIndex === 5) {
-            data.clicked = (data.clicked + 1) % 7; // Увеличиваем clicked и берем по модулю 7
+        if (data.lastClickedIndex === undefined || data.lastClickedIndex === 4) {
+            data.clicked = (data.clicked + 1) % 5; // Увеличиваем clicked и берем по модулю 7
             data.lastClickedIndex = 0;
         } else {
             // Иначе увеличиваем lastClickedIndex
@@ -35,7 +35,7 @@ const incrementClickedData = async (req, res) => {
 
         // Собираем все отделы с их кликами и ссылками
         let otdels = [];
-        for (let i = 1; i <= 6; i++) {
+        for (let i = 1; i <= 5; i++) {
             const num = data[`num${i}`];
             if (num && num.click >= data.clicked) { // Проверяем клики
                 otdels.push({ ...num, originalIndex: i });
