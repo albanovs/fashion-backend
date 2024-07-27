@@ -170,10 +170,10 @@ async function calculateAndCacheData() {
 
         const departments = [
             { name: 'Лидер', itog: itogs.totalAllItog.lider.itog, link: 'https://chat.whatsapp.com/CLPNpgrJZykA4T5w6SimCP' },
-            { name: 'Монако', itog: itogs.totalAllItog.monaco.itog, link: 'https://chat.whatsapp.com/IHt6E3FdfVc3gvdmtVyxQt' },
+            { name: 'Монако', itog: itogs.totalAllItog.monaco.itog, link: 'https://chat.whatsapp.com/KPuKEVKaTGX6Ap6zB7kMgo' },
             { name: 'Ильяс', itog: itogs.totalAllItog.fenix.itog, link: 'https://chat.whatsapp.com/KPuKEVKaTGX6Ap6zB7kMgo' },
             { name: 'Туран', itog: itogs.totalAllItog.turan.itog, link: 'https://chat.whatsapp.com/IHt6E3FdfVc3gvdmtVyxQt' },
-            { name: 'liberty', itog: itogs.totalAllItog.liberty.itog, link: 'https://chat.whatsapp.com/IHt6E3FdfVc3gvdmtVyxQt' }
+            { name: 'liberty', itog: itogs.totalAllItog.liberty.itog, link: 'https://chat.whatsapp.com/KqXYzjEAX5p2xOR88MOYtt' }
         ];
 
         departments.sort((a, b) => b.itog - a.itog);
