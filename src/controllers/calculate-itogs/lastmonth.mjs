@@ -217,7 +217,7 @@ async function calculateAndCacheData() {
                     link: departments[3].link
                 },
                 num5: {
-                    click: 1,
+                    click: 2,
                     otdel: departments[4].name,
                     link: departments[4].link
                 },
