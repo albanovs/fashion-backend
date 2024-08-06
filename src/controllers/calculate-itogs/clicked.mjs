@@ -11,59 +11,6 @@ const getClickedDatas = async (req, res) => {
     }
 };
 
-// const incrementClickedData = async (req, res) => {
-//     const { id } = req.body;
-
-//     try {
-//         // Находим документ по id
-//         const data = await OtdelLink.findById(id);
-
-//         if (!data) {
-//             return res.status(404).json({
-//                 error: "Документ не найден",
-//             });
-//         }
-
-//         // Если lastClickedIndex не определен или дошел до 1, устанавливаем его в 0 и увеличиваем clicked
-//         if (data.lastClickedIndex === undefined || data.lastClickedIndex === 4) {
-//             data.clicked = (data.clicked + 1) % 5; // Увеличиваем clicked и берем по модулю 7
-//             data.lastClickedIndex = 0;
-//         } else {
-//             // Иначе увеличиваем lastClickedIndex
-//             data.lastClickedIndex++;
-//         }
-
-//         // Собираем все отделы с их кликами и ссылками
-//         let otdels = [];
-//         for (let i = 1; i <= 5; i++) {
-//             const num = data[`num${i}`];
-//             if (num && num.click >= data.clicked) { // Проверяем клики
-//                 otdels.push({ ...num, originalIndex: i });
-//             }
-//         }
-
-//         // Если есть активные отделы, обновляем ссылку на следующую
-//         if (otdels.length > 0) {
-//             // Обновляем lastClickedIndex по модулю длины массива otdels
-//             data.lastClickedIndex = data.lastClickedIndex % otdels.length;
-//             data.link = otdels[data.lastClickedIndex].link;
-//         } else {
-//             console.log("No more links to click.");
-//             // Можно добавить логику для обнуления ссылки или других действий, если отделы закончились
-//         }
-
-//         // Сохраняем обновленные данные в базе данных
-//         await data.save();
-
-//         res.status(200).json(data);
-//     } catch (error) {
-//         console.error("Ошибка в incrementClickedData:", error);
-//         res.status(500).json({
-//             error: "Что-то пошло не так",
-//         });
-//     }
-// };
-
 const incrementClickedData = async (req, res) => {
     const { id } = req.body;
 
@@ -74,23 +21,37 @@ const incrementClickedData = async (req, res) => {
                 error: "Документ не найден",
             });
         }
+
+        // Создание массива ссылок с учетом количества кликов
         let linkArray = [];
-        data.forEach(item => {
-            for (let i = 0; i <= item.click; i++) {
-                linkArray.push(item.link);
+        for (let i = 1; i <= 5; i++) { // num1, num2, ..., num6
+            const num = data[`num${i}`];
+            if (num) {
+                for (let j = 0; j < num.click; j++) {
+                    linkArray.push(num.link);
+                }
             }
-        });
-
-        linkArray = linkArray.sort(() => Math.random() - 0.5);
-
-        for (let i = 0; i < data.length; i++) {
-            data[i].link = linkArray[i];
         }
 
-        await Promise.all(data.map(item => item.save()));
+        // Перемешивание массива ссылок
+        linkArray = linkArray.sort(() => Math.random() - 0.5);
+
+        // Проверка, что размер linkArray не равен нулю
+        if (linkArray.length === 0) {
+            return res.status(400).json({ error: "Нет доступных ссылок для обновления документа" });
+        }
+
+        // Увеличиваем индекс и берем по модулю длины массива
+        data.lastClickedIndex = (data.lastClickedIndex + 1) % linkArray.length;
+        
+        // Обновление основного поля link в документе
+        data.link = linkArray[data.lastClickedIndex];
+
+        await data.save();
 
         res.status(200).json(data);
     } catch (error) {
+        console.error("Ошибка в incrementClickedData:", error);
         res.status(500).json({
             error: "Что-то пошло не так",
         });

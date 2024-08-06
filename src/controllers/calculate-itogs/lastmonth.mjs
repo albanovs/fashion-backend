@@ -193,7 +193,6 @@ async function calculateAndCacheData() {
             await existingOtdelLink.save();
         } else {
             const otdelLink = new OtdelLink({
-                clicked: 0,
                 link: departments[0].link,
                 lastClickedIndex: 0,
                 num1: {

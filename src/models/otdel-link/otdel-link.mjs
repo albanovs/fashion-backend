@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 
 const otdelLinkSchema = new mongoose.Schema({
-    clicked: Number,
     link: String,
-    lastClickedIndex: Number,
+    lastClickedIndex: {
+        type: Number,
+        default: 0
+    },
     num1: {
         click: Number,
         otdel: String,
@@ -29,11 +31,6 @@ const otdelLinkSchema = new mongoose.Schema({
         otdel: String,
         link: String
     },
-    num6: {
-        click: Number,
-        otdel: String,
-        link: String
-    }
 })
 
 const OtdelLink = mongoose.model('otdel-link', otdelLinkSchema);
