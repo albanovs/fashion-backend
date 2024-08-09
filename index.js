@@ -82,11 +82,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json())
-bot.launch()
+// bot.launch()
 
-cron.schedule('*/10 * * * *', async () => {
-  bot.launch()
-})
+// cron.schedule('*/10 * * * *', async () => {
+//   bot.launch()
+// })
 
 connect();
 
