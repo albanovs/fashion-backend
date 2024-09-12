@@ -73,10 +73,12 @@ import updateCalcManager from "./src/controllers/calculate/calc-raaiting-month/c
 import getManagersRait from './src/routes/calculate/calcraiting.mjs'
 import schetfactura from './src/routes/schetfactura/schetfactura.mjs'
 // import setExpenses from './src/controllers/expences/expences.mjs'
-import expences from './src/routes/expences/expences.mjs'
 import logistadmin from './src/routes/logistandadmin/logistandadmin.mjs'
 import calculateadminlogist from "./src/controllers/calculate-adminlogist/calculateadminlogist.mjs";
 import stadmins from './src/controllers/calculate/calc-raaiting-month/calc-st_admin.mjs'
+
+import incoming from './src/routes/incoming-outgoing/incoming.mjs'
+import outgoing from './src/routes/incoming-outgoing/outgoing.mjs'
 
 const app = express();
 app.use(express.json());
@@ -90,7 +92,8 @@ app.use(bodyParser.json())
 
 connect();
 
-app.use('/', expences)
+app.use('/', incoming)
+app.use('/', outgoing)
 
 app.use('/', logistadmin)
 app.use('/', adminLogistraiting)

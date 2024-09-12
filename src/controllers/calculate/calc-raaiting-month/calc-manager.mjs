@@ -45,7 +45,6 @@ const updateCalcManager = async () => {
     }
 };
 
-updateCalcManager()
 
 let cachedData = null;
 

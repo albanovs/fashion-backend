@@ -4,7 +4,6 @@ import MonacoDataModel from '../../models/monaco/monacoData.mjs';
 import TuranDataModel from '../../models/turan/turanData.mjs';
 import FenixDataModel from '../../models/fenix/fenixData.mjs';
 import NewOtdelModel from '../../models/new-otel/newOtdelData.mjs'
-import ManagerPersent from '../../models/manager-persent/manager-persent.mjs';
 import cron from 'node-cron'
 import {
     calculateTotalCommission, calculateTotalCommissionPercent,
@@ -17,8 +16,7 @@ let cachedData = null;
 
 async function calculateAndCacheData() {
     try {
-        ManagerPersent.find()
-        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, dataItogLiberty, managerperc] = await Promise.all([
+        const [managers, dataItog, dataItogMonaco, dataItogTuran, dataItogFenix, dataItogNewOtdel, dataItogLiberty] = await Promise.all([
             simFenixModel.find(),
             LiderDataModel.find(),
             MonacoDataModel.find(),
@@ -26,7 +24,6 @@ async function calculateAndCacheData() {
             FenixDataModel.find(),
             NewOtdelModel.find(),
             LibertyDataModel.find(),
-            ManagerPersent.find()
         ]);
 
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
@@ -154,21 +151,6 @@ async function calculateAndCacheData() {
             }
         })
 
-        result.forEach(elem => {
-            const selectedManager = managerperc.find(i => {
-                const currentDate = new Date();
-                const managerDate = new Date(i.datas);
-                return managerDate.getMonth() === currentDate.getMonth() &&
-                    managerDate.getFullYear() === currentDate.getFullYear() &&
-                    i.manager === elem.curator;
-            });
-
-            if (selectedManager && selectedManager.persent) {
-                let allpercentsum = selectedManager.persent.reduce((acc, count) => acc += parseFloat(count.sum), 0);
-                elem.for_withdrawal = elem.comission - parseFloat(allpercentsum);
-            }
-        });
-
         return result;
 
     } catch (error) {
@@ -215,6 +197,5 @@ TuranDataModel.on('change', updateCalcManager);
 FenixDataModel.on('change', updateCalcManager);
 NewOtdelModel.on('change', updateCalcManager);
 LibertyDataModel.on('change', updateCalcManager);
-ManagerPersent.on('change', updateCalcManager);
 
 export default { calcRaintingManagerFenix, updateCalcManager, calculateAndCacheData };

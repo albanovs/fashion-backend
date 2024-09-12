@@ -1,35 +1,8 @@
-import ExpensesModel from "../../models/expences/expences.mjs";
 import MonacoDataModel from "../../models/monaco/monacoData.mjs";
 
 
 const createMonacoData = async (req, res) => {
     const { date, otchet, itog } = req.body
-
-    const existingData = await MonacoDataModel.findOne({ date: date });
-
-    if (existingData) {
-        console.error('Документ с указанной датой уже существует');
-        return res.sendStatus(400);
-    }
-
-    const existingExpense = await ExpensesModel.findOne({ "departmentExpenses.expenses": { $elemMatch: { date: date } } });
-
-    if (existingExpense) {
-        existingExpense.departmentExpenses.forEach(department => {
-            if (department.names === "монако") {
-                const foundExpense = department.expenses.find(expense => expense.date === date);
-                if (foundExpense) {
-                    const index = department.expenses.indexOf(foundExpense);
-                    if (index !== -1) {
-                        department.expenses[index].amount = itog[0].itogs;
-                    }
-                }
-            }
-        });
-        await existingExpense.save();
-    } else {
-        console.error('Расход для указанной даты не найден');
-    }
 
     let data = {
         date: date,
