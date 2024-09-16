@@ -16,7 +16,7 @@ async function calculateAndCacheData() {
         const filtereditog = dataItog.filter((item) => isCurrentMonthAndYear(item.date));
 
         const result = logist.map((elem) => {
-            const nonEmptyLogist = elem.slot;
+            const nonEmptyLogist = elem.slot.filter((item) => item.logist !== '' && item.status === '2');
 
             if (nonEmptyLogist.length > 0) {
 
