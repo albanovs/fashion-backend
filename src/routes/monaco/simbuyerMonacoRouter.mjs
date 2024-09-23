@@ -9,5 +9,6 @@ router.get('/test/simCardMonacos', monacoSimBuyerController.getSimTable)
 router.patch('/update/simcardmonacos', monacoSimBuyerController.updateSimcard)
 router.patch('/test/curatorMonacos/:id', monacoSimBuyerController.upDateCurator)
 router.delete('/test/deleteSlotMonacos/:id', monacoSimBuyerController.deleteSlot)
+router.delete('/test/managerdelete/:id', monacoSimBuyerController.deleteManager)
 
 export default router;

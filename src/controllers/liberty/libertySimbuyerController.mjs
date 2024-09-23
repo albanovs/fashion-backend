@@ -183,6 +183,22 @@ const updateDaysSinceVerification = async () => {
     }
 };
 
+const deleteManager = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await SimModelLiberty.findByIdAndDelete(id);
+
+        if (result) {
+            res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
+        } else {
+            res.status(404).json({ message: `Документ с id ${id} не найден.` });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Ошибка при удалении документа.' });
+    }
+};
+
 cron.schedule('0 0 * * *', () => {
     updateDaysSinceVerification();
 }, {
@@ -190,4 +206,4 @@ cron.schedule('0 0 * * *', () => {
     timezone: 'Europe/Moscow'
 });
 
-export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot }
+export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot, deleteManager }

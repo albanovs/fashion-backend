@@ -345,26 +345,7 @@ app.get("/test/whatsappslot", async (req, res) => {
   }
 });
 
-app.post("/test/register", async (req, res) => {
-  try {
-    const { username, password, role } = req.body;
-
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({ username, password: hashedPassword, role });
-    await user.save();
-
-    res.status(200).json({ message: "Регистрация прошла успешно" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Что-то пошло не так" });
-  }
-});
+// ------------------------------------------------------ logins ------------------------------------//
 
 app.post("/test/logins", async (req, res) => {
   try {
@@ -387,6 +368,49 @@ app.post("/test/logins", async (req, res) => {
     res.status(500).json({ message: "Что-то пошло не так" });
   }
 });
+
+app.get('/test/logins', async (req, res) => {
+  try {
+    const data = await User.find()
+    res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Что-то пошло не так" });
+  }
+})
+
+app.post("/test/register", async (req, res) => {
+  try {
+    const { username, password, role } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({ username, password: hashedPassword, role });
+    await user.save();
+
+    res.status(200).json({ message: "Регистрация прошла успешно" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Что-то пошло не так" });
+  }
+});
+
+app.delete('/test/login/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await User.findByIdAndDelete(id);
+    res.status(200).json({ message: "Пользователь успешно удален" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Что-то пошло не так" });
+  }
+});
+
 
 /*-------------------------------------------------------------simcard---------------------------*/
 

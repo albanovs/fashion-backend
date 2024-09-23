@@ -9,5 +9,6 @@ router.get('/test/simCardTurans', turanSimBuyerController.getSimTable)
 router.patch('/update/simcardturans', turanSimBuyerController.updateSimcard)
 router.patch('/test/curatorTurans/:id', turanSimBuyerController.upDateCurator)
 router.delete('/test/deleteSlotTurans/:id', turanSimBuyerController.deleteSlot)
+router.delete('/test/managerdelete/:id', turanSimBuyerController.deleteManager)
 
 export default router;
