@@ -562,7 +562,7 @@ app.patch('/test/curatormanagers/:id', async (req, res) => {
 app.delete('/test/managerdelete/:id', async () => {
   const { id } = req.params;
   try {
-    const result = await SimModelManager.findByIdAndDelete(id);
+    const result = await SimModelManager.findByIdAndDelete({ _id: id });
 
     if (result) {
       res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
