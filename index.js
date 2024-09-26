@@ -543,6 +543,38 @@ app.patch('/update/simcardmanagers', async (req, res) => {
   }
 });
 
+app.patch('/test/curatormanagers/:id', async (req, res) => {
+  const { id } = req.params;
+  const { curator } = req.body;
+  try {
+    const updateSimCard = await SimModelManager.findOneAndUpdate(
+      { _id: id },
+      { curator },
+      { new: true }
+    );
+    res.json(updateSimCard);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+})
+
+app.delete('/test/managerdelete/:id', async () => {
+  const { id } = req.params;
+  try {
+    const result = await SimModelManager.findByIdAndDelete(id);
+
+    if (result) {
+      res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
+    } else {
+      res.status(404).json({ message: `Документ с id ${id} не найден.` });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Ошибка при удалении документа.' });
+  }
+})
+
 
 
 const PORT = 4000;
