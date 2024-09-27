@@ -186,7 +186,7 @@ const updateDaysSinceVerification = async () => {
 const deleteManager = async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await SimModelFenix.findByIdAndDelete(id);
+        const result = await SimModelFenix.findOneAndDelete(id);
 
         if (result) {
             res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
