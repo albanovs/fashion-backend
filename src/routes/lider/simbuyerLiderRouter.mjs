@@ -9,6 +9,6 @@ router.get('/test/simCardLiders', liderSimbuyerController.getSimTable)
 router.patch('/update/simcards', liderSimbuyerController.updateSimcard)
 router.patch('/test/curatorLiders/:id', liderSimbuyerController.upDateCurator)
 router.delete('/test/deleteSlotLiders/:id', liderSimbuyerController.deleteSlot)
-router.delete('/test/managerdelete/:id', liderSimbuyerController.deleteManager)
+router.delete('/test/managerdelete/simcards/:id', liderSimbuyerController.deleteManager)
 
 export default router;

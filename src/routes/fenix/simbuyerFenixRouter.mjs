@@ -9,6 +9,6 @@ router.get('/test/simCardFenixes', fenixSimBuyerController.getSimTable)
 router.patch('/update/simcardfenixes', fenixSimBuyerController.updateSimcard)
 router.patch('/test/curatorFenixes/:id', fenixSimBuyerController.upDateCurator)
 router.delete('/test/deleteSlotFenixes/:id', fenixSimBuyerController.deleteSlot)
-router.delete('/test/managerdelete/:id', fenixSimBuyerController.deleteManager)
+router.delete('/test/managerdelete/simcardfenix/:id', fenixSimBuyerController.deleteManager)
 
 export default router;
