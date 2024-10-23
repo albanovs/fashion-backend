@@ -1,70 +1,80 @@
 import TuranDataModel from "../../models/turan/turanData.mjs";
+import { createUniversalData } from "../global-utils/otchet.mjs";
+import turanOtchetController from "./turanOtchetController.mjs";
 
 
-const createTuranData = async (req, res) => {
-    const { date, otchet, itog } = req.body
+// const createTuranData = async (req, res) => {
+//     const { date, otchet, itog } = req.body
 
-    let data = {
-        date: date,
-        otchet: otchet.map(elem => ({
-            _id: elem._id,
-            sm: elem.sm,
-            date: elem.date,
-            sity: elem.sity,
-            admin: elem.admin,
-            buyer: elem.buyer,
-            comPersent100: elem.comPersent100,
-            comPersent2: elem.comPersent2,
-            comPersent3: elem.comPersent3,
-            comPersent4: elem.comPersent4,
-            indexPersent100: elem.indexPersent100,
-            indexPersent2: elem.indexPersent2,
-            indexPersent3: elem.indexPersent3,
-            indexPersent4: elem.indexPersent4,
-            uhod: elem.uhod,
-            prihod: elem.prihod,
-            itog: elem.itog,
-            itogIndex: elem.itogIndex
-        })),
+//     let data = {
+//         date: date,
+//         otchet: otchet.map(elem => ({
+//             _id: elem._id,
+//             sm: elem.sm,
+//             date: elem.date,
+//             sity: elem.sity,
+//             admin: elem.admin,
+//             buyer: elem.buyer,
+//             comPersent100: elem.comPersent100,
+//             comPersent2: elem.comPersent2,
+//             comPersent3: elem.comPersent3,
+//             comPersent4: elem.comPersent4,
+//             indexPersent100: elem.indexPersent100,
+//             indexPersent2: elem.indexPersent2,
+//             indexPersent3: elem.indexPersent3,
+//             indexPersent4: elem.indexPersent4,
+//             uhod: elem.uhod,
+//             prihod: elem.prihod,
+//             itog: elem.itog,
+//             itogIndex: elem.itogIndex
+//         })),
 
-        itog: itog.map(elem => ({
-            _id: elem._id,
-            date: elem.date,
-            ros1: elem.ros1,
-            ros2: elem.ros2,
-            ros3: elem.ros3,
-            ros4: elem.ros4,
-            ros5: elem.ros5,
-            ros6: elem.ros6,
-            ros7: elem.ros7,
-            sum1: elem.sum1,
-            sum2: elem.sum2,
-            sum3: elem.sum3,
-            sum4: elem.sum4,
-            sum5: elem.sum5,
-            sum6: elem.sum6,
-            sum7: elem.sum7,
-            upak: elem.upak,
-            allItogIndex: elem.allItogIndex,
-            allItog: elem.allItog,
-            allItogUhod: elem.allItogUhod,
-            allItogPrihod: elem.allItogPrihod,
-            raznica: elem.raznica,
-            itogs: elem.itogs
-        }))
-    };
+//         itog: itog.map(elem => ({
+//             _id: elem._id,
+//             date: elem.date,
+//             ros1: elem.ros1,
+//             ros2: elem.ros2,
+//             ros3: elem.ros3,
+//             ros4: elem.ros4,
+//             ros5: elem.ros5,
+//             ros6: elem.ros6,
+//             ros7: elem.ros7,
+//             sum1: elem.sum1,
+//             sum2: elem.sum2,
+//             sum3: elem.sum3,
+//             sum4: elem.sum4,
+//             sum5: elem.sum5,
+//             sum6: elem.sum6,
+//             sum7: elem.sum7,
+//             upak: elem.upak,
+//             allItogIndex: elem.allItogIndex,
+//             allItog: elem.allItog,
+//             allItogUhod: elem.allItogUhod,
+//             allItogPrihod: elem.allItogPrihod,
+//             raznica: elem.raznica,
+//             itogs: elem.itogs
+//         }))
+//     };
 
-    const turanData = new TuranDataModel(data);
-    turanData.save()
-        .then(() => {
-            console.log('Данные успешно сохранены');
-            res.sendStatus(200);
-        })
-        .catch((error) => {
-            console.error('Ошибка при сохранении данных:', error);
-            res.sendStatus(500);
-        });
-}
+//     const turanData = new TuranDataModel(data);
+//     turanData.save()
+//         .then(() => {
+//             console.log('Данные успешно сохранены');
+//             res.sendStatus(200);
+//         })
+//         .catch((error) => {
+//             console.error('Ошибка при сохранении данных:', error);
+//             res.sendStatus(500);
+//         });
+// }
+
+export const createTuranData = async (req, res) => {
+    try {
+        await createUniversalData(req, res, TuranDataModel, turanOtchetController, "Туран");
+    } catch (error) {
+        res.status(500).json({ message: "Ошибка при создании данных для другой модели" });
+    }
+};
 
 const getTuranData = async (req, res) => {
     try {

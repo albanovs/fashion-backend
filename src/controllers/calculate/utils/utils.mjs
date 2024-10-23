@@ -10,6 +10,21 @@ export const calculateTotalCommission = (adminDataItog, elem, nonEmptyBuyers) =>
     }, 0);
 };
 
+export const calculateTotalCommissionBeta = (data, elem, buyers) => {
+    return data.otchet.reduce((acc, cur) => {
+        const curatorCommission = buyers.reduce((acc2, buyer) => {
+            if (cur.buyer.replace(/\s/g, '').toLowerCase() === elem.curator.replace(/\s/g, '').toLowerCase() ||
+                buyer.name.replace(/\s/g, '').toLowerCase() === cur.buyer.replace(/\s/g, '').toLowerCase()) {
+                return acc2 + cur.itog;
+            }
+            return acc2;
+        }, 0);
+        return acc + curatorCommission;
+    }, 0);
+};
+
+
+
 export const calculateTotalCommissionPercent = (adminDataItog, elem, nonEmptyBuyers) => {
     return adminDataItog.reduce((acc, cur) => {
         const curatorCommission = cur.otchet.reduce((acc2, cur2) => {
@@ -36,14 +51,14 @@ export const isCurrentMonthAndYear = (dateString) => {
     const currentDate = new Date();
     const [day, month, year] = dateString.split('.').map(Number);
     return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
-    // return 2024 === year && 8 === month;
+    // return 2024 === year && 9 === month;
 }
 
 export const percentVM = (curator, totalItog) => {
     let summa = 0
     if (curator.includes("ВМ")) {
         summa = ((totalItog) * 0.03).toFixed(0)
-    } else if (curator.includes("СМ") ) {
+    } else if (curator.includes("СМ")) {
         summa = ((totalItog) * 0.07).toFixed(0)
     }
     return summa

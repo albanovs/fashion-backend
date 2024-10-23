@@ -30,7 +30,7 @@ const updateCalcManager = async () => {
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
         const dateString = `${year}-${month}`;
-        // const dateString = `2024-6`;
+        // const dateString = `2024-9`;
 
         const existingRecord = await ManagerRaiting.findOne({ datas: dateString });
         if (!existingRecord) {
@@ -44,7 +44,6 @@ const updateCalcManager = async () => {
         console.error('Ошибка при выполнении вычислений и сохранении данных:', error);
     }
 };
-
 
 let cachedData = null;
 

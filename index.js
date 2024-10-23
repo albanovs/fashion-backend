@@ -80,6 +80,8 @@ import stadmins from './src/controllers/calculate/calc-raaiting-month/calc-st_ad
 import incoming from './src/routes/incoming-outgoing/incoming.mjs'
 import outgoing from './src/routes/incoming-outgoing/outgoing.mjs'
 
+import raitingManager from './src/routes/raitings/manager.mjs'
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -91,6 +93,8 @@ app.use(bodyParser.json())
 // })
 
 connect();
+
+app.use('/', raitingManager)
 
 app.use('/', incoming)
 app.use('/', outgoing)
