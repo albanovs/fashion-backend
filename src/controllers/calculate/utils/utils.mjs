@@ -50,8 +50,8 @@ export const calculateTotalOrders = (adminDataItog, elem, nonEmptyBuyers) => {
 export const isCurrentMonthAndYear = (dateString) => {
     const currentDate = new Date();
     const [day, month, year] = dateString.split('.').map(Number);
-    return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
-    // return 2024 === year && 9 === month;
+    // return currentDate.getFullYear() === year && currentDate.getMonth() + 1 === month;
+    return 2024 === year && 10 === month;
 }
 
 export const percentVM = (curator, totalItog) => {

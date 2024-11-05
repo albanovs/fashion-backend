@@ -1,22 +1,10 @@
-
-/**
- * @param {Object} body - Тело запроса с данными.
- * @param {Object} model - Модель данных для создания.
- * @returns {Object} - Объект данных, готовый для сохранения в базе.
- * @param {Object} req - Запрос с телом данных
- * @param {Object} res - Ответ сервера
- * @param {Object} model - Модель данных, для которой сохраняются данные
- * @param {Object} controller - Контроллер с функциями обработки отчета
- * @param {String} curatorName - Название отдела для фильтрации (по умолчанию: "Ильяс")
- */
-
 import ModelManagerRaiting from "../../models/rainting/managerrainting/manager.mjs";
 
-export const formatData = (body, model) => {
+export const formatData = (body) => {
     const { date, otchet, itog } = body;
 
-    const formattedData = {
-        date: date,
+    return {
+        date,
         otchet: otchet.map(elem => ({
             _id: elem._id,
             sm: elem.sm,
@@ -63,8 +51,6 @@ export const formatData = (body, model) => {
             itogs: elem.itogs
         }))
     };
-
-    return new model(formattedData);
 };
 
 export const createUniversalData = async (req, res, model, controller, curatorName) => {
@@ -141,12 +127,17 @@ export const createUniversalData = async (req, res, model, controller, curatorNa
         }
 
         await data.save();
-        await controller.deleteOtchetBeta(req, res);
-        await controller.createOtchet(req, res);
 
-        res.status(201).json({ message: "Данные успешно сохранены" });
+        if (!res.headersSent) {
+            await controller.deleteOtchetBeta(req, res);
+            await controller.createOtchet(req, res);
+            res.status(201).json({ message: "Данные успешно сохранены" });
+        }
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
-        res.status(500).send('Ошибка при сохранении данных');
+        if (!res.headersSent) {
+            res.status(500).send('Ошибка при сохранении данных');
+        }
     }
 };
+

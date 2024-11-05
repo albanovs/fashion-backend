@@ -1,7 +1,7 @@
 import fenixOtchetBetaModel from "../../models/fenix/fenixOtchetBeta.mjs";
 
 
-const createOtchet = async (req, res) => {
+const createOtchet = async () => {
     try {
         const otchetArray = [];
         for (let i = 1; i <= 30; i++) {
@@ -49,11 +49,8 @@ const createOtchet = async (req, res) => {
         });
 
         await newotchet.save();
-
-        res.status(201).json({ message: 'Отчеты успешно созданы' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Что-то пошло не так" });
     }
 }
 
@@ -214,10 +211,8 @@ const getOtchetBeta = async (req, res) => {
 const deleteOtchetBeta = async (req, res) => {
     try {
         await fenixOtchetBetaModel.deleteMany();
-        res.status(200).json({ message: 'Коллекция успешно удалена' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Произошла ошибка при удалении коллекции' });
     }
 }
 

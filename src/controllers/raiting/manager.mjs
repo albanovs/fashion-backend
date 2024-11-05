@@ -42,7 +42,7 @@ const createMonthlyReport = async () => {
                     otdel: teamName,
                     curator: sim.curator,
                     data_register: sim.data_register || 'до 09.05.2024',
-                    buyerLength: sim.slot.length,
+                    buyerLength: sim.slot.filter(slot => slot.status === "2" && slot.buyer !== "").length,
                     totalcom: 0,
                     order: 0,
                     comission: 0,
@@ -111,7 +111,7 @@ const updateWithdrawal = async (req, res) => {
 //         const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
 //         let SelectedManagers = FenixManagers.map(elem => elem.managers).flat()
 
-//         const dataArray = await FenixDataModel.find({ date: "21.10.2024" });
+//         const dataArray = await MonacoDataModel.find({ date: "04.11.2024" });
 //         if (!dataArray || dataArray.length === 0) {
 //             console.log('Данные Fenix не найдены');
 //             return;
@@ -188,6 +188,8 @@ const updateWithdrawal = async (req, res) => {
 //     }
 // };
 
+// updateFenixDataFromDB();
+
 
 const getAllManagers = async (req, res) => {
     try {
@@ -198,9 +200,5 @@ const getAllManagers = async (req, res) => {
         res.status(500).json({ error: "Что-то пошло не так" });
     }
 };
-
-cron.schedule('0 0 1 * *', () => {
-    createMonthlyReport();
-});
 
 export default { createMonthlyReport, updateWithdrawal, getAllManagers };

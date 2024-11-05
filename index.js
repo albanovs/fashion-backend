@@ -81,6 +81,7 @@ import incoming from './src/routes/incoming-outgoing/incoming.mjs'
 import outgoing from './src/routes/incoming-outgoing/outgoing.mjs'
 
 import raitingManager from './src/routes/raitings/manager.mjs'
+import createMonthlyReport from './src/controllers/raiting/manager.mjs'
 
 const app = express();
 app.use(express.json());
@@ -91,6 +92,12 @@ app.use(bodyParser.json())
 // cron.schedule('*/10 * * * *', async () => {
 //   bot.launch()
 // })
+
+cron.schedule('0 0 1 * *', () => {
+  createMonthlyReport.createMonthlyReport();
+});
+
+createMonthlyReport.createMonthlyReport();
 
 connect();
 
