@@ -4,6 +4,6 @@ import calcManager from '../../controllers/calculate/calc-raaiting-month/calc-ma
 
 router.get('/raitingmanager', calcManager.getManagerRaiting)
 router.get('/raitingmanagerlast2', calcManager.getmanagerlast2Raiting)
-router.get('/raitingbuyer', calcManager.getBuyerRaiting)
+// router.get('/raitingbuyer', calcManager.getBuyerRaiting)
 
 export default router;

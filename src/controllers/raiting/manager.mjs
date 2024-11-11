@@ -111,7 +111,7 @@ const updateWithdrawal = async (req, res) => {
 //         const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
 //         let SelectedManagers = FenixManagers.map(elem => elem.managers).flat()
 
-//         const dataArray = await MonacoDataModel.find({ date: "04.11.2024" });
+//         const dataArray = await LiderDataModel.find({ date: "05.11.2024" });
 //         if (!dataArray || dataArray.length === 0) {
 //             console.log('Данные Fenix не найдены');
 //             return;
@@ -188,8 +188,25 @@ const updateWithdrawal = async (req, res) => {
 //     }
 // };
 
-// updateFenixDataFromDB();
 
+const getBuyerRaiting = async (req, res) => {
+    try {
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managers = await ModelManagerRaiting.find({ datas: currentDate });
+        const allDetails = [];
+
+        managers.forEach(manager => {
+            manager.managers.forEach(manager => {
+                allDetails.push(...manager.detail);
+            })
+        });
+        allDetails.sort((a, b) => b.coeff - a.coeff);
+        res.status(200).json(allDetails);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
+    }
+};
 
 const getAllManagers = async (req, res) => {
     try {
@@ -201,4 +218,4 @@ const getAllManagers = async (req, res) => {
     }
 };
 
-export default { createMonthlyReport, updateWithdrawal, getAllManagers };
+export default { createMonthlyReport, updateWithdrawal, getAllManagers, getBuyerRaiting };

@@ -84,25 +84,6 @@ const updateCalcBuyer = async () => {
     }
 }
 
-const saveBuyerRaiting = async () => {
-    try {
-        const result = await extractDetailData();
-        if (result) {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = today.getMonth() + 1;
-            const dateString = `${year}-${month}`;
-            const dataToSave = {
-                datas: dateString,
-                managers: result
-            }
-            await BuyerRaiting.create(dataToSave);
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 const getManagerRaiting = async (req, res) => {
     try {
         const data = await ManagerRaiting.find();
@@ -209,4 +190,4 @@ cron.schedule('*/20 * * * *', async () => {
     }
 });
 
-export default { updateCalcManager, getManagerRaiting, getBuyerRaiting, saveBuyerRaiting, getmanagerlast2Raiting }
+export default { updateCalcManager, getManagerRaiting, getBuyerRaiting, getmanagerlast2Raiting }
