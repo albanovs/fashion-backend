@@ -13,7 +13,7 @@ import liderDataRouter from './src/routes/lider/liderDatasRouter.mjs'
 import liderOtchetBetaRouter from './src/routes/lider/otchetBetaRoutes.mjs'
 import simbuyerLiderRouter from './src/routes/lider/simbuyerLiderRouter.mjs'
 import liderSimLogistRouter from './src/routes/lider/liderLogistRouter.mjs'
- 
+
 import monacoDataRouter from './src/routes/monaco/monacoDatasRouter.mjs'
 import monacoOtchetBetaRouter from './src/routes/monaco/monacoOtchetRouter.mjs'
 import simbuyerMonacoRouter from './src/routes/monaco/simbuyerMonacoRouter.mjs'
@@ -83,9 +83,16 @@ import outgoing from './src/routes/incoming-outgoing/outgoing.mjs'
 import raitingManager from './src/routes/raitings/manager.mjs'
 import createMonthlyReport from './src/controllers/raiting/manager.mjs'
 
+
+const corsOptions = {
+    origin: 'https://fashion-backend-r8hh.onrender.com',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+};
+
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json())
 // bot.launch()
 
@@ -94,7 +101,7 @@ app.use(bodyParser.json())
 // })
 
 cron.schedule('0 0 1 * *', () => {
-  createMonthlyReport.createMonthlyReport();
+    createMonthlyReport.createMonthlyReport();
 });
 
 createMonthlyReport.createMonthlyReport();
@@ -171,419 +178,419 @@ app.use('/', itotdel)
 
 
 app.post("/test/mymodels", async (req, res) => {
-  try {
-    const { account, num } = req.body;
-    const myData = new MyModel({ account, num });
-    await myData.save();
-    res.status(200).json({ message: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
+    try {
+        const { account, num } = req.body;
+        const myData = new MyModel({ account, num });
+        await myData.save();
+        res.status(200).json({ message: "Данные успешно добавлены" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
+    }
 });
 
 app.patch("/test/mymodels/:id", async (req, res) => {
-  const { id } = req.params;
-  const { monako, lider, fenix, turan, liberty, fbox } = req.body;
+    const { id } = req.params;
+    const { monako, lider, fenix, turan, liberty, fbox } = req.body;
 
-  try {
-    const updatedMyModel = await MyModel.findByIdAndUpdate(
-      id,
-      { monako, lider, fenix, turan, liberty, fbox },
-      { new: true }
-    );
-    res.json(updatedMyModel);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Ошибка сервера" });
-  }
+    try {
+        const updatedMyModel = await MyModel.findByIdAndUpdate(
+            id,
+            { monako, lider, fenix, turan, liberty, fbox },
+            { new: true }
+        );
+        res.json(updatedMyModel);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Ошибка сервера" });
+    }
 });
 
 app.post("/insert/account", async (req, res) => {
-  try {
-    const myData = new MyModel({
-      account: req.body.account,
-      num: 1,
-      monako: "",
-      fenix: "",
-      lider: "",
-      turan: "",
-      liberty: "",
-      fbox: ""
-    });
-    await myData.save();
-    res.status(200).json({ massage: `${JSON.stringify(myData)}` });
-  } catch (error) {
-    res.status(500).json({ error: "что то пошло не так!" });
-  }
+    try {
+        const myData = new MyModel({
+            account: req.body.account,
+            num: 1,
+            monako: "",
+            fenix: "",
+            lider: "",
+            turan: "",
+            liberty: "",
+            fbox: ""
+        });
+        await myData.save();
+        res.status(200).json({ massage: `${JSON.stringify(myData)}` });
+    } catch (error) {
+        res.status(500).json({ error: "что то пошло не так!" });
+    }
 });
 
 app.get("/test/mymodels", async (req, res) => {
-  try {
-    const data = await MyModel.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
+    try {
+        const data = await MyModel.find();
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что то пошло не так",
+        });
+    }
 });
 
 app.post("/telegramslot", async (req, res) => {
-  try {
-    const { account, num } = req.body;
-    const myData = new MyModelForTg({ account, num });
-    await myData.save();
-    res.status(200).json({ message: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
+    try {
+        const { account, num } = req.body;
+        const myData = new MyModelForTg({ account, num });
+        await myData.save();
+        res.status(200).json({ message: "Данные успешно добавлены" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
+    }
 });
 
 app.patch("/test/telegramSlot/:id", async (req, res) => {
-  const { id } = req.params;
-  const { monako, lider, fenix, turan, liberty, fbox } = req.body;
+    const { id } = req.params;
+    const { monako, lider, fenix, turan, liberty, fbox } = req.body;
 
-  try {
-    const updatedTelegram = await MyModelForTg.findByIdAndUpdate(
-      id,
-      { monako, lider, fenix, turan, liberty, fbox },
-      { new: true }
-    );
-    res.json(updatedTelegram);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Ошибка сервера" });
-  }
+    try {
+        const updatedTelegram = await MyModelForTg.findByIdAndUpdate(
+            id,
+            { monako, lider, fenix, turan, liberty, fbox },
+            { new: true }
+        );
+        res.json(updatedTelegram);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Ошибка сервера" });
+    }
 });
 
 app.post("/insert/telegram", async (req, res) => {
-  try {
-    const { account } = req.body;
+    try {
+        const { account } = req.body;
 
-    for (let i = 1; i <= 20; i++) {
-      const myData = new MyModelForTg({
-        account,
-        num: i,
-        monako: "",
-        fenix: "",
-        lider: "",
-        turan: "",
-        liberty: "",
-        fbox: ""
-      });
-      await myData.save();
+        for (let i = 1; i <= 20; i++) {
+            const myData = new MyModelForTg({
+                account,
+                num: i,
+                monako: "",
+                fenix: "",
+                lider: "",
+                turan: "",
+                liberty: "",
+                fbox: ""
+            });
+            await myData.save();
+        }
+
+        res.status(200).json({ message: "Слоты успешно созданы" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
     }
-
-    res.status(200).json({ message: "Слоты успешно созданы" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
 });
 app.get("/test/telegramSlot", async (req, res) => {
-  try {
-    const data = await MyModelForTg.find().sort({ account: 1, num: 1 });
-    res.status(200).json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
+    try {
+        const data = await MyModelForTg.find().sort({ account: 1, num: 1 });
+        res.status(200).json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
+    }
 });
 
 app.post("/test/whatsappslot", async (req, res) => {
-  try {
-    const { account, num } = req.body;
-    const myData = new MyModelForWA({ account, num });
-    await myData.save();
-    res.status(200).json({ message: "Данные успешно добавлены" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
+    try {
+        const { account, num } = req.body;
+        const myData = new MyModelForWA({ account, num });
+        await myData.save();
+        res.status(200).json({ message: "Данные успешно добавлены" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
+    }
 });
 
 app.patch("/test/whatsappslot/:id", async (req, res) => {
-  const { id } = req.params;
-  const { monako, lider, fenix, turan, newOtdel } = req.body;
+    const { id } = req.params;
+    const { monako, lider, fenix, turan, newOtdel } = req.body;
 
-  try {
-    const updatedWhatsapp = await MyModelForWA.findByIdAndUpdate(
-      id,
-      { monako, lider, fenix, turan, newOtdel },
-      { new: true }
-    );
-    res.json(updatedWhatsapp);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Ошибка сервера" });
-  }
+    try {
+        const updatedWhatsapp = await MyModelForWA.findByIdAndUpdate(
+            id,
+            { monako, lider, fenix, turan, newOtdel },
+            { new: true }
+        );
+        res.json(updatedWhatsapp);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Ошибка сервера" });
+    }
 });
 
 app.post("/insert/account", async (req, res) => {
-  try {
-    const { account } = req.body;
+    try {
+        const { account } = req.body;
 
-    for (let i = 1; i <= 20; i++) {
-      const myData = new MyModelForWA({
-        account,
-        num: i,
-        monako: "",
-        fenix: "",
-        lider: "",
-        turan: "",
-        liberty: "",
-        fbox: ""
-      });
-      await myData.save();
+        for (let i = 1; i <= 20; i++) {
+            const myData = new MyModelForWA({
+                account,
+                num: i,
+                monako: "",
+                fenix: "",
+                lider: "",
+                turan: "",
+                liberty: "",
+                fbox: ""
+            });
+            await myData.save();
+        }
+
+        res.status(200).json({ message: "Слоты успешно созданы" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
     }
-
-    res.status(200).json({ message: "Слоты успешно созданы" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
 });
 
 app.get("/test/whatsappslot", async (req, res) => {
-  try {
-    const data = await MyModelForWA.find();
-    res.status(200).json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Что-то пошло не так" });
-  }
+    try {
+        const data = await MyModelForWA.find();
+        res.status(200).json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Что-то пошло не так" });
+    }
 });
 
 // ------------------------------------------------------ logins ------------------------------------//
 
 app.post("/test/logins", async (req, res) => {
-  try {
-    const { username, password } = req.body;
+    try {
+        const { username, password } = req.body;
 
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(400).json({ message: "Неправильное имя пользователя" });
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(400).json({ message: "Неправильное имя пользователя" });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: "Неверный пароль" });
+        }
+        const roles = await User.findOne({ username })
+
+        res.status(200).json({ roles });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Что-то пошло не так" });
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Неверный пароль" });
-    }
-    const roles = await User.findOne({ username })
-
-    res.status(200).json({ roles });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Что-то пошло не так" });
-  }
 });
 
 app.get('/test/logins', async (req, res) => {
-  try {
-    const data = await User.find()
-    res.status(200).json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Что-то пошло не так" });
-  }
+    try {
+        const data = await User.find()
+        res.status(200).json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Что-то пошло не так" });
+    }
 })
 
 app.post("/test/register", async (req, res) => {
-  try {
-    const { username, password, role } = req.body;
+    try {
+        const { username, password, role } = req.body;
 
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = new User({ username, password: hashedPassword, role });
+        await user.save();
+
+        res.status(200).json({ message: "Регистрация прошла успешно" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Что-то пошло не так" });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({ username, password: hashedPassword, role });
-    await user.save();
-
-    res.status(200).json({ message: "Регистрация прошла успешно" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Что-то пошло не так" });
-  }
 });
 
 app.delete('/test/login/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await User.findByIdAndDelete(id);
-    res.status(200).json({ message: "Пользователь успешно удален" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Что-то пошло не так" });
-  }
+    try {
+        const { id } = req.params;
+        await User.findByIdAndDelete(id);
+        res.status(200).json({ message: "Пользователь успешно удален" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Что-то пошло не так" });
+    }
 });
 
 
 /*-------------------------------------------------------------simcard---------------------------*/
 
 app.post("/insert/simcardManagers", async (req, res) => {
-  try {
-    const { curator } = req.body
-    const newData = new SimModelManager({
-      curator: curator,
-      slot: [{
-        num: 1,
-        number: '',
-        status: '1',
-        buyer: '',
-        personal_number: '',
-        date_of_verification: '',
-        days_since_verifiation: '',
-        status_simCard: '1',
-        physical_simCard: '1',
-        registration: '',
-        WAcod: '',
-        TGcod: '',
-      }]
-    })
-    await newData.save()
-    res.status(200).json({ massage: `${JSON.stringify(newData)}` })
-  } catch (error) {
-    res.status(500).json({ massage: `${JSON.stringify(error)}` })
-  }
+    try {
+        const { curator } = req.body
+        const newData = new SimModelManager({
+            curator: curator,
+            slot: [{
+                num: 1,
+                number: '',
+                status: '1',
+                buyer: '',
+                personal_number: '',
+                date_of_verification: '',
+                days_since_verifiation: '',
+                status_simCard: '1',
+                physical_simCard: '1',
+                registration: '',
+                WAcod: '',
+                TGcod: '',
+            }]
+        })
+        await newData.save()
+        res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+    } catch (error) {
+        res.status(500).json({ massage: `${JSON.stringify(error)}` })
+    }
 })
 
 app.post("/insert/slotsManagers", async (req, res) => {
-  try {
-    const { id } = req.body;
+    try {
+        const { id } = req.body;
 
-    const newData = await SimModelManager.findByIdAndUpdate(
-      id,
-      {
-        $push: {
-          slot: {
-            num: 1,
-            number: '',
-            status: '1',
-            buyer: '',
-            personal_number: '',
-            date_of_verification: '',
-            days_since_verification: '',
-            status_simCard: '1',
-            physical_simCard: '1',
-            registration: '',
-            WAcod: '',
-            TGcod: '',
-          }
-        }
-      },
-      { new: true }
-    );
+        const newData = await SimModelManager.findByIdAndUpdate(
+            id,
+            {
+                $push: {
+                    slot: {
+                        num: 1,
+                        number: '',
+                        status: '1',
+                        buyer: '',
+                        personal_number: '',
+                        date_of_verification: '',
+                        days_since_verification: '',
+                        status_simCard: '1',
+                        physical_simCard: '1',
+                        registration: '',
+                        WAcod: '',
+                        TGcod: '',
+                    }
+                }
+            },
+            { new: true }
+        );
 
-    res.status(200).json({ newData });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to insert new slot" });
-  }
+        res.status(200).json({ newData });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to insert new slot" });
+    }
 });
 
 app.get("/test/simcardmanagers", async (req, res) => {
-  try {
-    const data = await SimModelManager.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
+    try {
+        const data = await SimModelManager.find();
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что то пошло не так",
+        });
+    }
 })
 
 app.patch("/test/simcardmanagers/:id", async (req, res) => {
-  const { id } = req.params;
-  const {
-    number,
-    status,
-    buyer,
-    personal_number,
-    date_of_verification,
-    days_since_verification,
-    status_simCard,
-    physical_simCard,
-    registration,
-    WAcod,
-    TGcod,
-  } = req.body
-  try {
-    const updateSimCard = await SimModelManager.findOneAndUpdate(
-      { "slot._id": id },
-      {
-        "slot.$.number": number,
-        "slot.$.status": status,
-        "slot.$.buyer": buyer,
-        "slot.$.personal_number": personal_number,
-        "slot.$.date_of_verification": date_of_verification,
-        "slot.$.days_since_verification": days_since_verification,
-        "slot.$.status_simCard": status_simCard,
-        "slot.$.physical_simCard": physical_simCard,
-        "slot.$.registration": registration,
-        "slot.$.WAcod": WAcod,
-        "slot.$.TGcod": TGcod,
-      },
-      { new: true }
-    )
-    res.json(updateSimCard);
-  } catch (error) {
-    res.status(500).json({
-      error: "Что то пошло не так",
-    });
-  }
+    const { id } = req.params;
+    const {
+        number,
+        status,
+        buyer,
+        personal_number,
+        date_of_verification,
+        days_since_verification,
+        status_simCard,
+        physical_simCard,
+        registration,
+        WAcod,
+        TGcod,
+    } = req.body
+    try {
+        const updateSimCard = await SimModelManager.findOneAndUpdate(
+            { "slot._id": id },
+            {
+                "slot.$.number": number,
+                "slot.$.status": status,
+                "slot.$.buyer": buyer,
+                "slot.$.personal_number": personal_number,
+                "slot.$.date_of_verification": date_of_verification,
+                "slot.$.days_since_verification": days_since_verification,
+                "slot.$.status_simCard": status_simCard,
+                "slot.$.physical_simCard": physical_simCard,
+                "slot.$.registration": registration,
+                "slot.$.WAcod": WAcod,
+                "slot.$.TGcod": TGcod,
+            },
+            { new: true }
+        )
+        res.json(updateSimCard);
+    } catch (error) {
+        res.status(500).json({
+            error: "Что то пошло не так",
+        });
+    }
 })
 
 app.patch('/update/simcardmanagers', async (req, res) => {
-  const { itemId, field, value, days_since_verification } = req.body;
+    const { itemId, field, value, days_since_verification } = req.body;
 
-  try {
-    await SimModelManager.findOneAndUpdate(
-      { "slot._id": itemId },
-      { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
-    );
+    try {
+        await SimModelManager.findOneAndUpdate(
+            { "slot._id": itemId },
+            { $set: { [`slot.$.${field}`]: value, "slot.$.days_since_verification": days_since_verification } }
+        );
 
-    res.sendStatus(200);
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
+        res.sendStatus(200);
+    } catch (error) {
+        console.error(error);
+        res.sendStatus(500);
+    }
 });
 
 app.patch('/test/curatormanagers/:id', async (req, res) => {
-  const { id } = req.params;
-  const { curator } = req.body;
-  try {
-    const updateSimCard = await SimModelManager.findOneAndUpdate(
-      { _id: id },
-      { curator },
-      { new: true }
-    );
-    res.json(updateSimCard);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Something went wrong' });
-  }
+    const { id } = req.params;
+    const { curator } = req.body;
+    try {
+        const updateSimCard = await SimModelManager.findOneAndUpdate(
+            { _id: id },
+            { curator },
+            { new: true }
+        );
+        res.json(updateSimCard);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
 })
 
 app.delete('/test/managerdelete/:id', async () => {
-  const { id } = req.params;
-  try {
-    const result = await SimModelManager.findByIdAndDelete(id);
+    const { id } = req.params;
+    try {
+        const result = await SimModelManager.findByIdAndDelete(id);
 
-    if (result) {
-      res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
-    } else {
-      res.status(404).json({ message: `Документ с id ${id} не найден.` });
+        if (result) {
+            res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
+        } else {
+            res.status(404).json({ message: `Документ с id ${id} не найден.` });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Ошибка при удалении документа.' });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Ошибка при удалении документа.' });
-  }
 })
 
 
@@ -591,5 +598,5 @@ app.delete('/test/managerdelete/:id', async () => {
 const PORT = 4000;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
