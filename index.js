@@ -106,7 +106,7 @@ cron.schedule('0 0 1 * *', () => {
 
 createMonthlyReport.createMonthlyReport();
 
-// connect();
+connect();
 
 app.use('/', raitingManager)
 
