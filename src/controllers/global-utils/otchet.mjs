@@ -87,6 +87,7 @@ export const createUniversalData = async (req, res, model, controller, curatorNa
 
                     detail.summa = (detail.summa || 0) + totalMatchingSum;
                     detail.orders = (detail.orders || 0) + matchingOrders.length;
+                    detail.coeff = (detail.coeff || 0) + (parseFloat(totalMatchingSum) / parseFloat(matchingOrders.length) / 1000).toFixed(1);
 
                     const comPersent100Sum = matchingOrders.reduce((sum, report) => sum + report.comPersent100, 0);
                     totalComPersent100ForDetails += comPersent100Sum;

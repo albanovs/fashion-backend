@@ -1,3 +1,4 @@
+import { stat } from "fs";
 import mongoose from "mongoose";
 
 const ModelRaitingManager = new mongoose.Schema({
@@ -12,7 +13,18 @@ const ModelRaitingManager = new mongoose.Schema({
         comission: Number,
         comissionVM: Number,
         allCoeff: String,
-        detail: Array,
+        detail: [
+            {
+                name: String,
+                status: String,
+                orders: Number,
+                summa: Number,
+                team: String,
+                curator: String,
+                coeff: Number,
+                data_register: String
+            }
+        ],
         remainder: Number,
         for_withdrawal: [
             {

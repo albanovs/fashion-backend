@@ -29,8 +29,8 @@ const updateCalcManager = async () => {
         const today = new Date();
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
-        const dateString = `${year}-${month}`;
-        // const dateString = `2024-9`;
+        // const dateString = `${year}-${month}`;
+        const dateString = `2024-10`;
 
         const existingRecord = await ManagerRaiting.findOne({ datas: dateString });
         if (!existingRecord) {

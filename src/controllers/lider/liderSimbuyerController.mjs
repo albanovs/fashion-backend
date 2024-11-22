@@ -1,5 +1,6 @@
 import SimModelLider from "../../models/simcard/simlider.mjs"
 import cron from 'node-cron'
+import ModelManagerRaiting from "../../models/rainting/managerrainting/manager.mjs"
 
 const createSimTable = async (req, res) => {
     try {
@@ -93,6 +94,11 @@ const editSimTable = async (req, res) => {
             },
             { new: true }
         )
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const manager = await ModelManagerRaiting.findOne({ datas: currentDate });
+        if (manager) {
+            const filteredManager = manager.managers.flatMap(buyers => buyers.detail.filter(detail => detail.name.replace(/\s/g, '').toLowerCase() === buyer.replace(/\s/g, '').toLowerCase()));
+        }
         res.json(updateSimCard);
     } catch (error) {
         res.status(500).json({
