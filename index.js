@@ -83,16 +83,11 @@ import outgoing from './src/routes/incoming-outgoing/outgoing.mjs'
 import raitingManager from './src/routes/raitings/manager.mjs'
 import createMonthlyReport from './src/controllers/raiting/manager.mjs'
 
-
-const corsOptions = {
-    origin: 'https://fashion-backend-r8hh.onrender.com',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-};
-
 const app = express();
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors({
+    origin: 'https://fashion-backend-r8hh.onrender.com',
+}));
 app.use(bodyParser.json())
 // bot.launch()
 
