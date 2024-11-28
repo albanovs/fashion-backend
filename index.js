@@ -85,7 +85,9 @@ import createMonthlyReport from './src/controllers/raiting/manager.mjs'
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://crm.fashionrynok.kg',
+}));
 app.use(bodyParser.json())
 // bot.launch()
 
