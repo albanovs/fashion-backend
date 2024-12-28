@@ -5,10 +5,7 @@ const myModelSchema = new mongoose.Schema({
     num: Number,
     monako: String,
     fenix: String,
-    lider: String,
     turan: String,
-    liberty: String,
-    fbox: String
 })
 
 const MyModel = mongoose.model('mymodels', myModelSchema);

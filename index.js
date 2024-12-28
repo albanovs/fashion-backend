@@ -186,12 +186,12 @@ app.post("/test/mymodels", async (req, res) => {
 
 app.patch("/test/mymodels/:id", async (req, res) => {
     const { id } = req.params;
-    const { monako, lider, fenix, turan } = req.body;
+    const { monako, fenix, turan } = req.body;
 
     try {
         const updatedMyModel = await MyModel.findByIdAndUpdate(
             id,
-            { monako, lider, fenix, turan },
+            { monako, fenix, turan },
             { new: true }
         );
         res.json(updatedMyModel);

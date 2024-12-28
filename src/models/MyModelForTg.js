@@ -12,3 +12,6 @@ const myModelForTgSchema = new mongoose.Schema({
 const MyModelForTg = mongoose.model('telegramslots', myModelForTgSchema);
 
 export default MyModelForTg;
+
+
+
