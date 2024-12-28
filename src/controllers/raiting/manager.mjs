@@ -25,10 +25,8 @@ const createMonthlyReport = async () => {
         }
 
         const simModels = [
-            { model: SimModelLider, teamName: 'Лидер' },
+            { model: SimModelLider, teamName: 'Кайрат' },
             { model: SimModelFenix, teamName: 'Ильяс' },
-            { model: SimModelLiberty, teamName: 'Liberty' },
-            { model: SimModelMonaco, teamName: 'Монако' },
             { model: SimModelTuran, teamName: 'Туран' }
         ];
 
@@ -111,7 +109,7 @@ const updateFenixDataFromDB = async () => {
         const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
         let SelectedManagers = FenixManagers.map(elem => elem.managers).flat()
 
-        const dataArray = await LiderDataModel.find({ date: "18.11.2024" });
+        const dataArray = await FenixDataModel.find({ date: "01.12.2024" });
         if (!dataArray || dataArray.length === 0) {
             console.log('Данные Fenix не найдены');
             return;
@@ -188,6 +186,7 @@ const updateFenixDataFromDB = async () => {
     }
 };
 
+updateFenixDataFromDB();
 
 const getBuyerRaiting = async (req, res) => {
     try {

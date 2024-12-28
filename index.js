@@ -186,12 +186,12 @@ app.post("/test/mymodels", async (req, res) => {
 
 app.patch("/test/mymodels/:id", async (req, res) => {
     const { id } = req.params;
-    const { monako, lider, fenix, turan, liberty, fbox } = req.body;
+    const { monako, lider, fenix, turan } = req.body;
 
     try {
         const updatedMyModel = await MyModel.findByIdAndUpdate(
             id,
-            { monako, lider, fenix, turan, liberty, fbox },
+            { monako, lider, fenix, turan },
             { new: true }
         );
         res.json(updatedMyModel);
@@ -203,17 +203,16 @@ app.patch("/test/mymodels/:id", async (req, res) => {
 
 app.post("/insert/account", async (req, res) => {
     try {
-        const myData = new MyModel({
-            account: req.body.account,
-            num: 1,
-            monako: "",
-            fenix: "",
-            lider: "",
-            turan: "",
-            liberty: "",
-            fbox: ""
-        });
-        await myData.save();
+        for (let i = 1; i <= 5; i++) {
+            const myData = new MyModel({
+                account,
+                num: i,
+                monako: "",
+                fenix: "",
+                turan: "",
+            });
+            await myData.save();
+        }
         res.status(200).json({ massage: `${JSON.stringify(myData)}` });
     } catch (error) {
         res.status(500).json({ error: "что то пошло не так!" });
@@ -262,18 +261,16 @@ app.patch("/test/telegramSlot/:id", async (req, res) => {
 
 app.post("/insert/telegram", async (req, res) => {
     try {
-        const { account } = req.body;
+        const { account, account_ru } = req.body;
 
         for (let i = 1; i <= 20; i++) {
             const myData = new MyModelForTg({
                 account,
+                account_ru,
                 num: i,
                 monako: "",
                 fenix: "",
-                lider: "",
                 turan: "",
-                liberty: "",
-                fbox: ""
             });
             await myData.save();
         }
@@ -294,69 +291,6 @@ app.get("/test/telegramSlot", async (req, res) => {
     }
 });
 
-app.post("/test/whatsappslot", async (req, res) => {
-    try {
-        const { account, num } = req.body;
-        const myData = new MyModelForWA({ account, num });
-        await myData.save();
-        res.status(200).json({ message: "Данные успешно добавлены" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Что-то пошло не так" });
-    }
-});
-
-app.patch("/test/whatsappslot/:id", async (req, res) => {
-    const { id } = req.params;
-    const { monako, lider, fenix, turan, newOtdel } = req.body;
-
-    try {
-        const updatedWhatsapp = await MyModelForWA.findByIdAndUpdate(
-            id,
-            { monako, lider, fenix, turan, newOtdel },
-            { new: true }
-        );
-        res.json(updatedWhatsapp);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Ошибка сервера" });
-    }
-});
-
-app.post("/insert/account", async (req, res) => {
-    try {
-        const { account } = req.body;
-
-        for (let i = 1; i <= 20; i++) {
-            const myData = new MyModelForWA({
-                account,
-                num: i,
-                monako: "",
-                fenix: "",
-                lider: "",
-                turan: "",
-                liberty: "",
-                fbox: ""
-            });
-            await myData.save();
-        }
-
-        res.status(200).json({ message: "Слоты успешно созданы" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Что-то пошло не так" });
-    }
-});
-
-app.get("/test/whatsappslot", async (req, res) => {
-    try {
-        const data = await MyModelForWA.find();
-        res.status(200).json(data);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Что-то пошло не так" });
-    }
-});
 
 // ------------------------------------------------------ logins ------------------------------------//
 
