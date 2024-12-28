@@ -244,12 +244,12 @@ app.post("/telegramslot", async (req, res) => {
 
 app.patch("/test/telegramSlot/:id", async (req, res) => {
     const { id } = req.params;
-    const { monako, lider, fenix, turan, liberty, fbox } = req.body;
+    const { monako, fenix, turan, } = req.body;
 
     try {
         const updatedTelegram = await MyModelForTg.findByIdAndUpdate(
             id,
-            { monako, lider, fenix, turan, liberty, fbox },
+            { monako, fenix, turan },
             { new: true }
         );
         res.json(updatedTelegram);
