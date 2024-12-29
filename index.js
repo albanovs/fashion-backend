@@ -200,6 +200,7 @@ app.patch("/test/mymodels/:id", async (req, res) => {
 });
 
 app.post("/insert/account", async (req, res) => {
+    const { account } = req.body;
     try {
         for (let i = 1; i <= 5; i++) {
             const myData = new MyModel({

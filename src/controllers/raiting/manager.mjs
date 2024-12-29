@@ -186,7 +186,7 @@ const updateFenixDataFromDB = async () => {
     }
 };
 
-updateFenixDataFromDB();
+// updateFenixDataFromDB();
 
 const getBuyerRaiting = async (req, res) => {
     try {
