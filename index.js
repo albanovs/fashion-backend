@@ -13,7 +13,7 @@ import liderDataRouter from './src/routes/lider/liderDatasRouter.mjs'
 import liderOtchetBetaRouter from './src/routes/lider/otchetBetaRoutes.mjs'
 import simbuyerLiderRouter from './src/routes/lider/simbuyerLiderRouter.mjs'
 import liderSimLogistRouter from './src/routes/lider/liderLogistRouter.mjs'
-
+``
 import monacoDataRouter from './src/routes/monaco/monacoDatasRouter.mjs'
 import monacoOtchetBetaRouter from './src/routes/monaco/monacoOtchetRouter.mjs'
 import simbuyerMonacoRouter from './src/routes/monaco/simbuyerMonacoRouter.mjs'
@@ -85,9 +85,7 @@ import createMonthlyReport from './src/controllers/raiting/manager.mjs'
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-    origin: 'https://crm.fashionrynok.kg',
-}));
+app.use(cors());
 app.use(bodyParser.json())
 // bot.launch()
 
