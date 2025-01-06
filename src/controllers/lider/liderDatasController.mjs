@@ -96,7 +96,7 @@ import liderOtchetController from "./liderOtchetController.mjs";
 
 export const createLiderData = async (req, res) => {
     try {
-        await createUniversalData(req, res, LiderDataModel, liderOtchetController, "Лидер");
+        await createUniversalData(req, res, LiderDataModel, liderOtchetController, "Кайрат");
     } catch (error) {
         res.status(500).json({ message: "Ошибка при создании данных для другой модели" });
     }
