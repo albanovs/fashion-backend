@@ -183,27 +183,27 @@ const updateCalcManager = async () => {
     }
 }
 
-cron.schedule('*/10 * * * *', async () => {
-    try {
-        await updateCalcManager();
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-});
+// cron.schedule('*/10 * * * *', async () => {
+//     try {
+//         await updateCalcManager();
+//     } catch (error) {
+//         console.error('Ошибка при выполнении вычислений:', error);
+//     }
+// });
 
-updateCalcManager()
+// updateCalcManager()
 
-const models = [
-    simModelLier,
-    LiderDataModel,
-    MonacoDataModel,
-    TuranDataModel,
-    FenixDataModel,
-    NewOtdelDataModel,
-    LibertyDataModel,
-];
-models.forEach(model => {
-    model.on('change', updateCalcManager);
-});
+// const models = [
+//     simModelLier,
+//     LiderDataModel,
+//     MonacoDataModel,
+//     TuranDataModel,
+//     FenixDataModel,
+//     NewOtdelDataModel,
+//     LibertyDataModel,
+// ];
+// models.forEach(model => {
+//     model.on('change', updateCalcManager);
+// });
 
 export default { calcRaintingManager, updateCalcManager, calculateAndCacheData };

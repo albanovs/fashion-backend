@@ -88,15 +88,15 @@ async function calculateAndCacheAdminDataWrapper() {
 
 let cachedAdminData = null;
 
-calculateAndCacheAdminDataWrapper();
+// calculateAndCacheAdminDataWrapper();
 
-cron.schedule('*/10 * * * *', async () => {
-    try {
-        await calculateAndCacheAdminDataWrapper();
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-});
+// cron.schedule('*/10 * * * *', async () => {
+//     try {
+//         await calculateAndCacheAdminDataWrapper();
+//     } catch (error) {
+//         console.error('Ошибка при выполнении вычислений:', error);
+//     }
+// });
 
 const calcRaintingAdmin45days = async (req, res) => {
     try {

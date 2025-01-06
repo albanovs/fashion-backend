@@ -114,15 +114,15 @@ async function calculateAndCacheDataWrapper() {
     cachedData = result;
 }
 
-calculateAndCacheDataWrapper();
+// calculateAndCacheDataWrapper();
 
-cron.schedule('*/10 * * * *', async () => {
-    try {
-        await calculateAndCacheDataWrapper();
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-});
+// cron.schedule('*/10 * * * *', async () => {
+//     try {
+//         await calculateAndCacheDataWrapper();
+//     } catch (error) {
+//         console.error('Ошибка при выполнении вычислений:', error);
+//     }
+// });
 
 const calcRaintingLogistAdmin = async (req, res) => {
     try {

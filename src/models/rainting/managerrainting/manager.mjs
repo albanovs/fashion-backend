@@ -1,9 +1,9 @@
-import { stat } from "fs";
 import mongoose from "mongoose";
 
 const ModelRaitingManager = new mongoose.Schema({
     datas: String,
     managers: [{
+        id_manager: String,
         otdel: String,
         curator: String,
         data_register: String,

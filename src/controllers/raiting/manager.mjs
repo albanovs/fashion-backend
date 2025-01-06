@@ -37,6 +37,7 @@ const createMonthlyReport = async () => {
 
             simData.forEach(sim => {
                 const manager = {
+                    id_manager: sim._id,
                     otdel: teamName,
                     curator: sim.curator,
                     data_register: sim.data_register || 'до 09.05.2024',

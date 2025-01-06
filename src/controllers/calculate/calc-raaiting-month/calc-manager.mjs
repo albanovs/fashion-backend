@@ -167,7 +167,7 @@ const calculateSumAllCoeffAndBuyerLengthForLastTwoMonths = async () => {
     cachedData2 = sumCoeffs;
 };
 
-calculateSumAllCoeffAndBuyerLengthForLastTwoMonths()
+// calculateSumAllCoeffAndBuyerLengthForLastTwoMonths()
 
 const getmanagerlast2Raiting = async (req, res) => {
     try {
@@ -181,13 +181,13 @@ const getmanagerlast2Raiting = async (req, res) => {
     }
 };
 
-cron.schedule('*/20 * * * *', async () => {
-    try {
-        await updateCalcBuyer();
-        await calculateSumAllCoeffAndBuyerLengthForLastTwoMonths()
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-});
+// cron.schedule('*/20 * * * *', async () => {
+//     try {
+//         await updateCalcBuyer();
+//         await calculateSumAllCoeffAndBuyerLengthForLastTwoMonths()
+//     } catch (error) {
+//         console.error('Ошибка при выполнении вычислений:', error);
+//     }
+// });
 
 export default { updateCalcManager, getManagerRaiting, getBuyerRaiting, getmanagerlast2Raiting }

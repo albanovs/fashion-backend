@@ -180,22 +180,22 @@ const updateCalcManager = async () => {
         console.error('Ошибка при выполнении вычислений:', error);
     }
 }
-updateCalcManager()
+// updateCalcManager()
 
-cron.schedule('*/10 * * * *', async () => {
-    try {
-        await updateCalcManager();
-    } catch (error) {
-        console.error('Ошибка при выполнении вычислений:', error);
-    }
-});
+// cron.schedule('*/10 * * * *', async () => {
+//     try {
+//         await updateCalcManager();
+//     } catch (error) {
+//         console.error('Ошибка при выполнении вычислений:', error);
+//     }
+// });
 
-simTuranModel.on('change', updateCalcManager);
-LiderDataModel.on('change', updateCalcManager);
-MonacoDataModel.on('change', updateCalcManager);
-TuranDataModel.on('change', updateCalcManager);
-FenixDataModel.on('change', updateCalcManager);
-NewOtdelDataModel.on('change', updateCalcManager);
-LibertyDataModel.on('change', updateCalcManager);
+// simTuranModel.on('change', updateCalcManager);
+// LiderDataModel.on('change', updateCalcManager);
+// MonacoDataModel.on('change', updateCalcManager);
+// TuranDataModel.on('change', updateCalcManager);
+// FenixDataModel.on('change', updateCalcManager);
+// NewOtdelDataModel.on('change', updateCalcManager);
+// LibertyDataModel.on('change', updateCalcManager);
 
 export default { calcRaintingManagerTuran, updateCalcManager, calculateAndCacheData };

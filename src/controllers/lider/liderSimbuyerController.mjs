@@ -4,23 +4,52 @@ import ModelManagerRaiting from "../../models/rainting/managerrainting/manager.m
 
 const createSimTable = async (req, res) => {
     try {
-        const { curator } = req.body
+        const { curator } = req.body;
         const currentDate = new Date();
         const day = currentDate.getDate().toString().padStart(2, '0');
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
         const year = currentDate.getFullYear();
         const formattedDate = `${day}.${month}.${year}`;
+
         const newData = new SimModelLider({
             data_register: formattedDate,
             curator: curator,
-            slot: []
-        })
-        await newData.save()
-        res.status(200).json({ massage: `${JSON.stringify(newData)}` })
+            slot: [],
+        });
+        await newData.save();
+        const currentDateRaiting = new Date().toISOString().slice(0, 7);
+        let currentManagerRaiting = await ModelManagerRaiting.findOne({ datas: currentDateRaiting });
+        if (currentManagerRaiting) {
+            const curatorExists = currentManagerRaiting.managers.some(manager => manager.curator === curator);
+
+            if (!curatorExists) {
+                currentManagerRaiting.managers.push({
+                    otdel: 'Кайрат',
+                    curator: curator,
+                    data_register: formattedDate,
+                    buyerLength: 0,
+                    totalcom: 0,
+                    order: 0,
+                    comission: 0,
+                    comissionVM: 0,
+                    allCoeff: '0',
+                    detail: [],
+                    remainder: 0,
+                    for_withdrawal: [],
+                });
+                await currentManagerRaiting.save();
+                console.log(`Куратор ${curator} добавлен в список managers.`);
+            } else {
+                console.log(`Куратор ${curator} уже существует в списке managers.`);
+            }
+        }
+
+        res.status(200).json({ message: `Документ сохранен: ${JSON.stringify(newData)}` });
     } catch (error) {
-        res.status(500).json({ massage: `${JSON.stringify(error)}` })
+        res.status(500).json({ message: `${JSON.stringify(error)}` });
     }
-}
+};
+
 
 const addSimSlot = async (req, res) => {
     try {
@@ -94,11 +123,6 @@ const editSimTable = async (req, res) => {
             },
             { new: true }
         )
-        const currentDate = new Date().toISOString().slice(0, 7);
-        const manager = await ModelManagerRaiting.findOne({ datas: currentDate });
-        if (manager) {
-            const filteredManager = manager.managers.flatMap(buyers => buyers.detail.filter(detail => detail.name.replace(/\s/g, '').toLowerCase() === buyer.replace(/\s/g, '').toLowerCase()));
-        }
         res.json(updateSimCard);
     } catch (error) {
         res.status(500).json({
@@ -143,7 +167,15 @@ const upDateCurator = async (req, res) => {
             { curator },
             { new: true }
         );
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managerrainting = await ModelManagerRaiting.findOne({ datas: currentDate });
+
+        if (managerrainting) {
+            managerrainting.managers.find((item) => item.id_manager === id).curator = curator;
+            await managerrainting.save();
+        }
         res.json(updateSimCard);
+        await syncAndValidateBuyers();
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Something went wrong' });
@@ -193,6 +225,13 @@ const deleteManager = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await SimModelLider.findByIdAndDelete(id);
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managerrainting = await ModelManagerRaiting.findOne({ datas: currentDate });
+
+        if (managerrainting) {
+            managerrainting.managers = managerrainting.managers.filter((item) => item.id_manager !== id);
+            await managerrainting.save();
+        }
 
         if (result) {
             res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
@@ -211,5 +250,65 @@ cron.schedule('0 0 * * *', () => {
     scheduled: true,
     timezone: 'Europe/Moscow'
 });
+
+const syncAndValidateBuyers = async () => {
+    try {
+        const simData = await SimModelLider.find();
+        if (!simData.length) {
+            console.log('Нет данных в SimModelLider');
+            return;
+        }
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managerRaiting = await ModelManagerRaiting.findOne({ datas: currentDate });
+
+        if (!managerRaiting) {
+            console.log(`Документ с датой ${currentDate} не найден в ModelManagerRaiting`);
+            return;
+        }
+        const buyersInSim = new Map();
+        simData.forEach(sim => {
+            sim.slot.forEach(slotItem => {
+                if (slotItem.buyer) {
+                    buyersInSim.set(
+                        slotItem.buyer.replace(/\s/g, '').toLowerCase(),
+                        { buyer: slotItem.buyer, curator: sim.curator }
+                    );
+                }
+            });
+        });
+        managerRaiting.managers.forEach(manager => {
+            manager.detail.forEach(detail => {
+                const buyerName = detail.name.replace(/\s/g, '').toLowerCase();
+                if (!buyersInSim.has(buyerName)) {
+                    detail.status = '1';
+                    console.log(`Покупателю ${detail.name} изменён статус на 1.`);
+                }
+            });
+            buyersInSim.forEach(({ buyer, curator }, key) => {
+                const buyerExists = manager.detail.some(detail =>
+                    detail.name.replace(/\s/g, '').toLowerCase() === key
+                );
+
+                if (!buyerExists && manager.curator === curator) {
+                    manager.detail.push({
+                        name: buyer,
+                        status: '2',
+                        orders: 0,
+                        summa: 0,
+                        team: '',
+                        curator: manager.curator,
+                        coeff: 0,
+                        data_register: new Date().toISOString().slice(0, 10),
+                    });
+                    console.log(`Добавлен новый покупатель ${buyer} для куратора ${curator}.`);
+                }
+            });
+        });
+        await managerRaiting.save();
+        console.log('Синхронизация покупателей завершена.');
+    } catch (error) {
+        console.error('Ошибка при синхронизации покупателей:', error.message);
+    }
+};
 
 export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot, deleteManager }
