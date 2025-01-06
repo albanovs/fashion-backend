@@ -25,6 +25,7 @@ const createSimTable = async (req, res) => {
             if (!curatorExists) {
                 currentManagerRaiting.managers.push({
                     otdel: 'Кайрат',
+                    id_manager: newData._id,
                     curator: curator,
                     data_register: formattedDate,
                     buyerLength: 0,
@@ -124,6 +125,7 @@ const editSimTable = async (req, res) => {
             { new: true }
         )
         res.json(updateSimCard);
+        await syncAndValidateBuyers();
     } catch (error) {
         res.status(500).json({
             error: "Что то пошло не так",
@@ -175,7 +177,6 @@ const upDateCurator = async (req, res) => {
             await managerrainting.save();
         }
         res.json(updateSimCard);
-        await syncAndValidateBuyers();
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Something went wrong' });
@@ -232,7 +233,6 @@ const deleteManager = async (req, res) => {
             managerrainting.managers = managerrainting.managers.filter((item) => item.id_manager !== id);
             await managerrainting.save();
         }
-
         if (result) {
             res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
         } else {
@@ -258,6 +258,7 @@ const syncAndValidateBuyers = async () => {
             console.log('Нет данных в SimModelLider');
             return;
         }
+
         const currentDate = new Date().toISOString().slice(0, 7);
         const managerRaiting = await ModelManagerRaiting.findOne({ datas: currentDate });
 
@@ -265,50 +266,63 @@ const syncAndValidateBuyers = async () => {
             console.log(`Документ с датой ${currentDate} не найден в ModelManagerRaiting`);
             return;
         }
+
         const buyersInSim = new Map();
         simData.forEach(sim => {
-            sim.slot.forEach(slotItem => {
-                if (slotItem.buyer) {
-                    buyersInSim.set(
-                        slotItem.buyer.replace(/\s/g, '').toLowerCase(),
-                        { buyer: slotItem.buyer, curator: sim.curator }
-                    );
-                }
-            });
+            if (sim.slot && Array.isArray(sim.slot)) {
+                sim.slot.forEach(slotItem => {
+                    if (slotItem.buyer && slotItem.status === '2') {
+                        buyersInSim.set(
+                            slotItem.buyer.replace(/\s/g, '').toLowerCase(),
+                            { buyer: slotItem.buyer, curator: sim.curator || null, register: sim.data_register }
+                        );
+                    }
+                });
+            }
         });
-        managerRaiting.managers.forEach(manager => {
-            manager.detail.forEach(detail => {
-                const buyerName = detail.name.replace(/\s/g, '').toLowerCase();
-                if (!buyersInSim.has(buyerName)) {
-                    detail.status = '1';
-                    console.log(`Покупателю ${detail.name} изменён статус на 1.`);
-                }
-            });
-            buyersInSim.forEach(({ buyer, curator }, key) => {
-                const buyerExists = manager.detail.some(detail =>
-                    detail.name.replace(/\s/g, '').toLowerCase() === key
-                );
 
-                if (!buyerExists && manager.curator === curator) {
-                    manager.detail.push({
-                        name: buyer,
-                        status: '2',
-                        orders: 0,
-                        summa: 0,
-                        team: '',
-                        curator: manager.curator,
-                        coeff: 0,
-                        data_register: new Date().toISOString().slice(0, 10),
-                    });
-                    console.log(`Добавлен новый покупатель ${buyer} для куратора ${curator}.`);
+        managerRaiting.managers
+            .filter(manager => manager.otdel === "Кайрат")
+            .forEach(manager => {
+                buyersInSim.forEach(({ buyer, curator, register }, key) => {
+                    const buyerExists = manager.detail.some(detail =>
+                        detail.name.replace(/\s/g, '').toLowerCase() === key
+                    );
+
+                    if (!buyerExists && manager.curator === curator) {
+                        manager.detail.push({
+                            name: buyer,
+                            status: '2',
+                            orders: 0,
+                            summa: 0,
+                            team: 'Кайрат',
+                            curator: manager.curator,
+                            coeff: 0,
+                            data_register: register,
+                        });
+                        manager.buyerLength = (manager.buyerLength || 0) + 1;
+                    }
+                });
+                const initialLength = manager.detail.length;
+                manager.detail = manager.detail.filter(detail => {
+                    const buyerName = detail.name.replace(/\s/g, '').toLowerCase();
+                    const buyerDataInSim = buyersInSim.get(buyerName);
+
+                    if (!buyerDataInSim || buyerDataInSim.curator !== manager.curator) {
+                        return false;
+                    }
+                    return true;
+                });
+                const removedCount = initialLength - manager.detail.length;
+                if (removedCount > 0) {
+                    manager.buyerLength = Math.max((manager.buyerLength || 0) - removedCount, 0);
                 }
             });
-        });
         await managerRaiting.save();
-        console.log('Синхронизация покупателей завершена.');
     } catch (error) {
-        console.error('Ошибка при синхронизации покупателей:', error.message);
     }
 };
+
+
 
 export default { createSimTable, addSimSlot, editSimTable, getSimTable, updateSimcard, upDateCurator, deleteSlot, deleteManager }

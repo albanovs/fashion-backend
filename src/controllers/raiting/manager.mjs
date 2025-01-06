@@ -16,7 +16,6 @@ import LiderDataModel from "../../models/lider/liderData.mjs";
 const createMonthlyReport = async () => {
     try {
         const currentDate = new Date().toISOString().slice(0, 7);
-
         const existingReport = await ModelManagerRaiting.findOne({ datas: currentDate });
 
         if (existingReport) {
@@ -80,6 +79,7 @@ const createMonthlyReport = async () => {
         console.error('Ошибка при создании документа:', err);
     }
 };
+
 
 const updateWithdrawal = async (req, res) => {
     const { managerId, summa } = req.body;

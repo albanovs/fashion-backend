@@ -1,3 +1,4 @@
+import ModelManagerRaiting from "../../models/rainting/managerrainting/manager.mjs";
 import SimModelFenix from "../../models/simcard/simfenix.mjs"
 import cron from 'node-cron'
 
@@ -15,6 +16,33 @@ const createSimTable = async (req, res) => {
             slot: []
         })
         await newData.save()
+        const currentDateRaiting = new Date().toISOString().slice(0, 7);
+        let currentManagerRaiting = await ModelManagerRaiting.findOne({ datas: currentDateRaiting });
+        if (currentManagerRaiting) {
+            const curatorExists = currentManagerRaiting.managers.some(manager => manager.curator === curator);
+
+            if (!curatorExists) {
+                currentManagerRaiting.managers.push({
+                    otdel: 'Ильяс',
+                    id_manager: newData._id,
+                    curator: curator,
+                    data_register: formattedDate,
+                    buyerLength: 0,
+                    totalcom: 0,
+                    order: 0,
+                    comission: 0,
+                    comissionVM: 0,
+                    allCoeff: '0',
+                    detail: [],
+                    remainder: 0,
+                    for_withdrawal: [],
+                });
+                await currentManagerRaiting.save();
+                console.log(`Куратор ${curator} добавлен в список managers.`);
+            } else {
+                console.log(`Куратор ${curator} уже существует в списке managers.`);
+            }
+        }
         res.status(200).json({ massage: `${JSON.stringify(newData)}` })
     } catch (error) {
         res.status(500).json({ massage: `${JSON.stringify(error)}` })
@@ -94,6 +122,7 @@ const editSimTable = async (req, res) => {
             { new: true }
         )
         res.json(updateSimCard);
+        await syncAndValidateBuyers();
     } catch (error) {
         res.status(500).json({
             error: "Что то пошло не так",
@@ -137,6 +166,13 @@ const upDateCurator = async (req, res) => {
             { curator },
             { new: true }
         );
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managerrainting = await ModelManagerRaiting.findOne({ datas: currentDate });
+
+        if (managerrainting) {
+            managerrainting.managers.find((item) => item.id_manager === id).curator = curator;
+            await managerrainting.save();
+        }
         res.json(updateSimCard);
     } catch (error) {
         console.log(error);
@@ -187,7 +223,13 @@ const deleteManager = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await SimModelFenix.findByIdAndDelete(id);
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managerrainting = await ModelManagerRaiting.findOne({ datas: currentDate });
 
+        if (managerrainting) {
+            managerrainting.managers = managerrainting.managers.filter((item) => item.id_manager !== id);
+            await managerrainting.save();
+        }
         if (result) {
             res.status(200).json({ message: `Документ с id ${id} успешно удалён.` });
         } else {
@@ -196,6 +238,77 @@ const deleteManager = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Ошибка при удалении документа.' });
+    }
+};
+
+const syncAndValidateBuyers = async () => {
+    try {
+        const simData = await SimModelFenix.find();
+        if (!simData.length) {
+            console.log('Нет данных в SimModelFenix');
+            return;
+        }
+
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managerRaiting = await ModelManagerRaiting.findOne({ datas: currentDate });
+
+        if (!managerRaiting) {
+            console.log(`Документ с датой ${currentDate} не найден в ModelManagerRaiting`);
+            return;
+        }
+
+        const buyersInSim = new Map();
+        simData.forEach(sim => {
+            if (sim.slot && Array.isArray(sim.slot)) {
+                sim.slot.forEach(slotItem => {
+                    if (slotItem.buyer && slotItem.status === '2') {
+                        buyersInSim.set(
+                            slotItem.buyer.replace(/\s/g, '').toLowerCase(),
+                            { buyer: slotItem.buyer, curator: sim.curator || null, register: sim.data_register }
+                        );
+                    }
+                });
+            }
+        });
+        managerRaiting.managers
+            .filter(manager => manager.otdel === "Ильяс")
+            .forEach(manager => {
+                buyersInSim.forEach(({ buyer, curator, register }, key) => {
+                    const buyerExists = manager.detail.some(detail =>
+                        detail.name.replace(/\s/g, '').toLowerCase() === key
+                    );
+
+                    if (!buyerExists && manager.curator === curator) {
+                        manager.detail.push({
+                            name: buyer,
+                            status: '2',
+                            orders: 0,
+                            summa: 0,
+                            team: 'Ильяс',
+                            curator: manager.curator,
+                            coeff: 0,
+                            data_register: register,
+                        });
+                        manager.buyerLength = (manager.buyerLength || 0) + 1;
+                    }
+                });
+                const initialLength = manager.detail.length;
+                manager.detail = manager.detail.filter(detail => {
+                    const buyerName = detail.name.replace(/\s/g, '').toLowerCase();
+                    const buyerDataInSim = buyersInSim.get(buyerName);
+
+                    if (!buyerDataInSim || buyerDataInSim.curator !== manager.curator) {
+                        return false;
+                    }
+                    return true;
+                });
+                const removedCount = initialLength - manager.detail.length;
+                if (removedCount > 0) {
+                    manager.buyerLength = Math.max((manager.buyerLength || 0) - removedCount, 0);
+                }
+            });
+        await managerRaiting.save();
+    } catch (error) {
     }
 };
 
