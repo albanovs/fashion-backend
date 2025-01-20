@@ -110,7 +110,7 @@ const updateFenixDataFromDB = async () => {
         const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
         let SelectedManagers = FenixManagers.map(elem => elem.managers).flat()
 
-        const dataArray = await FenixDataModel.find({ date: "01.12.2024" });
+        const dataArray = await LiderDataModel.find({ date: "20.01.2025" });
         if (!dataArray || dataArray.length === 0) {
             console.log('Данные Fenix не найдены');
             return;

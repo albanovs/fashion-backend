@@ -87,8 +87,7 @@ export const createUniversalData = async (req, res, model, controller, curatorNa
 
                     detail.summa = (detail.summa || 0) + totalMatchingSum;
                     detail.orders = (detail.orders || 0) + matchingOrders.length;
-                    detail.coeff = (detail.coeff || 0) + (parseFloat(totalMatchingSum) / parseFloat(matchingOrders.length) / 1000).toFixed(1);
-
+                    detail.coeff = (parseFloat(detail.coeff) || 0) + ((parseFloat(totalMatchingSum) / parseFloat(matchingOrders.length)).toFixed(0) / 1000).toFixed(2)
                     const comPersent100Sum = matchingOrders.reduce((sum, report) => sum + report.comPersent100, 0);
                     totalComPersent100ForDetails += comPersent100Sum;
                 }
@@ -128,12 +127,7 @@ export const createUniversalData = async (req, res, model, controller, curatorNa
         }
 
         await data.save();
-
-        if (!res.headersSent) {
-            await controller.deleteOtchetBeta(req, res);
-            await controller.createOtchet(req, res);
-            res.status(201).json({ message: "Данные успешно сохранены" });
-        }
+        res.status(200).send('Данные успешно сохранены');
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
         if (!res.headersSent) {

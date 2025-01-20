@@ -49,6 +49,8 @@ const createOtchet = async (req, res) => {
         });
 
         await newotchet.save();
+        console.log('жасалды');
+
     } catch (error) {
         console.error(error);
         res.status(403).json({ error: "Что-то пошло не так" });
