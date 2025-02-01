@@ -95,6 +95,8 @@ app.use(bodyParser.json())
 
 cron.schedule('0 0 1 * *', () => {
     createMonthlyReport.createMonthlyReport();
+}, {
+    timezone: "Asia/Bishkek"
 });
 
 createMonthlyReport.createMonthlyReport();

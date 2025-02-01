@@ -24,7 +24,7 @@ const createSimTable = async (req, res) => {
 
             if (!curatorExists) {
                 currentManagerRaiting.managers.push({
-                    otdel: 'Кайрат',
+                    otdel: 'Монако',
                     id_manager: newData._id,
                     curator: curator,
                     data_register: formattedDate,
@@ -282,7 +282,7 @@ const syncAndValidateBuyers = async () => {
         });
 
         managerRaiting.managers
-            .filter(manager => manager.otdel === "Кайрат")
+            .filter(manager => manager.otdel === "Монако")
             .forEach(manager => {
                 buyersInSim.forEach(({ buyer, curator, register }, key) => {
                     const buyerExists = manager.detail.some(detail =>
@@ -295,7 +295,7 @@ const syncAndValidateBuyers = async () => {
                             status: '2',
                             orders: 0,
                             summa: 0,
-                            team: 'Кайрат',
+                            team: 'Монако',
                             curator: manager.curator,
                             coeff: 0,
                             data_register: register,

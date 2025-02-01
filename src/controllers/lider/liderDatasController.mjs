@@ -26,7 +26,6 @@ const createLiderData = async (req, res) => {
             itogIndex: 0
         }));
 
-        // Создаем новый отчет
         const newotchet = new liderOtchetBetaModel({
             otchet: otchetArray,
             itog: [{
@@ -55,7 +54,7 @@ const createLiderData = async (req, res) => {
 
         const SelectedManagers = FenixManagers
             .flatMap(elem => elem.managers)
-            .filter(manager => manager.otdel === "Кайрат");
+            .filter(manager => manager.otdel === "Монако");
 
         const updatePromises = SelectedManagers.map(async manager => {
             let totalOrdersForCurator = 0;

@@ -24,7 +24,7 @@ const createMonthlyReport = async () => {
         }
 
         const simModels = [
-            { model: SimModelLider, teamName: 'Кайрат' },
+            { model: SimModelLider, teamName: 'Монако' },
             { model: SimModelFenix, teamName: 'Ильяс' },
             { model: SimModelTuran, teamName: 'Туран' }
         ];

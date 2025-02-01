@@ -49,8 +49,9 @@ const createOtchet = async (req, res) => {
         });
 
         await newotchet.save();
+        console.log('csg');
 
-        res.status(201).json({ message: 'Отчеты успешно созданы' });
+        // res.status(201).json({ message: 'Отчеты успешно созданы' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Что-то пошло не так" });

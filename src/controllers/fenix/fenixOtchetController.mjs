@@ -54,6 +54,7 @@ const createOtchet = async () => {
     }
 }
 
+
 const updateOtchet = async (req, res) => {
     const { id } = req.params;
     const {
