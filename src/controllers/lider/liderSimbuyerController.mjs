@@ -124,8 +124,73 @@ const editSimTable = async (req, res) => {
             },
             { new: true }
         )
+        const simData = await SimModelLider.find();
+        if (!simData.length) {
+            console.log('Нет данных в SimModelLider');
+            return;
+        }
+
+        const currentDate = new Date().toISOString().slice(0, 7);
+        const managerRaiting = await ModelManagerRaiting.findOne({ datas: currentDate });
+
+        if (!managerRaiting) {
+            console.log(`Документ с датой ${currentDate} не найден в ModelManagerRaiting`);
+            return;
+        }
+
+        const buyersInSim = new Map();
+        simData.forEach(sim => {
+            if (sim.slot && Array.isArray(sim.slot)) {
+                sim.slot.forEach(slotItem => {
+                    if (slotItem.buyer && slotItem.status === '2') {
+                        buyersInSim.set(
+                            slotItem.buyer.replace(/\s/g, '').toLowerCase(),
+                            { buyer: slotItem.buyer, curator: sim.curator || null, register: sim.data_register }
+                        );
+                    }
+                });
+            }
+        });
+
+        managerRaiting.managers
+            .filter(manager => manager.otdel === "Монако")
+            .forEach(manager => {
+                buyersInSim.forEach(({ buyer, curator, register }, key) => {
+                    const buyerExists = manager.detail.some(detail =>
+                        detail.name.replace(/\s/g, '').toLowerCase() === key
+                    );
+
+                    if (!buyerExists && manager.curator === curator) {
+                        manager.detail.push({
+                            name: buyer,
+                            status: '2',
+                            orders: 0,
+                            summa: 0,
+                            team: 'Монако',
+                            curator: manager.curator,
+                            coeff: 0,
+                            data_register: register,
+                        });
+                        manager.buyerLength = (manager.buyerLength || 0) + 1;
+                    }
+                });
+                const initialLength = manager.detail.length;
+                manager.detail = manager.detail.filter(detail => {
+                    const buyerName = detail.name.replace(/\s/g, '').toLowerCase();
+                    const buyerDataInSim = buyersInSim.get(buyerName);
+
+                    if (!buyerDataInSim || buyerDataInSim.curator !== manager.curator) {
+                        return false;
+                    }
+                    return true;
+                });
+                const removedCount = initialLength - manager.detail.length;
+                if (removedCount > 0) {
+                    manager.buyerLength = Math.max((manager.buyerLength || 0) - removedCount, 0);
+                }
+            });
+        await managerRaiting.save();
         res.json(updateSimCard);
-        await syncAndValidateBuyers();
     } catch (error) {
         res.status(500).json({
             error: "Что то пошло не так",
