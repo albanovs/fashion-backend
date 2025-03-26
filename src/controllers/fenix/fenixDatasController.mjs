@@ -55,7 +55,7 @@ const createFenixData = async (req, res) => {
 
         const SelectedManagers = FenixManagers
             .flatMap(elem => elem.managers)
-            .filter(manager => manager.otdel === "Ильяс");
+        // .filter(manager => manager.otdel === "Ильяс");
 
         const updatePromises = SelectedManagers.map(async manager => {
             let totalOrdersForCurator = 0;
@@ -63,6 +63,7 @@ const createFenixData = async (req, res) => {
             let totalSumForCurator = 0;
             let totalSumForDetails = 0;
             let totalComPersent100ForDetails = 0;
+            let totalComPersent100ForDetailsAll = 0;
 
             const curatorOrders = otchet.filter(ot =>
                 ot.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
@@ -87,8 +88,12 @@ const createFenixData = async (req, res) => {
                         ((totalMatchingSum / matchingOrders.length) / 1000).toFixed(2)
                     );
 
-                    const comPersent100Sum = matchingOrders.reduce((sum, report) => sum + report.comPersent100, 0);
+                    const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.comPersent100, 0);
+                    const comPersent100Sum = matchingOrders.reduce((sum, report) => {
+                        return report.sm === 1 ? sum + report.comPersent100 : sum;
+                    }, 0);
                     totalComPersent100ForDetails += comPersent100Sum;
+                    totalComPersent100ForDetailsAll += comPersent100Sumall;
                 }
                 return detail;
             });
@@ -113,7 +118,7 @@ const createFenixData = async (req, res) => {
             manager.allCoeff = (
                 parseFloat(manager.allCoeff || 0) +
                 (totalOrdersForCurator + totalOrdersForDetails) / manager.buyerLength +
-                (totalComPersent100ForDetails / manager.buyerLength) / 1000
+                (totalComPersent100ForDetailsAll / manager.buyerLength) / 1000
             ).toFixed(1);
 
             await ModelManagerRaiting.updateOne(
