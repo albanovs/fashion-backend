@@ -51,11 +51,10 @@ const createTuranData = async (req, res) => {
         const currentDate = new Date().toISOString().slice(0, 7);
 
         const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
-
+        
         const SelectedManagers = FenixManagers
             .flatMap(elem => elem.managers)
         // .filter(manager => manager.otdel === "Туран");
-
         const updatePromises = SelectedManagers.map(async manager => {
             let totalOrdersForCurator = 0;
             let totalOrdersForDetails = 0;
@@ -67,6 +66,7 @@ const createTuranData = async (req, res) => {
             const curatorOrders = otchet.filter(ot =>
                 ot.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
             );
+            totalComPersent100ForDetailsAll += curatorOrders.reduce((sum, report) => sum + report.itog, 0);
             totalOrdersForCurator = curatorOrders.length;
             totalSumForCurator = curatorOrders.reduce((sum, report) => sum + report.itog, 0);
 
@@ -87,7 +87,7 @@ const createTuranData = async (req, res) => {
                         ((totalMatchingSum / matchingOrders.length) / 1000).toFixed(2)
                     );
 
-                    const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.comPersent100, 0);
+                    const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
                     const comPersent100Sum = matchingOrders.reduce((sum, report) => {
                         return report.sm === 1 ? sum + report.comPersent100 : sum;
                     }, 0);

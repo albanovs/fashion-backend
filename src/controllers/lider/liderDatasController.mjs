@@ -67,6 +67,7 @@ const createLiderData = async (req, res) => {
             const curatorOrders = otchet.filter(ot =>
                 ot.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
             );
+            totalComPersent100ForDetailsAll += curatorOrders.reduce((sum, report) => sum + report.itog, 0);
             totalOrdersForCurator = curatorOrders.length;
             totalSumForCurator = curatorOrders.reduce((sum, report) => sum + report.itog, 0);
 
@@ -87,7 +88,7 @@ const createLiderData = async (req, res) => {
                         ((totalMatchingSum / matchingOrders.length) / 1000).toFixed(2)
                     );
 
-                    const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.comPersent100, 0);
+                    const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
                     const comPersent100Sum = matchingOrders.reduce((sum, report) => {
                         return report.sm === 1 ? sum + report.comPersent100 : sum;
                     }, 0);

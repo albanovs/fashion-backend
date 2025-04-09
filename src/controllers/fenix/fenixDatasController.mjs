@@ -68,6 +68,7 @@ const createFenixData = async (req, res) => {
             const curatorOrders = otchet.filter(ot =>
                 ot.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
             );
+            totalComPersent100ForDetailsAll += curatorOrders.reduce((sum, report) => sum + report.comPersent100, 0);
             totalOrdersForCurator = curatorOrders.length;
             totalSumForCurator = curatorOrders.reduce((sum, report) => sum + report.itog, 0);
 
