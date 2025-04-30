@@ -209,7 +209,7 @@ const getBuyerRaiting = async (req, res) => {
                 allDetails.push(...manager.detail);
             })
         });
-        allDetails.sort((a, b) => b.summa - a.summa);
+        allDetails.sort((a, b) => b.coeff - a.coeff);
         res.status(200).json(allDetails);
     } catch (error) {
         console.error(error);
