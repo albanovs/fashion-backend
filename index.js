@@ -82,6 +82,7 @@ import outgoing from './src/routes/incoming-outgoing/outgoing.mjs'
 
 import raitingManager from './src/routes/raitings/manager.mjs'
 import createMonthlyReport from './src/controllers/raiting/manager.mjs'
+import updateDataFromDB from './src/controllers/raiting/manager.mjs'
 
 const app = express();
 app.use(express.json());
@@ -97,10 +98,14 @@ cron.schedule('0 0 1 * *', () => {
     createMonthlyReport.createMonthlyReport();
 }, {
     scheduled: true,
-    timezone: "Asia/Bishkek"
 });
 
 createMonthlyReport.createMonthlyReport();
+
+cron.schedule('0 22 * * *', async () => {
+    console.log('Запуск обновления данных в 22:00');
+    await updateDataFromDB.updateDataFromDB();
+});
 
 connect();
 

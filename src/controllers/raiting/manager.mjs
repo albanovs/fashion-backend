@@ -104,19 +104,29 @@ const updateWithdrawal = async (req, res) => {
     }
 };
 
-const updateFenixDataFromDB = async () => {
+const updateDataFromDB = async () => {
     try {
-        const currentDate = new Date().toISOString().slice(0, 7);
-        const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
-        let SelectedManagers = FenixManagers.map(elem => elem.managers).flat()
+        const today = new Date();
+        const formattedDate = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`;
 
-        const dataArray = await LiderDataModel.find({ date: "08.04.2025" });
-        if (!dataArray || dataArray.length === 0) {
-            console.log('Данные Fenix не найдены');
+        const currentMonth = today.toISOString().slice(0, 7);
+        const FenixManagers = await ModelManagerRaiting.find({ datas: currentMonth });
+        let SelectedManagers = FenixManagers.map(elem => elem.managers).flat();
+
+        const [turanData, liderData, monacoData] = await Promise.all([
+            TuranDataModel.find({ date: formattedDate }),
+            LiderDataModel.find({ date: formattedDate }),
+            MonacoDataModel.find({ date: formattedDate })
+        ]);
+
+        const combinedDataArray = [...turanData, ...liderData, ...monacoData];
+
+        if (!combinedDataArray || combinedDataArray.length === 0) {
+            console.log('Данные updateDataFromDB не найдены');
             return;
         }
 
-        for (const data of dataArray) {
+        for (const data of combinedDataArray) {
             for (let manager of SelectedManagers) {
                 let totalOrdersForCurator = 0;
                 let totalOrdersForDetails = 0;
@@ -129,7 +139,6 @@ const updateFenixDataFromDB = async () => {
                     otchet.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
                 );
                 totalComPersent100ForDetailsAll += curatorOrders.reduce((sum, report) => sum + report.itog, 0);
-
                 totalOrdersForCurator = curatorOrders.length;
                 totalSumForCurator = curatorOrders.reduce((sum, report) => sum + report.itog, 0);
 
@@ -145,7 +154,7 @@ const updateFenixDataFromDB = async () => {
 
                         detail.summa = (detail.summa || 0) + totalMatchingSum;
                         detail.orders = (detail.orders || 0) + matchingOrders.length;
-                        detail.coeff = (parseFloat(detail.coeff) || 0) + ((parseFloat(totalMatchingSum) / parseFloat(matchingOrders.length)).toFixed(0) / 1000).toFixed(2)
+                        detail.coeff = (parseFloat(detail.coeff) || 0) + ((parseFloat(totalMatchingSum) / parseFloat(matchingOrders.length)).toFixed(0) / 1000).toFixed(2);
 
                         const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
                         const comPersent100Sum = matchingOrders.reduce((sum, report) => {
@@ -153,8 +162,8 @@ const updateFenixDataFromDB = async () => {
                         }, 0);
                         totalComPersent100ForDetails += comPersent100Sum;
                         totalComPersent100ForDetailsAll += comPersent100Sumall;
-
                     }
+
                     return detail;
                 });
 
@@ -190,13 +199,11 @@ const updateFenixDataFromDB = async () => {
             }
         }
 
-        console.log('Обновление данных завершено 05.10.2024');
+        console.log('Обновление данных завершено', formattedDate);
     } catch (error) {
         console.error('Ошибка при обновлении данных:', error);
     }
 };
-
-// updateFenixDataFromDB();
 
 const getBuyerRaiting = async (req, res) => {
     try {
@@ -227,4 +234,4 @@ const getAllManagers = async (req, res) => {
     }
 };
 
-export default { createMonthlyReport, updateWithdrawal, getAllManagers, getBuyerRaiting };
+export default { createMonthlyReport, updateDataFromDB, updateWithdrawal, getAllManagers, getBuyerRaiting };

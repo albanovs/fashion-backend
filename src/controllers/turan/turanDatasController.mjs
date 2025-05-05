@@ -48,95 +48,95 @@ const createTuranData = async (req, res) => {
             }]
         });
 
-        const currentDate = new Date().toISOString().slice(0, 7);
+        // const currentDate = new Date().toISOString().slice(0, 7);
 
-        const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
+        // const FenixManagers = await ModelManagerRaiting.find({ datas: currentDate });
         
-        const SelectedManagers = FenixManagers
-            .flatMap(elem => elem.managers)
+        // const SelectedManagers = FenixManagers
+        //     .flatMap(elem => elem.managers)
         // .filter(manager => manager.otdel === "Туран");
-        const updatePromises = SelectedManagers.map(async manager => {
-            let totalOrdersForCurator = 0;
-            let totalOrdersForDetails = 0;
-            let totalSumForCurator = 0;
-            let totalSumForDetails = 0;
-            let totalComPersent100ForDetails = 0;
-            let totalComPersent100ForDetailsAll = 0;
+        // const updatePromises = SelectedManagers.map(async manager => {
+        //     let totalOrdersForCurator = 0;
+        //     let totalOrdersForDetails = 0;
+        //     let totalSumForCurator = 0;
+        //     let totalSumForDetails = 0;
+        //     let totalComPersent100ForDetails = 0;
+        //     let totalComPersent100ForDetailsAll = 0;
 
-            const curatorOrders = otchet.filter(ot =>
-                ot.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
-            );
-            totalComPersent100ForDetailsAll += curatorOrders.reduce((sum, report) => sum + report.itog, 0);
-            totalOrdersForCurator = curatorOrders.length;
-            totalSumForCurator = curatorOrders.reduce((sum, report) => sum + report.itog, 0);
+        //     const curatorOrders = otchet.filter(ot =>
+        //         ot.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
+        //     );
+        //     totalComPersent100ForDetailsAll += curatorOrders.reduce((sum, report) => sum + report.itog, 0);
+        //     totalOrdersForCurator = curatorOrders.length;
+        //     totalSumForCurator = curatorOrders.reduce((sum, report) => sum + report.itog, 0);
 
-            manager.detail = manager.detail.map(detail => {
-                const matchingOrders = otchet.filter(ot =>
-                    ot.buyer.replace(/\s/g, '').toLowerCase() === detail.name.replace(/\s/g, '').toLowerCase()
-                );
+        //     manager.detail = manager.detail.map(detail => {
+        //         const matchingOrders = otchet.filter(ot =>
+        //             ot.buyer.replace(/\s/g, '').toLowerCase() === detail.name.replace(/\s/g, '').toLowerCase()
+        //         );
 
-                if (matchingOrders.length > 0) {
-                    const totalMatchingSum = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
-                    totalOrdersForDetails += matchingOrders.length;
-                    totalSumForDetails += totalMatchingSum;
+        //         if (matchingOrders.length > 0) {
+        //             const totalMatchingSum = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
+        //             totalOrdersForDetails += matchingOrders.length;
+        //             totalSumForDetails += totalMatchingSum;
 
-                    detail.summa = (detail.summa || 0) + totalMatchingSum;
-                    detail.orders = (detail.orders || 0) + matchingOrders.length;
-                    detail.coeff = (
-                        (parseFloat(detail.coeff) || 0) +
-                        ((totalMatchingSum / matchingOrders.length) / 1000).toFixed(2)
-                    );
+        //             detail.summa = (detail.summa || 0) + totalMatchingSum;
+        //             detail.orders = (detail.orders || 0) + matchingOrders.length;
+        //             detail.coeff = (
+        //                 (parseFloat(detail.coeff) || 0) +
+        //                 ((totalMatchingSum / matchingOrders.length) / 1000).toFixed(2)
+        //             );
 
-                    const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
-                    const comPersent100Sum = matchingOrders.reduce((sum, report) => {
-                        return report.sm === 1 ? sum + report.comPersent100 : sum;
-                    }, 0);
-                    totalComPersent100ForDetails += comPersent100Sum;
-                    totalComPersent100ForDetailsAll += comPersent100Sumall;
-                }
-                return detail;
-            });
+        //             const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
+        //             const comPersent100Sum = matchingOrders.reduce((sum, report) => {
+        //                 return report.sm === 1 ? sum + report.comPersent100 : sum;
+        //             }, 0);
+        //             totalComPersent100ForDetails += comPersent100Sum;
+        //             totalComPersent100ForDetailsAll += comPersent100Sumall;
+        //         }
+        //         return detail;
+        //     });
 
-            if (totalOrdersForCurator > 0) {
-                manager.order = (manager.order || 0) + totalOrdersForCurator;
-                manager.totalcom = (manager.totalcom || 0) + totalSumForCurator;
-            }
+        //     if (totalOrdersForCurator > 0) {
+        //         manager.order = (manager.order || 0) + totalOrdersForCurator;
+        //         manager.totalcom = (manager.totalcom || 0) + totalSumForCurator;
+        //     }
 
-            if (totalOrdersForDetails > 0) {
-                manager.order = (manager.order || 0) + totalOrdersForDetails;
-                manager.totalcom = (manager.totalcom || 0) + totalSumForDetails;
-            }
+        //     if (totalOrdersForDetails > 0) {
+        //         manager.order = (manager.order || 0) + totalOrdersForDetails;
+        //         manager.totalcom = (manager.totalcom || 0) + totalSumForDetails;
+        //     }
 
-            manager.comission = parseFloat(manager.comission || 0) + Math.round(totalComPersent100ForDetails * 0.07);
-            manager.remainder = parseFloat(manager.remainder || 0) + Math.round(totalComPersent100ForDetails * 0.07);
+        //     manager.comission = parseFloat(manager.comission || 0) + Math.round(totalComPersent100ForDetails * 0.07);
+        //     manager.remainder = parseFloat(manager.remainder || 0) + Math.round(totalComPersent100ForDetails * 0.07);
 
-            manager.comissionVM = manager.curator.includes('ВМ')
-                ? 0
-                : parseFloat(manager.comissionVM || 0) + Math.round(totalComPersent100ForDetails * 0.03);
+        //     manager.comissionVM = manager.curator.includes('ВМ')
+        //         ? 0
+        //         : parseFloat(manager.comissionVM || 0) + Math.round(totalComPersent100ForDetails * 0.03);
 
-            manager.allCoeff = (
-                parseFloat(manager.allCoeff || 0) +
-                (totalOrdersForCurator + totalOrdersForDetails) / manager.buyerLength +
-                (totalComPersent100ForDetailsAll / manager.buyerLength) / 1000
-            ).toFixed(1);
+        //     manager.allCoeff = (
+        //         parseFloat(manager.allCoeff || 0) +
+        //         (totalOrdersForCurator + totalOrdersForDetails) / manager.buyerLength +
+        //         (totalComPersent100ForDetailsAll / manager.buyerLength) / 1000
+        //     ).toFixed(1);
 
-            await ModelManagerRaiting.updateOne(
-                { 'managers._id': manager._id },
-                {
-                    $set: {
-                        'managers.$.detail': manager.detail,
-                        'managers.$.totalcom': manager.totalcom,
-                        'managers.$.order': manager.order,
-                        'managers.$.comission': manager.comission,
-                        'managers.$.comissionVM': manager.comissionVM,
-                        'managers.$.remainder': manager.remainder,
-                        'managers.$.allCoeff': manager.allCoeff
-                    }
-                }
-            );
-        });
+        //     await ModelManagerRaiting.updateOne(
+        //         { 'managers._id': manager._id },
+        //         {
+        //             $set: {
+        //                 'managers.$.detail': manager.detail,
+        //                 'managers.$.totalcom': manager.totalcom,
+        //                 'managers.$.order': manager.order,
+        //                 'managers.$.comission': manager.comission,
+        //                 'managers.$.comissionVM': manager.comissionVM,
+        //                 'managers.$.remainder': manager.remainder,
+        //                 'managers.$.allCoeff': manager.allCoeff
+        //             }
+        //         }
+        //     );
+        // });
 
-        await Promise.all(updatePromises);
+        // await Promise.all(updatePromises);
         await turanData.save();
         await TuranOtchetBetaModel.deleteMany();
         await newotchet.save();
