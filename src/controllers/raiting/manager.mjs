@@ -116,7 +116,7 @@ const updateDataFromDB = async () => {
         const [turanData, liderData, monacoData] = await Promise.all([
             TuranDataModel.find({ date: formattedDate }),
             LiderDataModel.find({ date: formattedDate }),
-            MonacoDataModel.find({ date: formattedDate })
+            FenixDataModel.find({ date: formattedDate })
         ]);
 
         const combinedDataArray = [...turanData, ...liderData, ...monacoData];
