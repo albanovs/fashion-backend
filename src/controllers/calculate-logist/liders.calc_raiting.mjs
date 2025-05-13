@@ -32,6 +32,7 @@ async function calculateAndCacheData() {
                     const matchesCurator = calculateMatchesCurator(filtereditog, elem);
                     const matchesLogist = calculateMatchesLogist(filtereditog, logistItem);
                     const sumComPersent100 = calculateSumComPersent100(filtereditog, logistItem);
+                    const coeff = matchesLogist === 0 ? 0 : (sumComPersent100 / matchesLogist / 10000).toFixed(1);
 
                     return {
                         curator: matchesCurator,
@@ -39,6 +40,7 @@ async function calculateAndCacheData() {
                         status: logistItem.status,
                         orders: matchesLogist,
                         summa: sumComPersent100 === 0 ? 0 : sumComPersent100,
+                        coeff: coeff
                     };
                 });
 
