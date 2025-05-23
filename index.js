@@ -94,17 +94,33 @@ app.use(bodyParser.json())
 //   bot.launch()
 // })
 
-cron.schedule('0 0 1 * *', () => {
-    createMonthlyReport.createMonthlyReport();
+cron.schedule('0 0 1 * *', async () => {
+    try {
+        await createMonthlyReport.createMonthlyReport();
+        console.log('Ежемесячный отчет успешно создан.');
+    } catch (err) {
+        console.error('Ошибка при создании ежемесячного отчета:', err);
+    }
 }, {
     scheduled: true,
+    timezone: 'Asia/Bishkek'
 });
+
 
 createMonthlyReport.createMonthlyReport();
 
 cron.schedule('0 22 * * *', async () => {
     console.log('Запуск обновления данных в 22:00');
-    await updateDataFromDB.updateDataFromDB();
+    try {
+        await updateDataFromDB.updateDataFromDBFenix();
+        await updateDataFromDB.updateDataFromDBMonaco();
+        await updateDataFromDB.updateDataFromDBTuran();
+        console.log('Обновление завершено.');
+    } catch (error) {
+        console.error('Ошибка при обновлении данных:', error);
+    }
+}, {
+    timezone: 'Asia/Bishkek'
 });
 
 connect();

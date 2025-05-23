@@ -174,20 +174,17 @@ const editSimTable = async (req, res) => {
                         manager.buyerLength = (manager.buyerLength || 0) + 1;
                     }
                 });
-                const initialLength = manager.detail.length;
-                manager.detail = manager.detail.filter(detail => {
+                manager.detail.forEach(detail => {
                     const buyerName = detail.name.replace(/\s/g, '').toLowerCase();
                     const buyerDataInSim = buyersInSim.get(buyerName);
 
                     if (!buyerDataInSim || buyerDataInSim.curator !== manager.curator) {
-                        return false;
+                        detail.status = '1';
+                    } else {
+                        detail.status = '2';
                     }
-                    return true;
                 });
-                const removedCount = initialLength - manager.detail.length;
-                if (removedCount > 0) {
-                    manager.buyerLength = Math.max((manager.buyerLength || 0) - removedCount, 0);
-                }
+                manager.buyerLength = manager.detail.filter(d => d.status === '2').length;
             });
         await managerRaiting.save();
         res.json(updateSimCard);
