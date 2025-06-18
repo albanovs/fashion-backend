@@ -119,6 +119,14 @@ const updateWithdrawal = async (req, res) => {
 //             FenixDataModel.find({ date: formattedDate })
 //         ]);
 
+//         // const dataaa = '18.06.2025';
+
+//         // const [turanData, liderData, monacoData] = await Promise.all([
+//         //     TuranDataModel.find({ date: dataaa }),
+//         //     LiderDataModel.find({ date: dataaa }),
+//         //     FenixDataModel.find({ date: dataaa })
+//         // ]);
+
 //         const combinedDataArray = [...turanData, ...liderData, ...monacoData];
 
 //         if (!combinedDataArray || combinedDataArray.length === 0) {
@@ -199,11 +207,135 @@ const updateWithdrawal = async (req, res) => {
 //             }
 //         }
 
-//         console.log('Обновление данных завершено', formattedDate);
+//         console.log('Обновление данных завершено');
 //     } catch (error) {
 //         console.error('Ошибка при обновлении данных:', error);
 //     }
 // };
+
+// updateDataFromDB();
+
+
+const updateDataFromDB = async () => {
+    try {
+        const today = new Date();
+        const formattedDate = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`;
+
+        const currentMonth = today.toISOString().slice(0, 7);
+        const FenixManagers = await ModelManagerRaiting.find({ datas: currentMonth });
+        let SelectedManagers = FenixManagers.map(elem => elem.managers).flat();
+
+        const [turanData, liderData, monacoData] = await Promise.all([
+            TuranDataModel.find({ date: formattedDate }),
+            LiderDataModel.find({ date: formattedDate }),
+            FenixDataModel.find({ date: formattedDate })
+        ]);
+
+        const combinedDataArray = [...turanData, ...liderData, ...monacoData];
+
+        if (!combinedDataArray || combinedDataArray.length === 0) {
+            console.log('Данные updateDataFromDB не найдены');
+            return '❗️ Данные не найдены за ' + formattedDate;
+        }
+
+        let reportMessage = `📊 <b>Отчет за ${formattedDate}</b>\n\n`;
+
+        for (const data of combinedDataArray) {
+            for (let manager of SelectedManagers) {
+                let totalOrdersForCurator = 0;
+                let totalOrdersForDetails = 0;
+                let totalSumForCurator = 0;
+                let totalSumForDetails = 0;
+                let totalComPersent100ForDetails = 0;
+                let totalComPersent100ForDetailsAll = 0;
+
+                const curatorOrders = data.otchet.filter(otchet =>
+                    otchet.buyer.replace(/\s/g, '').toLowerCase() === manager.curator.replace(/\s/g, '').toLowerCase()
+                );
+                totalComPersent100ForDetailsAll += curatorOrders.reduce((sum, report) => sum + report.itog, 0);
+                totalOrdersForCurator = curatorOrders.length;
+                totalSumForCurator = curatorOrders.reduce((sum, report) => sum + report.itog, 0);
+
+                manager.detail = manager.detail.map(detail => {
+                    const matchingOrders = data.otchet.filter(otchet =>
+                        otchet.buyer.replace(/\s/g, '').toLowerCase() === detail.name.replace(/\s/g, '').toLowerCase()
+                    );
+
+                    if (matchingOrders.length > 0) {
+                        const totalMatchingSum = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
+                        totalOrdersForDetails += matchingOrders.length;
+                        totalSumForDetails += totalMatchingSum;
+
+                        detail.summa = (detail.summa || 0) + totalMatchingSum;
+                        detail.orders = (detail.orders || 0) + matchingOrders.length;
+                        detail.coeff = (parseFloat(detail.coeff) || 0) + ((parseFloat(totalMatchingSum) / parseFloat(matchingOrders.length)).toFixed(0) / 1000).toFixed(2);
+
+                        const comPersent100Sumall = matchingOrders.reduce((sum, report) => sum + report.itog, 0);
+                        const comPersent100Sum = matchingOrders.reduce((sum, report) => {
+                            return report.sm === 1 ? sum + report.comPersent100 : sum;
+                        }, 0);
+                        totalComPersent100ForDetails += comPersent100Sum;
+                        totalComPersent100ForDetailsAll += comPersent100Sumall;
+                    }
+
+                    return detail;
+                });
+
+                if (totalOrdersForCurator > 0) {
+                    manager.order = (manager.order || 0) + totalOrdersForCurator;
+                    manager.totalcom = (manager.totalcom || 0) + totalSumForCurator;
+                }
+
+                if (totalOrdersForDetails > 0) {
+                    manager.order = (manager.order || 0) + totalOrdersForDetails;
+                    manager.totalcom = (manager.totalcom || 0) + totalSumForDetails;
+                }
+
+                manager.comission = parseFloat((manager.comission || 0)) + Math.round(totalComPersent100ForDetails * 0.07);
+                manager.remainder = parseFloat((manager.remainder || 0)) + Math.round(totalComPersent100ForDetails * 0.07);
+                manager.comissionVM = manager.curator.includes('ВМ') ? 0 : parseFloat((manager.comissionVM || 0)) + Math.round(totalComPersent100ForDetails * 0.03);
+                manager.allCoeff = (parseFloat((manager.allCoeff || 0)) + (parseFloat((totalOrdersForCurator + totalOrdersForDetails)) / manager.buyerLength) + parseFloat((totalComPersent100ForDetailsAll / manager.buyerLength)) / 1000).toFixed(1);
+
+                await ModelManagerRaiting.updateOne(
+                    { 'managers._id': manager._id },
+                    {
+                        $set: {
+                            'managers.$.detail': manager.detail,
+                            'managers.$.totalcom': manager.totalcom,
+                            'managers.$.order': manager.order,
+                            'managers.$.comission': manager.comission,
+                            'managers.$.comissionVM': manager.comissionVM,
+                            'managers.$.remainder': manager.remainder,
+                            'managers.$.allCoeff': manager.allCoeff
+                        }
+                    }
+                );
+
+                reportMessage += `👤 <b>${manager.curator}</b>\n`;
+                reportMessage += `— кол-во байер: ${manager.buyerLength}\n`;
+                reportMessage += `— Заказов: ${manager.order}\n`;
+                reportMessage += `— Сумма: ${manager.totalcom} сом\n`;
+                reportMessage += `— Комиссия: ${manager.comission} сом\n`;
+                reportMessage += `— Коэфф: ${manager.allCoeff}\n`;
+
+                if (manager.detail.length > 0) {
+                    reportMessage += `   📌 <i>байеры:</i>\n`;
+                    for (const detail of manager.detail) {
+                        reportMessage += `   • ${detail.name}: ${detail.orders || 0} / ${detail.summa || 0} сом / коэфф: ${detail.coeff || 0}\n`;
+                    }
+                }
+
+                reportMessage += `\n`;
+            }
+        }
+
+        console.log('Обновление данных завершено');
+        return reportMessage;
+    } catch (error) {
+        console.error('Ошибка при обновлении данных:', error);
+        return `❌ Ошибка обновления: ${error.message}`;
+    }
+};
 
 const updateDataFromDBFenix = async () => {
     try {
@@ -418,7 +550,7 @@ const updateDataFromDBMonaco = async () => {
         const FenixManagers = await ModelManagerRaiting.find({ datas: currentMonth });
         let SelectedManagers = FenixManagers.map(elem => elem.managers).flat();
 
-        const liderData = await LiderDataModel.find({ date: formattedDate })
+        const liderData = await LiderDataModel.find({ date: formattedDate });
 
 
 
@@ -511,6 +643,8 @@ const updateDataFromDBMonaco = async () => {
     }
 };
 
+// updateDataFromDBMonaco();
+
 // updateDataFromDBlocal();
 
 const getBuyerRaiting = async (req, res) => {
@@ -542,4 +676,4 @@ const getAllManagers = async (req, res) => {
     }
 };
 
-export default { createMonthlyReport, updateDataFromDBFenix, updateDataFromDBMonaco, updateDataFromDBTuran, updateWithdrawal, getAllManagers, getBuyerRaiting };
+export default { createMonthlyReport, updateDataFromDBFenix, updateDataFromDB, updateDataFromDBMonaco, updateDataFromDBTuran, updateWithdrawal, getAllManagers, getBuyerRaiting };

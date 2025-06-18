@@ -109,19 +109,34 @@ cron.schedule('0 0 1 * *', async () => {
 
 createMonthlyReport.createMonthlyReport();
 
-cron.schedule('0 22 * * *', async () => {
-    console.log('Запуск обновления данных в 22:00');
+const TELEGRAM_BOT_TOKEN = '7318777394:AAFI9HIXTTAthvmfFADW4zlDftsaiR_gO88';
+const TELEGRAM_CHAT_ID = '-1002643965515';
+
+const sendTelegramMessage = async (text) => {
     try {
-        await updateDataFromDB.updateDataFromDBFenix();
-        await updateDataFromDB.updateDataFromDBMonaco();
-        await updateDataFromDB.updateDataFromDBTuran();
-        console.log('Обновление завершено.');
+        await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            chat_id: TELEGRAM_CHAT_ID,
+            text: text,
+            parse_mode: 'HTML',
+        });
+        console.log('Сообщение успешно отправлено в Telegram');
+    } catch (err) {
+        console.error('Ошибка при отправке сообщения в Telegram:', err.message);
+    }
+};
+cron.schedule('0 21 * * *', async () => {
+    console.log('Запуск обновления данных в 21:00');
+    try {
+        const reportText = await updateDataFromDB();
+        await sendTelegramMessage(reportText);
+        console.log('Обновление и отправка отчета завершены.');
     } catch (error) {
-        console.error('Ошибка при обновлении данных:', error);
+        console.error('Ошибка при обновлении данных или отправке:', error);
     }
 }, {
     timezone: 'Asia/Bishkek'
 });
+// updateDataFromDB.updateDataFromDB();
 
 connect();
 
