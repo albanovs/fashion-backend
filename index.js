@@ -118,7 +118,7 @@ const sendTelegramMessage = async (text) => {
         await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             chat_id: TELEGRAM_CHAT_ID,
             text: text,
-            parse_mode: 'HTML',
+            // parse_mode: 'HTML',
         });
         console.log('Сообщение успешно отправлено в Telegram');
     } catch (err) {
@@ -136,17 +136,17 @@ cron.schedule('0 19 * * *', async () => {
     }
 });
 
-const updatedatas = async () => {
-    try {
-        const reportText = await updateDataFromDB.updateDataFromDB();
-        await sendTelegramMessage(reportText);
-        console.log('Обновление и отправка отчета завершены.');
-    } catch (error) {
-        console.error('Ошибка при обновлении данных или отправке:', error);
-    }
-};
+// const updatedatas = async () => {
+//     try {
+//         const reportText = await updateDataFromDB.updateDataFromDB();
+//         await sendTelegramMessage(reportText);
+//         console.log('Обновление и отправка отчета завершены.');
+//     } catch (error) {
+//         console.error('Ошибка при обновлении данных или отправке:', error);
+//     }
+// };
 
-updatedatas();
+// updatedatas();
 
 
 // updateDataFromDB.updateDataFromDB();
