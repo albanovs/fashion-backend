@@ -231,6 +231,14 @@ const updateDataFromDB = async () => {
             FenixDataModel.find({ date: formattedDate })
         ]);
 
+        // const curdata = '22.06.2025'
+
+        // const [turanData, liderData, monacoData] = await Promise.all([
+        //     TuranDataModel.find({ date: curdata }),
+        //     LiderDataModel.find({ date: curdata }),
+        //     FenixDataModel.find({ date: curdata })
+        // ]);
+
         const combinedDataArray = [...turanData, ...liderData, ...monacoData];
 
         if (!combinedDataArray || combinedDataArray.length === 0) {
