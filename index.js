@@ -125,16 +125,16 @@ const sendTelegramMessage = async (text) => {
         console.error('Ошибка при отправке сообщения в Telegram:', err.message);
     }
 };
-cron.schedule('0 19 * * *', async () => {
-    console.log('Запуск обновления данных в 21:00');
-    try {
-        const reportText = await updateDataFromDB();
-        await sendTelegramMessage(reportText);
-        console.log('Обновление и отправка отчета завершены.');
-    } catch (error) {
-        console.error('Ошибка при обновлении данных или отправке:', error);
-    }
-});
+// cron.schedule('0 19 * * *', async () => {
+//     console.log('Запуск обновления данных в 19:00');
+//     try {
+//         const reportText = await updateDataFromDB();
+//         await sendTelegramMessage(reportText);
+//         console.log('Обновление и отправка отчета завершены.');
+//     } catch (error) {
+//         console.error('Ошибка при обновлении данных или отправке:', error);
+//     }
+// });
 
 // const updatedatas = async () => {
 //     try {
