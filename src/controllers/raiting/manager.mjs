@@ -115,19 +115,19 @@ const updateDataFromDB = async () => {
         const FenixManagers = await ModelManagerRaiting.find({ datas: currentMonth });
         let SelectedManagers = FenixManagers.map(elem => elem.managers).flat();
 
-        const [turanData, liderData, monacoData] = await Promise.all([
-            TuranDataModel.find({ date: formattedDate }),
-            LiderDataModel.find({ date: formattedDate }),
-            FenixDataModel.find({ date: formattedDate })
-        ]);
-
-        // const curdata = '24.11.2025'
-
         // const [turanData, liderData, monacoData] = await Promise.all([
-        //     TuranDataModel.find({ date: curdata }),
-        //     LiderDataModel.find({ date: curdata }),
-        //     FenixDataModel.find({ date: curdata })
+        //     TuranDataModel.find({ date: formattedDate }),
+        //     LiderDataModel.find({ date: formattedDate }),
+        //     FenixDataModel.find({ date: formattedDate })
         // ]);
+
+        const curdata = '01.02.2026'
+
+        const [turanData, liderData, monacoData] = await Promise.all([
+            TuranDataModel.find({ date: curdata }),
+            LiderDataModel.find({ date: curdata }),
+            FenixDataModel.find({ date: curdata })
+        ]);
 
         const combinedDataArray = [...turanData, ...liderData, ...monacoData];
 
@@ -189,9 +189,9 @@ const updateDataFromDB = async () => {
                     manager.totalcom = (manager.totalcom || 0) + totalSumForDetails;
                 }
 
-                manager.comission = parseFloat((manager.comission || 0)) + Math.round(totalComPersent100ForDetails * 0.07);
-                manager.remainder = parseFloat((manager.remainder || 0)) + Math.round(totalComPersent100ForDetails * 0.07);
-                manager.comissionVM = manager.curator.includes('ВМ') ? 0 : parseFloat((manager.comissionVM || 0)) + Math.round(totalComPersent100ForDetails * 0.03);
+                manager.comission = parseFloat((manager.comission || 0)) + Math.round(totalComPersent100ForDetails * 0.05);
+                manager.remainder = parseFloat((manager.remainder || 0)) + Math.round(totalComPersent100ForDetails * 0.05);
+                manager.comissionVM = parseFloat((manager.comission || 0)) + Math.round(totalComPersent100ForDetails * 0.05); //manager.curator.includes('ВМ') ? 0 : parseFloat((manager.comissionVM || 0)) + Math.round(totalComPersent100ForDetails * 0.05);
                 manager.allCoeff = (parseFloat((manager.allCoeff || 0)) + (parseFloat((totalOrdersForCurator + totalOrdersForDetails)) / manager.buyerLength) + parseFloat((totalComPersent100ForDetailsAll / manager.buyerLength)) / 1000).toFixed(1);
 
                 await ModelManagerRaiting.updateOne(
@@ -235,13 +235,13 @@ const updateDataFromDB = async () => {
     }
 };
 
-cron.schedule(
-    '0 22 * * *',
-    updateDataFromDB,
-    {
-        timezone: "Asia/Bishkek"
-    }
-);
+// cron.schedule(
+//     '0 22 * * *',
+//     updateDataFromDB,
+//     {
+//         timezone: "Asia/Bishkek"
+//     }
+// );
 
 // updateDataFromDB()
 
